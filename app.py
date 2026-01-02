@@ -364,25 +364,27 @@ st.sidebar.divider()
 
 with st.sidebar.expander("📋 Support Checklist", expanded=True):
     st.markdown("""
-    ### Quick Start
-    1. ✅ Check priority
+    ### Quick Start (60s)
+    1. ✅ Check priority (VIP?)
     2. ✅ Verify identity (PIN)
     3. ✅ Check service status
     4. ✅ Add tags
     
     ### Service Health
-    - Domain: Active?
+    - Domain: Active? Expired?
     - Hosting: Active/Suspended?
     - NS: ns1-4.host-ww.net
+    - DA NS: dan1-2.host-ww.net
     
     ### Troubleshooting
-    **Email**: MX/SPF/DKIM
-    **Website**: A record, NS
-    **cPanel**: IP blocks
+    **Email**: MX/SPF/DKIM/DMARC
+    **Website**: A record, NS, logs
+    **cPanel/ DirectAdmin**: IP blocks, login attempts
     **SSL**: Certificate, mixed content
+    **Others**: Basekit Sitebuilder, HMailPlus
     
     ### Tags
-    Mail | Hosting | DNS | Billing | VPS
+    Mail | Hosting | DNS | SiteBuilder| VPS
     """)
 
 st.sidebar.divider()
