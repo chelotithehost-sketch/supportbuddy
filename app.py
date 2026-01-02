@@ -344,22 +344,6 @@ with st.sidebar.expander("🤖 AI Analysis + Screenshots", expanded=False):
         st.image(uploaded_image, caption="Uploaded Screenshot", use_container_width=True)
         st.caption("✅ Screenshot will be analyzed")
     
-    if st.button("Analyze Ticket Screenshot"):
-    if uploaded_file:
-        # 1. Prepare image for Gemini
-        image_data = {"mime_type": uploaded_file.type, "data": uploaded_file.getvalue()}
-        
-        # 2. Call the rotation function we built
-        with st.spinner("Analyzing with available models..."):
-            # This function now handles the rate limits internally!
-            result, used_model = analyze_ticket_with_rotation(user_query, image_data)
-            
-            if result:
-                st.success(f"✅ Analysis complete using {used_model}")
-                st.markdown(result)
-            else:
-                st.error("🚨 All models are currently rate-limited. Please try again in a minute.")
-    
     if st.button("🔍 Analyze Ticket", key="analyze_btn", use_container_width=True):
         if ticket_thread:
             with st.spinner("Analyzing" + (" with screenshot" if uploaded_image else "") + "..."):
