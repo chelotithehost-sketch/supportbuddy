@@ -1,0 +1,263 @@
+# 📷 Screenshot Analysis Feature Guide
+
+## Overview
+The Tech Support Toolkit now supports **AI-powered screenshot analysis**! This allows agents to upload error screenshots, browser warnings, and interface issues for automatic analysis.
+
+## ✅ What Can Be Analyzed
+
+### Supported Image Types
+- **Error Screenshots**: Browser errors, 404/500 pages
+- **SSL Warnings**: Certificate errors, security warnings
+- **cPanel Issues**: Login problems, interface errors
+- **Email Errors**: Client configuration screenshots, SMTP errors
+- **DNS Errors**: Propagation issues, resolution failures
+
+### Supported Formats
+- PNG (.png)
+- JPEG (.jpg, .jpeg)
+- GIF (.gif)
+
+## 🚀 How to Use
+
+### Step 1: Paste Ticket Text
+```
+Paste the ticket conversation into the text area as usual
+```
+
+### Step 2: Upload Screenshot
+```
+Click "📎 Upload Screenshot (optional)"
+Select the error screenshot from your computer
+```
+
+### Step 3: Analyze
+```
+Click "🔍 Analyze Ticket"
+AI will analyze BOTH the text and the screenshot
+```
+
+## 🛡️ Rate Limiting Protection
+
+### Built-in Safeguards
+The app includes smart rate limiting to prevent API overuse:
+
+**Conservative Limits:**
+- Maximum **2 AI requests per minute**
+- Automatic tracking of API calls
+- Visual indicator showing remaining calls
+- Countdown timer when limit reached
+
+**What Happens at Limit:**
+- Shows warning: "⏱️ Rate limit: Wait Xs"
+- Automatically falls back to keyword analysis
+- No errors or failures
+- Smooth user experience
+
+### API Call Tracking
+```
+✅ API calls available: 2/2 per minute  ← Full capacity
+✅ API calls available: 1/2 per minute  ← One call used
+⏱️ Wait 45s                             ← Limit reached
+```
+
+## 📊 Token Usage
+
+### Image Impact on API
+- **Text-only analysis**: ~500-1000 tokens
+- **With screenshot**: ~750-1250 tokens
+- **Well within limits**: Free tier = 64K tokens/minute
+
+### Why This Works
+1. Images are compressed before upload (max 1024px)
+2. Converted to efficient JPEG format
+3. Only ~258 additional tokens per image
+4. Token limits are generous (64,000/minute)
+
+## 🎯 Real-World Examples
+
+### Example 1: cPanel ReCAPTCHA Issue
+**Ticket Text:**
+```
+Unable to log into cPanel. Keep getting reCAPTCHA errors.
+IP Address: 197.211.58.53
+```
+
+**Screenshot:** Shows cPanel login page with reCAPTCHA error
+
+**AI Analysis:**
+```
+Issue Type: 🔐 cPanel Access Issue
+
+Screenshot Analysis:
+"The screenshot shows a cPanel login page with an error message 
+stating 'Please verify you are human by checking the box.' 
+This indicates the IP address 197.211.58.53 is being blocked 
+by cPHulk due to multiple failed login attempts."
+
+Suggested Actions:
+- Use IP Unban tool to remove IP block for 197.211.58.53
+- Check cPHulk logs for this IP
+- Clear browser cache and try incognito mode
+```
+
+### Example 2: SSL Certificate Warning
+**Ticket Text:**
+```
+Website showing "Not Secure" warning in browser
+```
+
+**Screenshot:** Shows browser SSL warning
+
+**AI Analysis:**
+```
+Issue Type: 🔒 SSL Certificate Issue
+
+Screenshot Analysis:
+"The screenshot displays a browser warning: 'Your connection 
+is not private' with error code NET::ERR_CERT_AUTHORITY_INVALID. 
+This indicates the SSL certificate is either self-signed, 
+expired, or not properly installed."
+
+Suggested Actions:
+- Use SSL Check tool to verify certificate status
+- Check if Let's Encrypt AutoSSL is enabled
+- Verify domain is fully propagated before SSL installation
+```
+
+### Example 3: Email Client Error
+**Ticket Text:**
+```
+Outlook showing error when trying to send emails
+```
+
+**Screenshot:** Shows Outlook SMTP error
+
+**AI Analysis:**
+```
+Issue Type: 📧 Email Issue
+
+Screenshot Analysis:
+"The screenshot shows Outlook error: '550 Authentication 
+required' with SMTP server settings visible. Port 25 is 
+being used instead of the recommended port 587 with STARTTLS."
+
+Suggested Actions:
+- Change SMTP port from 25 to 587
+- Enable STARTTLS/TLS authentication
+- Verify email password is correct
+- Check if client IP is blocked
+```
+
+## ⚡ Performance Tips
+
+### For Best Results:
+1. **Clear screenshots**: Ensure error messages are readable
+2. **Include context**: Paste ticket text for better analysis
+3. **One screenshot at a time**: Analyze complex issues step-by-step
+4. **Monitor rate limits**: Watch the API call counter
+
+### When NOT to Use Screenshots:
+- General questions (no visual error)
+- Billing inquiries
+- Simple text-based issues
+- When over rate limit (use keyword analysis instead)
+
+## 🔧 Technical Details
+
+### Image Processing Pipeline
+```
+1. Upload → 2. Resize (max 1024px) → 3. Convert to JPEG → 4. Compress (85% quality) → 5. Base64 encode → 6. Send to AI
+```
+
+### Security
+- Images are NOT stored permanently
+- Processed in memory only
+- Deleted after analysis
+- No data retention
+
+### Fallback Behavior
+```
+IF API available AND within rate limit:
+    Use AI with screenshot analysis
+ELSE:
+    Use keyword-based analysis (still very effective)
+```
+
+## 💡 Best Practices
+
+### Do:
+✅ Upload clear, readable screenshots
+✅ Include full error messages in view
+✅ Combine with ticket text for context
+✅ Use for visual errors (SSL, browser, cPanel)
+✅ Monitor rate limit indicator
+
+### Don't:
+❌ Upload multiple screenshots at once
+❌ Use for non-visual issues
+❌ Ignore rate limit warnings
+❌ Upload sensitive data (passwords visible)
+❌ Upload extremely large images (auto-resized anyway)
+
+## 📈 Rate Limit Management
+
+### If You Hit the Limit:
+1. **Wait 60 seconds** for reset
+2. **Use keyword analysis** (still very accurate)
+3. **Prioritize screenshots** for truly visual issues
+4. **Spread out requests** across time
+
+### Upgrading API Limits:
+For heavy usage, consider upgrading Gemini API plan:
+- Free tier: 3-10 requests/minute
+- Paid tier: 360+ requests/minute
+- Still very affordable for team use
+
+## 🎓 Training Tips for Agents
+
+### Quick Training Guide:
+1. Show agents the upload button
+2. Demonstrate with 2-3 examples
+3. Explain rate limit indicator
+4. Show fallback behavior
+5. Practice with common error types
+
+### Common Questions:
+
+**Q: What if the AI can't analyze the screenshot?**
+A: It will still analyze the ticket text and provide keyword-based suggestions.
+
+**Q: How long does analysis take?**
+A: 3-5 seconds typically, slightly longer with screenshots.
+
+**Q: Can I upload multiple screenshots?**
+A: One at a time. For complex issues, analyze each screenshot separately.
+
+**Q: What if I'm over the rate limit?**
+A: Wait 60 seconds, or proceed with keyword analysis (still effective!).
+
+## 🚀 Impact on Support Quality
+
+### Benefits:
+- ✅ **Faster diagnosis** of visual errors
+- ✅ **Better accuracy** with error messages
+- ✅ **Reduced back-and-forth** with clients
+- ✅ **Consistent analysis** across team
+- ✅ **Training tool** for new agents
+
+### Metrics to Track:
+- Average resolution time (should decrease)
+- First-response accuracy (should increase)
+- Client satisfaction scores (should improve)
+- Escalation rate (should decrease)
+
+## 📞 Support
+
+For issues with screenshot analysis:
+- Check API key is configured
+- Verify image format is supported
+- Ensure image file size is reasonable (<5MB)
+- Check rate limit status
+- Try keyword analysis as fallback
+
+Happy analyzing! 🎉
