@@ -31,25 +31,47 @@ try:
 except:
     pass
 
-# Gemini models
-GEMINI_MODELS = ["gemini-3-flash", "gemini-2.5-flash-lite"]
+import google.generativeai as genai
+from google.api_core import exceptions
+import time
 
-# Rate limit tracking
-if 'api_calls' not in st.session_state:
-    st.session_state.api_calls = []
+# 1. Vision-capable models for ticket analysis
+GEMINI_MODELS = [
+    "gemini-3-flash", 
+    "gemini-2.5-flash", 
+    "gemini-2.5-flash-lite", 
+    "gemini-2.0-flash",
+    "gemini-2.0-flash-lite-preview",
+    "gemini-robotics-er-1.5-preview"
+]
 
-def check_rate_limit():
-    """Check if we're within rate limits"""
-    now = time.time()
-    st.session_state.api_calls = [t for t in st.session_state.api_calls if now - t < 60]
-    if len(st.session_state.api_calls) >= 2:
-        return False, 60 - (now - st.session_state.api_calls[0])
-    return True, 0
+def analyze_ticket_with_rotation(prompt, image_file):
+    """
+    Tries each model in GEMINI_MODELS until one succeeds or all fail.
+    Replaces manual rate limit tracking.
+    """
+    for model_name in GEMINI_MODELS:
+        try:
+            # Initialize model
+            model = genai.GenerativeModel(model_name)
+            
+            # Attempt analysis (passing both prompt and image)
+            response = model.generate_content([prompt, image_file])
+            
+            # If successful, return the result and the model that worked
+            return response.text, model_name
 
-def record_api_call():
-    """Record an API call"""
-    st.session_state.api_calls.append(time.time())
+        except exceptions.ResourceExhausted:
+            # This is the 'Rate Limit' error. If caught, we try the next model in the list.
+            st.warning(f"⚠️ {model_name} rate limit reached. Switching to next model...")
+            continue 
 
+        except Exception as e:
+            # Handle other errors (like invalid API key or network issues)
+            st.error(f"❌ Error with {model_name}: {str(e)}")
+            continue
+
+    return None, None
 # Custom CSS
 st.markdown("""
 <style>
