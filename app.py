@@ -528,62 +528,233 @@ elif tool == "DNS":
                         for s in success_checks: st.success(f"• {s}")
 
 elif tool == "WHOIS":
-    st.header("🌐 WHOIS Lookup")
-    domain = st.text_input("Enter domain:", placeholder="example.com")
+    st.header("🌐 Comprehensive WHOIS Lookup")
+    st.markdown("Check domain registration, expiration, status, and registrar information")
+    
+    domain = st.text_input("Enter domain name:", placeholder="example.com", key="whois_domain")
     
     if st.button("🔍 Check WHOIS", use_container_width=True):
         if domain:
-            with st.spinner("Checking WHOIS..."):
+            domain = domain.strip().lower()
+            
+            with st.spinner(f"Performing WHOIS lookup for {domain}..."):
+                issues = []
+                warnings = []
+                success_checks = []
+                
+                st.subheader("📝 Domain Registration Information")
+                
                 try:
-                    w = whois.whois(domain.strip().lower())
+                    w = whois.whois(domain)
+                    
                     if w and w.domain_name:
-                        st.success("✅ WHOIS retrieved")
+                        st.success("✅ WHOIS information retrieved successfully")
+                        success_checks.append("WHOIS lookup successful")
                         
                         col1, col2 = st.columns(2)
+                        
                         with col1:
+                            st.markdown("### Basic Information")
                             st.write(f"**Domain:** {domain}")
+                            
                             if w.registrar:
                                 st.write(f"**Registrar:** {w.registrar}")
+                            
+                            if w.registrant:
+                                registrant = str(w.registrant)
+                                if 'redacted' not in registrant.lower():
+                                    st.write(f"**Registrant:** {registrant}")
+                            
+                            # Status
+                            if w.status:
+                                st.markdown("### Domain Status")
+                                status_list = w.status if isinstance(w.status, list) else [w.status]
+                                
+                                for status in status_list[:5]:
+                                    status_str = str(status)
+                                    status_lower = status_str.lower()
+                                    
+                                    if any(x in status_lower for x in ['ok', 'active', 'registered']):
+                                        st.success(f"✅ {status_str.split()[0]}")
+                                        success_checks.append("Domain status: OK")
+                                    elif any(x in status_lower for x in ['hold', 'lock', 'suspended', 'pending delete']):
+                                        st.error(f"❌ {status_str.split()[0]}")
+                                        issues.append(f"Domain status issue: {status_str.split()[0]}")
+                                    elif any(x in status_lower for x in ['pending', 'verification', 'grace']):
+                                        st.warning(f"⚠️ {status_str.split()[0]}")
+                                        warnings.append(f"Domain status: {status_str.split()[0]}")
+                                    elif 'expired' in status_lower:
+                                        st.error(f"❌ {status_str.split()[0]}")
+                                        issues.append("Domain expired")
+                                    else:
+                                        st.info(f"ℹ️ {status_str.split()[0]}")
                         
                         with col2:
+                            st.markdown("### Important Dates")
+                            
+                            # Creation date
+                            if w.creation_date:
+                                created = w.creation_date[0] if isinstance(w.creation_date, list) else w.creation_date
+                                st.write(f"**Created:** {str(created).split()[0]}")
+                            
+                            # Updated date
+                            if w.updated_date:
+                                updated = w.updated_date[0] if isinstance(w.updated_date, list) else w.updated_date
+                                st.write(f"**Last Updated:** {str(updated).split()[0]}")
+                            
+                            # Expiration date
                             if w.expiration_date:
                                 exp = w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date
                                 st.write(f"**Expires:** {str(exp).split()[0]}")
-                                days = (exp - datetime.now()).days
-                                if days < 0:
-                                    st.error(f"❌ Expired {abs(days)}d ago")
-                                elif days < 30:
-                                    st.error(f"⚠️ {days} days left")
-                                else:
-                                    st.success(f"✅ {days} days")
+                                
+                                # Calculate days remaining
+                                try:
+                                    days_left = (exp - datetime.now().replace(microsecond=0)).days
+                                    
+                                    if days_left < 0:
+                                        st.error(f"❌ **EXPIRED {abs(days_left)} days ago!**")
+                                        issues.append(f"Domain expired {abs(days_left)} days ago")
+                                    elif days_left < 30:
+                                        st.error(f"⚠️ **{days_left} days remaining - URGENT!**")
+                                        issues.append(f"Domain expires in {days_left} days")
+                                    elif days_left < 90:
+                                        st.warning(f"⚠️ **{days_left} days remaining**")
+                                        warnings.append(f"Domain expires in {days_left} days")
+                                    else:
+                                        st.success(f"✅ **{days_left} days remaining**")
+                                        success_checks.append("Domain expiration: Good")
+                                except:
+                                    pass
                         
+                        # Nameservers
                         if w.name_servers:
-                            st.markdown("**Nameservers:**")
-                            for ns in (w.name_servers[:4] if isinstance(w.name_servers, list) else [w.name_servers]):
-                                st.code(f"• {str(ns).lower().rstrip('.')}")
-                except:
-                    st.error("❌ WHOIS failed")
-                    st.info(f"Try: https://who.is/whois/{domain}")
+                            st.markdown("### WHOIS Nameservers")
+                            ns_list = w.name_servers if isinstance(w.name_servers, list) else [w.name_servers]
+                            
+                            for ns in ns_list[:5]:
+                                ns_clean = str(ns).lower().rstrip('.')
+                                st.code(f"• {ns_clean}")
+                                
+                                if 'host-ww.net' in ns_clean:
+                                    st.caption("✅ HostAfrica nameserver")
+                        
+                        # Full WHOIS data
+                        with st.expander("📄 View Full Raw WHOIS Data"):
+                            st.json(str(w))
+                        
+                        # Summary
+                        st.divider()
+                        st.subheader("📊 WHOIS Health Summary")
+                        
+                        if not issues and not warnings:
+                            st.success("🎉 **Domain is in good standing!** No issues detected.")
+                        else:
+                            if issues:
+                                st.markdown("**❌ Critical Issues:**")
+                                for issue in issues:
+                                    st.error(f"• {issue}")
+                            
+                            if warnings:
+                                st.markdown("**⚠️ Warnings:**")
+                                for warning in warnings:
+                                    st.warning(f"• {warning}")
+                            
+                            if success_checks:
+                                st.markdown("**✅ Passed Checks:**")
+                                for check in success_checks:
+                                    st.success(f"• {check}")
+                        
+                    else:
+                        st.error("❌ Could not retrieve WHOIS information")
+                        st.info(f"Try manual lookup at: https://who.is/whois/{domain}")
+                        
+                except Exception as e:
+                    st.error(f"❌ WHOIS lookup failed: {type(e).__name__}")
+                    st.warning("Some domains (especially ccTLDs) may not return complete WHOIS data via automated tools.")
+                    st.info(f"**Try manual lookup:**\n- https://who.is/whois/{domain}\n- https://lookup.icann.org/en/lookup?name={domain}")
+        else:
+            st.warning("⚠️ Please enter a domain name")
 
 elif tool == "IP":
-    st.header("🔍 IP Lookup")
-    ip = st.text_input("Enter IP:", placeholder="8.8.8.8")
+    st.header("🔍 IP Address Lookup")
+    st.markdown("Get detailed geolocation and ISP information for any IP address")
     
-    if st.button("🔍 Lookup", use_container_width=True):
+    ip = st.text_input("Enter IP address:", placeholder="8.8.8.8", key="ip_input")
+    
+    if st.button("🔍 Lookup IP", use_container_width=True):
         if ip:
-            try:
-                res = requests.get(f"http://ip-api.com/json/{ip}", timeout=5).json()
-                if res.get('status') == 'success':
-                    st.success(f"✅ Found: {ip}")
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        st.metric("City", res.get('city', 'N/A'))
-                    with col2:
-                        st.metric("Country", res.get('country', 'N/A'))
-                    with col3:
-                        st.metric("ISP", res.get('isp', 'N/A')[:20])
-            except:
-                st.error("❌ Failed")
+            # Validate IP format
+            ip_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
+            if not re.match(ip_pattern, ip):
+                st.error("❌ Invalid IP address format")
+            else:
+                with st.spinner(f"Looking up {ip}..."):
+                    try:
+                        # Try primary API
+                        geo_data = None
+                        try:
+                            response = requests.get(f"https://ipapi.co/{ip}/json/", timeout=5)
+                            if response.status_code == 200:
+                                geo_data = response.json()
+                        except:
+                            pass
+                        
+                        # Fallback API
+                        if not geo_data or geo_data.get('error'):
+                            response = requests.get(f"http://ip-api.com/json/{ip}", timeout=5)
+                            if response.status_code == 200:
+                                fallback = response.json()
+                                if fallback.get('status') == 'success':
+                                    geo_data = {
+                                        'ip': ip,
+                                        'city': fallback.get('city'),
+                                        'region': fallback.get('regionName'),
+                                        'country_name': fallback.get('country'),
+                                        'postal': fallback.get('zip'),
+                                        'latitude': fallback.get('lat'),
+                                        'longitude': fallback.get('lon'),
+                                        'org': fallback.get('isp'),
+                                        'timezone': fallback.get('timezone'),
+                                        'asn': fallback.get('as')
+                                    }
+                        
+                        if geo_data and not geo_data.get('error'):
+                            st.success(f"✅ Information found for {ip}")
+                            
+                            col1, col2, col3 = st.columns(3)
+                            
+                            with col1:
+                                st.metric("🌐 IP Address", ip)
+                                st.metric("🏙️ City", geo_data.get('city', 'N/A'))
+                                st.metric("📮 Postal Code", geo_data.get('postal', 'N/A'))
+                            
+                            with col2:
+                                st.metric("🗺️ Region", geo_data.get('region', 'N/A'))
+                                st.metric("🌍 Country", geo_data.get('country_name', 'N/A'))
+                                st.metric("🕐 Timezone", geo_data.get('timezone', 'N/A'))
+                            
+                            with col3:
+                                st.metric("📡 ISP/Organization", geo_data.get('org', 'N/A')[:25])
+                                if geo_data.get('latitude') and geo_data.get('longitude'):
+                                    st.metric("📍 Coordinates", f"{geo_data['latitude']:.4f}, {geo_data['longitude']:.4f}")
+                                if geo_data.get('asn'):
+                                    st.metric("🔢 ASN", geo_data.get('asn', 'N/A'))
+                            
+                            # Map link
+                            if geo_data.get('latitude') and geo_data.get('longitude'):
+                                map_url = f"https://www.google.com/maps?q={geo_data['latitude']},{geo_data['longitude']}"
+                                st.markdown(f"🗺️ [View on Google Maps]({map_url})")
+                            
+                            # Full details
+                            with st.expander("🔍 View Full IP Details"):
+                                st.json(geo_data)
+                        else:
+                            st.error("❌ Could not retrieve information for this IP address")
+                            st.info("The IP might be private, invalid, or the lookup service is unavailable")
+                    except Exception as e:
+                        st.error(f"❌ Error: {str(e)}")
+        else:
+            st.warning("⚠️ Please enter an IP address")
 
 elif tool == "cPanel":
     st.header("📂 cPanel List")
@@ -593,78 +764,194 @@ elif tool == "cPanel":
     with col2:
         st.link_button("Open", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
 
-elif tool == "MyIP":
-    st.header("📍 My IP")
+elif tool == "cPanel":
+    st.header("📂 cPanel Account List")
+    st.markdown("View all cPanel hosting accounts and their details")
     col1, col2 = st.columns([3, 1])
     with col1:
-        st.info("Find your IP")
+        st.info("Access the complete list of cPanel accounts")
     with col2:
-        st.link_button("Open", "https://ip.hostafrica.com/", use_container_width=True)
+        st.link_button("📂 Open List", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
+
+elif tool == "MyIP":
+    st.header("📍 Find My IP Address")
+    st.markdown("Quickly discover your current public IP address")
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.info("Click to open HostAfrica's IP detection tool")
+    with col2:
+        st.link_button("🔍 Get My IP", "https://ip.hostafrica.com/", use_container_width=True)
 
 elif tool == "NS":
-    st.header("🔄 NS Updater")
+    st.header("🔄 Bulk Nameserver Updater")
+    st.markdown("Update nameservers for multiple domains at once")
     col1, col2 = st.columns([3, 1])
     with col1:
-        st.info("Bulk update nameservers")
+        st.info("Use this tool to bulk update nameservers in WHMCS")
     with col2:
-        st.link_button("Open", "https://my.hostafrica.com/admin/addonmodules.php?module=nameserv_changer", use_container_width=True)
+        st.link_button("🔄 Open Updater", "https://my.hostafrica.com/admin/addonmodules.php?module=nameserv_changer", use_container_width=True)
 
 elif tool == "SSL":
-    st.header("🔒 SSL Check + Mixed Content")
-    domain_ssl = st.text_input("Enter domain:", placeholder="example.com")
+    st.header("🔒 Comprehensive SSL Certificate Checker")
+    st.markdown("Verify SSL certificate validity, expiration, and check for mixed content issues")
     
-    if st.button("🔍 Check SSL", use_container_width=True):
+    domain_ssl = st.text_input("Enter domain (without https://):", placeholder="example.com", key="ssl_domain")
+    
+    if st.button("🔍 Check SSL Certificate", use_container_width=True):
         if domain_ssl:
-            domain_ssl = domain_ssl.replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0]
+            domain_ssl = domain_ssl.replace('https://', '').replace('http://', '').replace('www.', '').split('/')[0].strip()
             
-            with st.spinner("Checking SSL..."):
+            with st.spinner(f"Analyzing SSL certificate for {domain_ssl}..."):
                 try:
-                    ctx = ssl.create_default_context()
+                    # SSL Certificate Check
+                    context = ssl.create_default_context()
                     with socket.create_connection((domain_ssl, 443), timeout=10) as sock:
-                        with ctx.wrap_socket(sock, server_hostname=domain_ssl) as s:
-                            cert = s.getpeercert()
-                            st.success("✅ SSL valid")
+                        with context.wrap_socket(sock, server_hostname=domain_ssl) as secure_sock:
+                            cert = secure_sock.getpeercert()
                             
-                            na = cert.get('notAfter')
-                            if na:
-                                exp = datetime.strptime(na, '%b %d %H:%M:%S %Y %Z')
-                                days = (exp - datetime.now()).days
-                                if days > 30:
-                                    st.success(f"✅ {days} days remaining")
-                                else:
-                                    st.warning(f"⚠️ {days} days remaining")
+                            st.success(f"✅ SSL Certificate found and valid for {domain_ssl}")
+                            
+                            col1, col2 = st.columns(2)
+                            
+                            with col1:
+                                st.subheader("📋 Certificate Details")
+                                
+                                subject = dict(x[0] for x in cert['subject'])
+                                st.write("**Issued To:**", subject.get('commonName', 'N/A'))
+                                
+                                issuer = dict(x[0] for x in cert['issuer'])
+                                st.write("**Issued By:**", issuer.get('commonName', 'N/A'))
+                                st.write("**Organization:**", issuer.get('organizationName', 'N/A'))
+                            
+                            with col2:
+                                st.subheader("📅 Validity Period")
+                                
+                                not_before = cert.get('notBefore')
+                                not_after = cert.get('notAfter')
+                                
+                                st.write("**Valid From:**", not_before)
+                                st.write("**Valid Until:**", not_after)
+                                
+                                if not_after:
+                                    try:
+                                        expiry_date = datetime.strptime(not_after, '%b %d %H:%M:%S %Y %Z')
+                                        days_remaining = (expiry_date - datetime.now()).days
+                                        
+                                        if days_remaining > 30:
+                                            st.success(f"✅ **{days_remaining} days** remaining")
+                                        elif days_remaining > 0:
+                                            st.warning(f"⚠️ **{days_remaining} days** remaining - Renew soon!")
+                                        else:
+                                            st.error(f"❌ Certificate expired {abs(days_remaining)} days ago")
+                                    except:
+                                        pass
+                            
+                            # Subject Alternative Names
+                            if 'subjectAltName' in cert:
+                                st.subheader("🌐 Subject Alternative Names (Covered Domains)")
+                                sans = [san[1] for san in cert['subjectAltName']]
+                                
+                                for san in sans[:10]:
+                                    st.code(san)
+                                
+                                if len(sans) > 10:
+                                    st.info(f"...and {len(sans) - 10} more domain(s)")
                             
                             # Mixed Content Check
                             st.subheader("🔍 Mixed Content Check")
-                            try:
-                                response = requests.get(f"https://{domain_ssl}", timeout=10, verify=True)
-                                http_resources = re.findall(r'http://[^"\'\s<>]+', response.text)
+                            with st.spinner("Checking for mixed content issues..."):
+                                try:
+                                    # Fetch the homepage
+                                    response = requests.get(f"https://{domain_ssl}", timeout=10, verify=True)
+                                    content = response.text
+                                    
+                                    # Check for HTTP resources
+                                    http_resources = re.findall(r'http://[^"\'\s<>]+', content)
+                                    
+                                    if http_resources:
+                                        st.warning(f"⚠️ **Found {len(http_resources)} potential mixed content issue(s)**")
+                                        st.caption("Mixed content occurs when HTTPS pages load HTTP resources (images, scripts, etc.)")
+                                        
+                                        # Show first few examples
+                                        st.markdown("**Examples:**")
+                                        for resource in http_resources[:5]:
+                                            st.code(resource)
+                                        
+                                        if len(http_resources) > 5:
+                                            st.info(f"...and {len(http_resources) - 5} more HTTP resources")
+                                        
+                                        st.markdown("""
+                                        **How to fix:**
+                                        1. Change all `http://` to `https://` in your HTML/CSS
+                                        2. Use protocol-relative URLs: `//example.com/image.jpg`
+                                        3. Update your CMS/theme settings to use HTTPS
+                                        """)
+                                    else:
+                                        st.success("✅ No mixed content issues detected!")
+                                        st.caption("All resources are loaded securely via HTTPS")
+                                except Exception as e:
+                                    st.warning(f"⚠️ Could not check for mixed content: {str(e)}")
+                            
+                            # Certificate summary
+                            with st.expander("🔍 View Complete Certificate Summary"):
+                                summary = {
+                                    'Common Name': subject.get('commonName', 'N/A'),
+                                    'Issuer': issuer.get('commonName', 'N/A'),
+                                    'Issuer Organization': issuer.get('organizationName', 'N/A'),
+                                    'Valid From': not_before,
+                                    'Valid Until': not_after,
+                                    'Serial Number': cert.get('serialNumber', 'N/A'),
+                                    'Version': cert.get('version', 'N/A'),
+                                    'Total SANs': len(sans) if 'subjectAltName' in cert else 0
+                                }
                                 
-                                if http_resources:
-                                    st.warning(f"⚠️ Found {len(http_resources)} mixed content issue(s)")
-                                    for resource in http_resources[:3]:
-                                        st.code(resource)
-                                    if len(http_resources) > 3:
-                                        st.info(f"...and {len(http_resources) - 3} more")
-                                else:
-                                    st.success("✅ No mixed content issues!")
-                            except:
-                                st.warning("⚠️ Could not check mixed content")
-                except:
-                    st.error("❌ SSL check failed")
+                                for key, value in summary.items():
+                                    st.text(f"{key}: {value}")
+                                
+                                st.divider()
+                                
+                                with st.expander("📄 Show Technical/Raw Certificate Data"):
+                                    st.json(cert)
+                        
+                except socket.gaierror:
+                    st.error(f"❌ Could not resolve domain: {domain_ssl}")
+                    st.info("💡 Make sure the domain name is correct and accessible")
+                    
+                except socket.timeout:
+                    st.error(f"⏱️ Connection timeout for {domain_ssl}")
+                    st.info("💡 The server might be slow or blocking connections")
+                    
+                except ssl.SSLError as ssl_err:
+                    st.error(f"❌ SSL Error: {str(ssl_err)}")
+                    st.warning("""
+                    **Common SSL Issues:**
+                    - Certificate has expired
+                    - Certificate is self-signed
+                    - Certificate name doesn't match domain
+                    - Incomplete certificate chain
+                    - Mixed content blocking
+                    """)
+                    
+                except Exception as e:
+                    st.error(f"❌ Error checking SSL: {str(e)}")
+                    st.info(f"💡 Try checking manually at: https://www.ssllabs.com/ssltest/analyze.html?d={domain_ssl}")
+        else:
+            st.warning("⚠️ Please enter a domain name")
 
 elif tool == "Help":
-    st.header("📚 Help Center")
+    st.header("📚 HostAfrica Help Center")
+    st.markdown("Search the knowledge base for guides and documentation")
     col1, col2 = st.columns([3, 1])
     with col1:
-        st.info("Search documentation")
+        st.info("Access the complete HostAfrica help center and documentation")
     with col2:
-        st.link_button("Open", "https://help.hostafrica.com", use_container_width=True)
+        st.link_button("📚 Open Help", "https://help.hostafrica.com", use_container_width=True)
 
 elif tool == "Flush":
-    st.header("🧹 Flush DNS")
+    st.header("🧹 Flush Google DNS Cache")
+    st.markdown("Clear Google's DNS cache for a domain to force fresh lookups")
     col1, col2 = st.columns([3, 1])
     with col1:
-        st.info("Clear Google DNS cache")
+        st.info("Use this to force Google DNS to fetch fresh DNS records for a domain")
     with col2:
-        st.link_button("Open", "https://dns.google/cache", use_container_width=True)
+        st.link_button("🧹 Flush Cache", "https://dns.google/cache", use_container_width=True)
