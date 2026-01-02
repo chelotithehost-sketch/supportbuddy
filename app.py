@@ -226,7 +226,7 @@ def analyze_ticket_with_ai(ticket_text, image_data=None):
         return analyze_ticket_keywords(ticket_text)
 
 HostAfrica: web hosting (cPanel/DirectAdmin), domains, email, SSL, VPS
-NS: cPanel (ns1-4.host-ww.net), DirectAdmin (dan1-2.host-ww.net)
+NS: cPanel (ns1 to ns4.host-ww.net), DirectAdmin (dan1 to dan4.host-ww.net)
 
 Ticket: {ticket_text}
 
