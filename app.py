@@ -183,47 +183,24 @@ def image_to_base64(image_file):
         return None
 
 def analyze_ticket_with_ai(ticket_text, image_data=None):
-    """
-    Final Clean Version:
-    1. Checks if API key exists.
-    2. Runs the rotation logic (tries every model).
-    3. Formats the JSON response for your app.
-    """
-    # 1. Safety check for API Key
+    """Analyze ticket with AI (with optional image)"""
     if not GEMINI_API_KEY:
         return analyze_ticket_keywords(ticket_text)
-        
-    # 2. Use the Rotation Logic (This handles rate limits for you!)
-    # We create a prompt that tells the AI to return JSON
-    rotation_prompt = f"""Analyze this HostAfrica support ticket {"and screenshot" if image_data else ""}.
-    Format your response as a JSON object with: 
-    issue_type, checks, actions, response_template, kb_topics, and screenshot_analysis.
     
-    Ticket: {ticket_text}"""
-
-    with st.spinner("Searching for an available AI model..."):
-        result_text, model_used = analyze_ticket_with_rotation(rotation_prompt, image_data)
-
-    # 3. If a model worked, turn the text into the JSON your app needs
-    if result_text:
-        try:
-            # Clean up the AI text to make sure it's valid JSON
-            clean_json = result_text.strip().replace("```json", "").replace("```", "").strip()
-            analysis = json.loads(clean_json)
-            
-            # Add your KB articles like before
-            analysis['kb_articles'] = search_kb_articles(ticket_text)
-            st.success(f"✅ Analysis complete using {model_used}")
-            return analysis
-            
-        except Exception as e:
-            st.warning(f"⚠️ AI returned data in wrong format: {str(e)}")
-            return analyze_ticket_keywords(ticket_text)
-    
-    # 4. If nothing worked (All models rate limited)
-    else:
-        st.error("🚨 All AI models are busy. Using basic keyword analysis instead.")
+    can_call, wait_time = check_rate_limit()
+    if not can_call:
+        st.warning(f"⏱️ Rate limit: Please wait {int(wait_time)} seconds")
         return analyze_ticket_keywords(ticket_text)
+    
+    try:
+        import google.generativeai as genai
+        model = genai.GenerativeModel(random.choice(GEMINI_MODELS))
+        
+        prompt = f"""Analyze this HostAfrica support ticket{"and screenshot" if image_data else ""}.
+
+HostAfrica: web hosting (cPanel/DirectAdmin), domains, email, SSL, VPS
+NS: cPanel (ns1-4.host-ww.net), DirectAdmin (dan1-2.host-ww.net)
+
 Ticket: {ticket_text}
 
 {"IMPORTANT: Analyze the screenshot for error messages, warnings, or visual clues." if image_data else ""}
@@ -365,7 +342,7 @@ with st.sidebar.expander("🤖 AI Analysis + Screenshots", expanded=False):
         # 2. Call the rotation function we built
         with st.spinner("Analyzing with available models..."):
             # This function now handles the rate limits internally!
-            result, used_model = analyze_ticket_with_rotation(ticket_text, image_data)
+            result, used_model = analyze_ticket_with_rotation(user_query, image_data)
             
             if result:
                 st.success(f"✅ Analysis complete using {used_model}")
