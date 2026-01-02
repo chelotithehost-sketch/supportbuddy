@@ -80,51 +80,51 @@ st.markdown("""
 # KB Database
 HOSTAFRICA_KB = {
     'cPanel Hosting Guide': [
-        {'title': 'cPanel Hosting Guide', 'url': 'https://help.hostafrica.com/category/control-panel-and-emails/cpanel/',
+        {'title': 'cPanel Hosting Guide', 'url': 'https://help.hostafrica.com/category/control-panel-and-emails/cpanel',
          'keywords': ['cpanel', 'hosting', 'login', 'access', 'recaptcha', 'captcha']},
     ],
     'DirectAdmin Hosting Guide': [
-        {'title': 'Email cPanel', 'url': 'https://help.hostafrica.com/category/control-panel-and-emails/directadmin/',
+        {'title': 'Email cPanel', 'url': 'https://help.hostafrica.com/category/control-panel-and-emails/directadmin',
          'keywords': ['DirectAdmin', 'hosting', 'login', 'access', 'recaptcha', 'captcha']},
     ],
     'cPanel-email': [
-        {'title': 'Email cPanel', 'url': 'https://help.hostafrica.com/category/control-panel-and-emails/cpanel/',
+        {'title': 'Email cPanel', 'url': 'https://help.hostafrica.com/category/control-panel-and-emails/cpanel',
          'keywords': ['email', 'mail', 'smtp', 'imap', 'pop3']},
     ],
     'DirectAdmin-email': [
-        {'title': 'Email DirectAdmin', 'url': 'https://help.hostafrica.com/category/control-panel-and-emails/directadmin/',
+        {'title': 'Email DirectAdmin', 'url': 'https://help.hostafrica.com/category/control-panel-and-emails/directadmin',
          'keywords': ['email', 'mail', 'smtp', 'imap', 'pop3']},
     ],
     'HMail-Email': [
-        {'title': 'Email Configuration', 'url': 'https://help.hostafrica.com/category/professional-email-and-workspace/',
+        {'title': 'Email Configuration', 'url': 'https://help.hostafrica.com/category/professional-email-and-workspace',
          'keywords': ['email', 'mail', 'smtp', 'imap', 'pop3']},
     ],
     'domain': [
-        {'title': 'Domain Management', 'url': 'https://help.hostafrica.com/category/domains/',
+        {'title': 'Domain Management', 'url': 'https://help.hostafrica.com/category/domains',
          'keywords': ['domain', 'nameserver', 'dns', 'transfer']},
     ],
     'Backup': [
-        {'title': 'JetBackup', 'url': 'https://help.hostafrica.com/category/jetbackup-5/',
+        {'title': 'JetBackup', 'url': 'https://help.hostafrica.com/category/jetbackup-5',
          'keywords': ['Backup', 'JetBackup']},
     ],
     'Self Managed VPS': [
-        {'title': 'Self Managed VPS', 'url': 'https://help.hostafrica.com/category/vps/',
+        {'title': 'Self Managed VPS', 'url': 'https://help.hostafrica.com/category/vps',
          'keywords': ['VPS', 'Cloud Servers', 'Self Managed VPS']},
     ],
     'Basekit Site Builder': [
-        {'title': 'Website Builder Basekit', 'url': 'https://www.guides.business/hc/en-gb/articles/19964374415389-Sitebuilder-FAQs/',
+        {'title': 'Website Builder Basekit', 'url': 'https://www.guides.business/hc/en-gb/articles/19964374415389-Sitebuilder-FAQs',
          'keywords': ['SiteBuilder', 'Basekit']},
     ],
     'VPS Application Topics': [
-        {'title': 'Website Builder Basekit', 'url': 'https://help.hostafrica.com/category/vps-applications-topics/',
+        {'title': 'Website Builder Basekit', 'url': 'https://help.hostafrica.com/category/vps-applications-topics',
          'keywords': ['N8N', 'SupaBase']},
     ],
     'General Topics': [
-        {'title': 'HostAfrica General Topics', 'url': 'https://help.hostafrica.com/category/hostafrica-general/',
+        {'title': 'HostAfrica General Topics', 'url': 'https://help.hostafrica.com/category/hostafrica-general',
          'keywords': ['Support PIN', 'Client Area']},
     ],
     'ssl': [
-        {'title': 'SSL Certificates', 'url': 'https://help.hostafrica.com/category/ssl-certificates/',
+        {'title': 'SSL Certificates', 'url': 'https://help.hostafrica.com/category/ssl-certificates',
          'keywords': ['ssl', 'https', 'certificate', 'secure']},
     ],
 }
