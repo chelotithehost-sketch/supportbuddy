@@ -175,20 +175,34 @@ def image_to_base64(image_file):
         st.error(f"Error processing image: {str(e)}")
         return None
 
+def analyze_ticket_with_rotation(prompt, image_data):
+    """Try models in rotation until one succeeds"""
+    for model_name in GEMINI_MODELS:
+        try:
+            import google.generativeai as genai
+            model = genai.GenerativeModel(model_name)
+            
+            content = [prompt, {"mime_type": "image/jpeg", "data": image_data}] if image_data else prompt
+            response = model.generate_content(content)
+            
+            return response.text, model_name
+            
+        except Exception as e:
+            error_str = str(e)
+            if "429" in error_str or "ResourceExhausted" in error_str or "rate" in error_str.lower():
+                continue
+            else:
+                st.warning(f"Model {model_name} error: {error_str[:50]}")
+                continue
+    
+    return None, None
+
 def analyze_ticket_with_ai(ticket_text, image_data=None):
     """Analyze ticket with AI (with optional image)"""
     if not GEMINI_API_KEY:
         return analyze_ticket_keywords(ticket_text)
     
-    can_call, wait_time = check_rate_limit()
-    if not can_call:
-        st.warning(f"⏱️ Rate limit: Please wait {int(wait_time)} seconds")
-        return analyze_ticket_keywords(ticket_text)
-    
     try:
-        import google.generativeai as genai
-        model = genai.GenerativeModel(random.choice(GEMINI_MODELS))
-        
         prompt = f"""Analyze this HostAfrica support ticket{"and screenshot" if image_data else ""}.
 
 HostAfrica: web hosting (cPanel/DirectAdmin), domains, email, SSL, VPS
@@ -208,15 +222,18 @@ JSON format:
     "screenshot_analysis": "What the screenshot shows and how it helps diagnose"
 }}"""
 
-        content = [prompt, {"mime_type": "image/jpeg", "data": image_data}] if image_data else prompt
+        result_text, model_used = analyze_ticket_with_rotation(prompt, image_data)
         
-        response = model.generate_content(content)
-        record_api_call()
-        
-        text = response.text.strip().replace("```json", "").replace("```", "").strip()
-        result = json.loads(text)
-        result['kb_articles'] = search_kb_articles(ticket_text)
-        return result
+        if result_text:
+            text = result_text.strip().replace("```json", "").replace("```", "").strip()
+            result = json.loads(text)
+            result['kb_articles'] = search_kb_articles(ticket_text)
+            if model_used:
+                st.caption(f"💡 Analyzed using: {model_used}")
+            return result
+        else:
+            st.warning("⚠️ All AI models busy, using keyword analysis")
+            return analyze_ticket_keywords(ticket_text)
         
     except Exception as e:
         st.warning(f"AI unavailable: {str(e)[:100]}")
