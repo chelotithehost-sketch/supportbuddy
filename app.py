@@ -36,14 +36,7 @@ from google.api_core import exceptions
 import time
 
 # 1. Vision-capable models for ticket analysis
-GEMINI_MODELS = [
-    "gemini-3-flash", 
-    "gemini-2.5-flash", 
-    "gemini-2.5-flash-lite", 
-    "gemini-2.0-flash",
-    "gemini-2.0-flash-lite-preview",
-    "gemini-robotics-er-1.5-preview"
-]
+GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-2.0-flash-lite-preview", "gemini-robotics-er-1.5-preview"]
 
 def analyze_ticket_with_rotation(prompt, image_file):
     """
