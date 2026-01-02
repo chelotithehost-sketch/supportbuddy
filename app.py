@@ -32,7 +32,7 @@ except:
     pass
 
 # Gemini models
-GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite"]
+GEMINI_MODELS = ["gemini-3-flash", "gemini-2.5-flash-lite"]
 
 # Rate limit tracking
 if 'api_calls' not in st.session_state:
