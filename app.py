@@ -952,9 +952,6 @@ elif tool == "🌍 WHOIS Lookup":
             if 'Raw Whois Result' in parsed_data:
                     st.code(parsed_data['Raw Whois Result'], language=None)
             else:
-                    st.code(whois_data, language=None)
-                    st.markdown('</div>', unsafe_allow_html=True)
-            else:
 
                 st.code(whois_html, language=None)
                 st.markdown('</div>', unsafe_allow_html=True)
