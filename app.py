@@ -158,7 +158,7 @@ except ImportError:
     google_exceptions = None
 
 # Vision-capable models for ticket analysis
-GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-2.0-flash-exp", "gemini-1.5-pro", "gemini-1.5-flash"]
+GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3.0-flash"]
 
 # Create persistent session for .ng WHOIS queries
 ng_session = requests.Session()
@@ -513,7 +513,7 @@ if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 
 # Sidebar Navigation
-st.sidebar.title("🔧 Support Buddy")
+st.sidebar.title(" The Support Buddy")
 st.sidebar.markdown("---")
 tool = st.sidebar.radio(
     "Select Tool:",
@@ -529,8 +529,8 @@ st.sidebar.caption("🔧 HostAfrica Support Tools v2.0")
 
 # Main Content Area
 if tool == "🏠 Home":
-    st.title("🔧 Your Smart Buddy")
-    st.markdown('<div class="info-box"><h3>HostAfrica Support Tools</h3></div>', unsafe_allow_html=True)
+    st.title("Welcome To The HostAfrica")
+    st.markdown('<div class="info-box"><h3>Support Buddy</h3></div>', unsafe_allow_html=True)
    
     # Add dedicated buttons for ticket tools
     st.markdown("### 🎫 Ticket Management Tools")
