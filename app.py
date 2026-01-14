@@ -595,7 +595,7 @@ if tool == "🏠 Home":
             check7 = st.checkbox("Steps to reproduce noted")
             check8 = st.checkbox("Screenshots/logs reviewed")
         
-        with col2:
+       with col2:
             st.markdown("#### 🛠️ Technical Checks")
             check9 = st.checkbox("DNS records verified")
             check10 = st.checkbox("Hosting status checked")
