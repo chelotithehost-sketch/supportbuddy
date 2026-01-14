@@ -950,7 +950,7 @@ elif tool == "🌍 WHOIS Lookup":
                     st.markdown('<div class="info-box">', unsafe_allow_html=True)
                     st.markdown("### 🇳🇬 .ng WHOIS Information")
                     # Show only the raw WHOIS text, not HTML
-                   if 'Raw Whois Result' in parsed_data:
+            if 'Raw Whois Result' in parsed_data:
                     st.code(parsed_data['Raw Whois Result'], language=None)
             else:
                     st.code(whois_data, language=None)
