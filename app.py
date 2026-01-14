@@ -529,9 +529,8 @@ st.sidebar.caption("🔧 HostAfrica Support Tools v2.0")
 
 # Main Content Area
 if tool == "🏠 Home":
-    st.title("🔧 Your Support Buddy")
-    st.markdown("### Welcome to HostAfrica Support Tools")
-    st.markdown('<div class="info-box"><h3>Welcome to HostAfrica Support Tools</h3></div>', unsafe_allow_html=True)
+    st.title("🔧 Your Smart Buddy")
+    st.markdown('<div class="info-box"><h3>HostAfrica Support Tools</h3></div>', unsafe_allow_html=True)
    
     # Add dedicated buttons for ticket tools
     st.markdown("### 🎫 Ticket Management Tools")
