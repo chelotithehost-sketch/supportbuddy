@@ -92,7 +92,7 @@ st.markdown("""
     .info-box {
         padding: 1.5rem;
         border-radius: 12px;
-        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        background: transparent;
         border-left: 6px solid #3b82f6;
         margin: 1rem 0;
         box-shadow: 0 2px 6px rgba(59,130,246,0.1);
