@@ -945,7 +945,7 @@ elif tool == "🌍 WHOIS Lookup":
                
                 with st.spinner("Querying .ng WHOIS database..."):
                     whois_data = query_ng_whois(domain)
-                    parsed_data = parse_ng_whois(whois_html)  # ✅ Parse it
+                    parsed_data = parse_ng_whois(whois_data)  # ✅ Parse it
                    
                     st.markdown('<div class="info-box">', unsafe_allow_html=True)
                     st.markdown("### 🇳🇬 .ng WHOIS Information")
