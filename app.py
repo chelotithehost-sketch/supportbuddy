@@ -556,8 +556,7 @@ if tool == "🏠 Home":
 st.markdown('</div>', unsafe_allow_html=True)
     
     # Add dedicated buttons for ticket tools
-    st.markdown("### 🎫 Ticket Management Tools")
-    
+    st.markdown("### 🎫 Ticket Management Tools") 
     col1, col2 = st.columns(2)
     
     with col1:
