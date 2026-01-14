@@ -4,4 +4,4 @@ python-whois>=0.8.0
 Pillow>=10.0.0
 google-generativeai>=0.3.0
 urllib3>=2.0.0
-pandas>=2.2.0  ← Fixed from >=2.0.0
+pandas>=2.2.0
