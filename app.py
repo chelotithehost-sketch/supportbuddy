@@ -553,7 +553,7 @@ if tool == "🏠 Home":
 - 📋 Support Ticket Tools  
 - 🤖 AI-Powered Ticket Analysis  
 """)
-st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
     
     # Add dedicated buttons for ticket tools
     st.markdown("### 🎫 Ticket Management Tools") 
@@ -561,18 +561,18 @@ st.markdown('</div>', unsafe_allow_html=True)
     
     with col1:
         if st.button("📋 Support Ticket Checklist", use_container_width=True, type="primary"):
-            st.session_state.show_checklist = True
-            st.session_state.show_analysis = False
+           st.session_state.show_checklist = True
+           st.session_state.show_analysis = False
     
     with col2:
         if st.button("🤖 AI Ticket Analysis", use_container_width=True, type="primary"):
-            st.session_state.show_analysis = True
-            st.session_state.show_checklist = False
+           st.session_state.show_analysis = True
+           st.session_state.show_checklist = False
     
     # Display Support Ticket Checklist if toggled
     if st.session_state.get('show_checklist', False):
-        st.markdown("---")
-        st.markdown("## 📋 Support Ticket Checklist")
+       st.markdown("---")
+       st.markdown("## 📋 Support Ticket Checklist")
         
         st.markdown('<div class="info-card">', unsafe_allow_html=True)
         st.markdown("""
