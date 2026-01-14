@@ -574,8 +574,8 @@ if tool == "🏠 Home":
        st.markdown("---")
        st.markdown("## 📋 Support Ticket Checklist")
         
-        st.markdown('<div class="info-card">', unsafe_allow_html=True)
-        st.markdown("""
+       st.markdown('<div class="info-card">', unsafe_allow_html=True)
+       st.markdown("""
         Use this checklist to ensure you've gathered all necessary information before responding to a ticket.
         """)
         st.markdown('</div>', unsafe_allow_html=True)
