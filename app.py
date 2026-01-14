@@ -1398,7 +1398,7 @@ elif tool == "💬 AI Support Chat":
             with st.spinner("🤖 AI is thinking..."):
                 try:
                     # Configure Gemini
-                    model = genai.GenerativeModel('gemini-3.0-flash')
+                    model = genai.GenerativeModel('gemini-3-flash-preview')
                    
                     # Create context-aware prompt
                     context = """You are a helpful HostAfrica technical support assistant.
