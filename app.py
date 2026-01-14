@@ -580,9 +580,9 @@ if tool == "🏠 Home":
         """)
        st.markdown('</div>', unsafe_allow_html=True)
         
-        col1, col2 = st.columns(2)
+       col1, col2 = st.columns(2)
         
-        with col1:
+       with col1:
             st.markdown("#### 📝 Initial Assessment")
             check1 = st.checkbox("Customer's main issue identified")
             check2 = st.checkbox("Ticket category verified")
