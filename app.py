@@ -537,7 +537,6 @@ if tool == "🏠 Home":
     st.markdown('<div class="info-box">', unsafe_allow_html=True)
     st.markdown("""
 **Quick access to essential support tools:**
-
 - 🏠 Home  
 - 🔐 PIN Checker  
 - 🔓 IP Unban  
@@ -554,7 +553,6 @@ if tool == "🏠 Home":
 - 📋 Support Ticket Tools  
 - 🤖 AI-Powered Ticket Analysis  
 """)
-
 st.markdown('</div>', unsafe_allow_html=True)
     
     # Add dedicated buttons for ticket tools
