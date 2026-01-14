@@ -16,6 +16,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import pandas as pd
 from io import StringIO
+from bs4 import BeautifulSoup
 
 # Page Configuration
 st.set_page_config(
@@ -158,7 +159,7 @@ except ImportError:
     google_exceptions = None
 
 # Vision-capable models for ticket analysis
-GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash-exp", "gemini-3.0-flash"]
+GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash-exp", "gemini-3-flash-preview"]
 
 # Create persistent session for .ng WHOIS queries
 ng_session = requests.Session()
