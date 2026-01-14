@@ -578,7 +578,7 @@ if tool == "🏠 Home":
        st.markdown("""
         Use this checklist to ensure you've gathered all necessary information before responding to a ticket.
         """)
-        st.markdown('</div>', unsafe_allow_html=True)
+       st.markdown('</div>', unsafe_allow_html=True)
         
         col1, col2 = st.columns(2)
         
