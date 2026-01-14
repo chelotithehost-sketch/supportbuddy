@@ -955,6 +955,10 @@ elif tool == "🌍 WHOIS Lookup":
                     st.code(whois_data, language=None)
                     st.markdown('</div>', unsafe_allow_html=True)
             else:
+
+                st.code(whois_html, language=None)
+                st.markdown('</div>', unsafe_allow_html=True)
+                
                 # Standard WHOIS lookup
                 with st.spinner(f"Looking up WHOIS for {domain}..."):
                     try:
