@@ -383,7 +383,37 @@ def query_ng_whois(domain):
         return response.text
     except Exception as e:
         return f"Error: {e}"
-
+        
+# Function to parse .ng WHOIS HTML
+def parse_ng_whois(html):
+    """Parse .ng WHOIS HTML into structured data"""
+    soup = BeautifulSoup(html, 'html.parser')
+    sections = {}
+   
+    # Parse cards
+    cards = soup.find_all('div', class_='card mb-4')
+    for card in cards:
+        header = card.find('h5', class_='card-header whois_bg')
+        if header:
+            section_name = header.text.strip()
+            data = {}
+            table = card.find('table', class_='table')
+            if table:
+                for tr in table.find_all('tr'):
+                    tds = tr.find_all('td')
+                    if len(tds) == 2:
+                        key = tds[0].text.strip().rstrip(':')
+                        value = tds[1].get_text(separator='\n').strip()
+                        data[key] = value
+            sections[section_name] = data
+   
+    # Parse raw WHOIS
+    raw_pre = soup.find('pre')
+    if raw_pre:
+        sections['Raw Whois Result'] = raw_pre.get_text().strip()
+   
+    return sections
+    
 # Function to check .ng nameservers
 def check_ng_nameservers(domain):
     """Check nameservers for .ng domains using DNS lookup"""
@@ -1368,7 +1398,7 @@ elif tool == "💬 AI Support Chat":
             with st.spinner("🤖 AI is thinking..."):
                 try:
                     # Configure Gemini
-                    model = genai.GenerativeModel('gemma-3-4b')
+                    model = genai.GenerativeModel('gemini-3.0-flash')
                    
                     # Create context-aware prompt
                     context = """You are a helpful HostAfrica technical support assistant.
