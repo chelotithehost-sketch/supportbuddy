@@ -158,7 +158,7 @@ except ImportError:
     google_exceptions = None
 
 # Vision-capable models for ticket analysis
-GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3.0-flash"]
+GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash-exp", "gemini-3.0-flash"]
 
 # Create persistent session for .ng WHOIS queries
 ng_session = requests.Session()
@@ -523,7 +523,7 @@ st.sidebar.title(" The Support Buddy")
 st.sidebar.markdown("---")
 tool = st.sidebar.radio(
     "Select Tool:",
-    ["🏠 Home", "🔐 PIN Checker", "🔓 IP Unban", "🔍 DNS Lookup", "🌍 WHOIS Lookup", "🗂️ DNS Analyzer", "🔒 SSL Checker", "📚 Help Center", "🧹 Flush DNS Cache", "💬 AI Support Chat", "🔍 IP Address Lookup", "🔄 Bulk NS Updater", "📂 cPanel Account List"],
+    ["🏠 Home", "🔐 PIN Checker", "🔓 IP Unban", "🔍 DNS Lookup", "🌍 WHOIS Lookup", "🔍 NS Authority Checker", "🗂️ DNS Analyzer", "🔒 SSL Checker", "📚 Help Center", "🧹 Flush DNS Cache", "💬 AI Support Chat", "🔍 IP Address Lookup", "🔄 Bulk NS Updater", "📂 cPanel Account List"],
     label_visibility="collapsed"
 )
 st.sidebar.markdown("---")
@@ -1275,6 +1275,36 @@ elif tool == "📚 Help Center":
    
     st.markdown("---")
     st.link_button("🌐 Browse Full Help Center", "https://help.hostafrica.com", use_container_width=True, type="primary")
+
+elif tool == "🔍 NS Authority Checker":
+    st.title("🔍 Nameserver Authority Checker")
+    st.markdown("Check if specific nameservers are authoritative for a domain (single or bulk)")
+   
+    input_text = st.text_area(
+        "Enter domain and nameservers (one per line, comma-separated):",
+        placeholder="example.com, ns1.example.com, ns2.example.com\nanother.com, ns3.example.com",
+        help="Format: domain, ns1, ns2, ... (Supports bulk lines)"
+    )
+   
+    if st.button("🔍 Check Authority", type="primary"):
+        if input_text:
+            parsed = parse_input(input_text)
+            results = []
+            for item in parsed:
+                result = check_nameserver_authority(item['domain'], item['nameservers'])
+                results.append(result)
+                display_ns_result(result)
+           
+            # Optional: Download results as CSV
+            csv = convert_results_to_csv(results)
+            st.download_button(
+                label="📥 Download Results as CSV",
+                data=csv,
+                file_name="ns_authority_results.csv",
+                mime="text/csv"
+            )
+        else:
+            st.warning("⚠️ Enter at least one domain and nameserver")
 elif tool == "🧹 Flush DNS Cache":
     st.title("🧹 Flush Google DNS Cache")
     st.markdown("Clear Google's DNS cache to force fresh lookups")
@@ -1338,7 +1368,7 @@ elif tool == "💬 AI Support Chat":
             with st.spinner("🤖 AI is thinking..."):
                 try:
                     # Configure Gemini
-                    model = genai.GenerativeModel('gemini-1.5-flash')
+                    model = genai.GenerativeModel('gemini-2.0-flash-exp')
                    
                     # Create context-aware prompt
                     context = """You are a helpful HostAfrica technical support assistant.
