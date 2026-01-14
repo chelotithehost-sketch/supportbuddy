@@ -931,16 +931,17 @@ elif tool == "🌍 WHOIS Lookup":
         "Enter domain name:",
         placeholder="example.com or example.ng",
         help="Enter a domain to look up its WHOIS information",
-        key="whois_input_field"
+        key="whois_input_tool"
     )
     
     if st.button("🔍 Lookup WHOIS", type="primary"):
         if whois_domain:
-            # Clean the domain input
+            # Clean domain input
             domain = whois_domain.strip().lower().replace('https://', '').replace('http://', '').replace('/', '')
+            is_ng_domain = domain.endswith('.ng')
             
-            # 1. SPECIAL CASE: .ng domains
-            if domain.endswith('.ng'):
+            # --- SECTION 1: .ng SPECIALIZED LOOKUP ---
+            if is_ng_domain:
                 st.info("🇳🇬 Using specialized .ng WHOIS lookup")
                 with st.spinner("Querying .ng WHOIS database..."):
                     try:
@@ -950,30 +951,24 @@ elif tool == "🌍 WHOIS Lookup":
                         st.markdown('<div class="info-box">', unsafe_allow_html=True)
                         st.markdown("### 🇳🇬 .ng WHOIS Information")
                         
-                        # Use the dictionary returned by your new parse function
-                        if 'Raw Whois Result' in parsed:
+                        # Check if parsing worked
+                        if isinstance(parsed, dict) and 'Raw Whois Result' in parsed:
                             st.code(parsed['Raw Whois Result'], language=None)
                         else:
-                            # Fallback if parsing didn't find the raw section
-                            st.warning("Could not parse raw data, showing full output:")
-                            st.code(whois_data[:1000], language=None)
-                            
+                            # Fallback if raw result key is missing
+                            st.code(whois_data, language=None)
+                        
                         st.markdown('</div>', unsafe_allow_html=True)
                     except Exception as e:
                         st.error(f"❌ .ng Lookup failed: {str(e)}")
 
-            # 2. STANDARD CASE: All other domains
+            # --- SECTION 2: STANDARD WHOIS LOOKUP (.com, .net, .co.za, etc) ---
             else:
                 with st.spinner(f"Looking up WHOIS for {domain}..."):
                     try:
                         w = whois.whois(domain)
-                        
                         st.markdown('<div class="success-box">', unsafe_allow_html=True)
                         st.markdown("### ✅ WHOIS Information Retrieved")
-
-                        issues = []
-                        warnings = []
-                        success_checks = []
                         
                         col1, col2 = st.columns(2)
                         with col1:
@@ -984,17 +979,15 @@ elif tool == "🌍 WHOIS Lookup":
                         with col2:
                             st.markdown("**Important Dates:**")
                             if w.expiration_date:
-                                # Handle cases where expiration_date might be a list
                                 exp = w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date
                                 st.write(f"**Expires:** {str(exp).split()[0]}")
                                 
-                                # Health Check logic
+                                # Quick Health Check
                                 try:
+                                    from datetime import datetime
                                     days_left = (exp - datetime.now()).days
-                                    if days_left < 0:
-                                        st.error(f"❌ EXPIRED {abs(days_left)} days ago!")
-                                    elif days_left < 30:
-                                        st.warning(f"⚠️ Expires in {days_left} days")
+                                    if days_left < 30:
+                                        st.warning(f"⚠️ Expires in {days_left} days!")
                                     else:
                                         st.success(f"✅ {days_left} days remaining")
                                 except:
@@ -1002,57 +995,10 @@ elif tool == "🌍 WHOIS Lookup":
                         
                         with st.expander("📄 View Full Raw WHOIS Data"):
                             st.json(str(w))
-                        
                         st.markdown('</div>', unsafe_allow_html=True)
                         
                     except Exception as e:
                         st.error(f"❌ WHOIS lookup failed: {type(e).__name__}")
-                        st.info(f"**Try manual lookup:**\n- https://who.is/whois/{domain}")
-        else:
-            st.warning("⚠️ Please enter a domain name")
-                       
-                        # Nameservers
-                        if w.name_servers:
-                            st.markdown("### WHOIS Nameservers")
-                            ns_list = w.name_servers if isinstance(w.name_servers, list) else [w.name_servers]
-                           
-                            for ns in ns_list[:5]:
-                                ns_clean = str(ns).lower().rstrip('.')
-                                st.code(f"• {ns_clean}")
-                               
-                                if 'host-ww.net' in ns_clean:
-                                    st.caption("✅ HostAfrica nameserver")
-                       
-                        # Full WHOIS data
-                        with st.expander("📄 View Full Raw WHOIS Data"):
-                            st.json(str(w))
-                       
-                        # Summary
-                        st.divider()
-                        st.subheader("📊 WHOIS Health Summary")
-                       
-                        if not issues and not warnings:
-                            st.success("🎉 **Domain is in good standing!** No issues detected.")
-                        else:
-                            if issues:
-                                st.markdown("**❌ Critical Issues:**")
-                                for issue in issues:
-                                    st.error(f"• {issue}")
-                           
-                            if warnings:
-                                st.markdown("**⚠️ Warnings:**")
-                                for warning in warnings:
-                                    st.warning(f"• {warning}")
-                           
-                            if success_checks:
-                                st.markdown("**✅ Passed Checks:**")
-                                for check in success_checks:
-                                    st.success(f"• {check}")
-                       
-                        st.markdown('</div>', unsafe_allow_html=True)
-                    except Exception as e:
-                        st.error(f"❌ WHOIS lookup failed: {type(e).__name__}")
-                        st.warning("Some domains (especially ccTLDs) may not return complete WHOIS data via automated tools.")
                         st.info(f"**Try manual lookup:**\n- https://who.is/whois/{domain}\n- https://lookup.icann.org/en/lookup?name={domain}")
         else:
             st.warning("⚠️ Please enter a domain name")
@@ -1076,7 +1022,7 @@ elif tool == "🔍 IP Address Lookup":
                         try:
                             response = requests.get(f"https://ipapi.co/{ip}/json/", timeout=5)
                             if response.status_code == 200:
-                                geo_data = response.json()
+                               geo_data = response.json()
                         except:
                             pass
                        
