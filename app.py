@@ -518,7 +518,7 @@ st.sidebar.markdown("---")
 
 tool = st.sidebar.radio(
     "Select Tool:",
-    ["🏠 Home", "🔐 PIN Checker", "🔓 IP Unban", "🔍 DNS Lookup", "🌍 WHOIS Lookup", "🗂️ DNS Analyzer", "🔒 SSL Checker", "📚 Help Center", "🧹 Flush DNS Cache", "💬 AI Support Chat", "🔍 IP Address Lookup", 🔄 Bulk NS Updater, "📂 cPanel Account List"],
+    ["🏠 Home", "🔐 PIN Checker", "🔓 IP Unban", "🔍 DNS Lookup", "🌍 WHOIS Lookup", "🗂️ DNS Analyzer", "🔒 SSL Checker", "📚 Help Center", "🧹 Flush DNS Cache", "💬 AI Support Chat", "🔍 IP Address Lookup", "🔄 Bulk NS Updater", "📂 cPanel Account List"],
     label_visibility="collapsed"
 )
 
