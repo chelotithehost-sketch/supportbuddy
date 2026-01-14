@@ -371,9 +371,15 @@ def convert_results_to_csv(results):
 # Function to query .ng WHOIS
 def query_ng_whois(domain):
     """Query WHOIS information for .ng domains"""
-    url = f"https://whois.net.ng/whois/{domain}"
+    if not domain.lower().endswith(".ng"):
+        return "Error: whois.net.ng supports .ng domains only"
+    url = "https://whois.net.ng/whois/"
     try:
-        response = ng_session.get(url, timeout=10)
+        response = ng_session.get(
+            url,
+            params={"domain": domain},
+            timeout=10
+        )
         return response.text
     except Exception as e:
         return f"Error: {e}"
