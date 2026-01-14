@@ -536,20 +536,6 @@ if tool == "🏠 Home":
     st.markdown("""
 **Quick access to essential support tools:**
 - 🏠 Home
-- 🔐 PIN Checker
-- 🔓 IP Unban
-- 🔍 DNS Lookup
-- 🌍 WHOIS Lookup (.ng domains supported)
-- 🗂️ DNS Analyzer
-- 🔒 SSL Checker
-- 📚 Help Center
-- 🧹 Flush DNS Cache
-- 💬 AI Support Chat
-- 🔍 IP Address Lookup
-- 🔄 Bulk NS Updater
-- 📂 cPanel Account List
-- 📋 Support Ticket Tools
-- 🤖 AI-Powered Ticket Analysis
 """)
     st.markdown('</div>', unsafe_allow_html=True)
    
