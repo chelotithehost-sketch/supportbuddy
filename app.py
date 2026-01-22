@@ -401,7 +401,7 @@ elif tool == "🔐 PIN Checker":
      customer_pin = st.text_input("Enter PIN to verify:")
     
     # Construct a search URL if the target script supports it
-    search_url = f"https://my.hostafrica.com/admin/admin_tool/client-pin?pin={customer_pin}"
+     search_url = f"https://my.hostafrica.com/admin/admin_tool/client-pin?pin={customer_pin}"
     
     if st.button("Verify on WHMCS"):
        st.link_button("Click here to see results", search_url)
