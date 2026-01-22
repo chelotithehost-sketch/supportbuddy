@@ -394,7 +394,7 @@ if tool == "Home":
         st.metric("AI Assistant", "✅ Available" if GEMINI_AVAILABLE else "⚠️ Configure API")
 
 # ADMIN TOOLS
-    elif tool == "🔐 PIN Checker":
+elif tool == "🔐 PIN Checker":
      st.title("🔐 PIN Checker")
      st.markdown("Verify customer PINs for account access")
     
