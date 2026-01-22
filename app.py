@@ -983,54 +983,81 @@ elif tool == "🌍 WHOIS Lookup":
                                 for i, (k, v) in enumerate(data.items()):
                                     cols[i % 2].markdown(f"**{k}:** {v}")
 
-                    # ==========================================
-                    # STANDARD TLD TREATMENT (.com, .net, .org, etc)
-                    # ==========================================
-                    else:
-                        w = whois.whois(domain)
-                        # Consolidate status to string for logic check
-                        status_list = w.status if isinstance(w.status, list) else [w.status]
-                        status_joined = " ".join([str(s) for s in status_list]).lower()
-                        
-                        # Fix: Handle naive/aware datetime comparison
-                        is_expired = False
-                        if w.expiration_date:
-                            exp = w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date
-                            # Remove timezone info from registry date to match local now()
-                            if exp.replace(tzinfo=None) < now:
-                                is_expired = True
-
-                        # Status-Aware Alerting Logic
-                        error_keywords = ["hold", "suspended", "expired", "redemption", "pendingdelete", "raa"]
-                        if any(x in status_joined for x in error_keywords) or is_expired:
-                            st.error(f"❌ Domain Alert: {status_joined.upper() if status_joined else 'EXPIRED'}")
-                        elif "ok" in status_joined or "active" in status_joined:
-                            st.success("✅ Domain Status: OK / ACTIVE")
+# ==========================================
+# STANDARD TLD TREATMENT (.com, .net, .org, etc)
+# ==========================================
+else:
+    with st.spinner(f"Looking up WHOIS for {domain}..."):
+        try:
+            w = whois.whois(domain)
+            
+            # Consolidate status to string for logic check
+            status_list = w.status if isinstance(w.status, list) else [w.status]
+            status_joined = " ".join([str(s) for s in status_list]).lower()
+            
+            # Fix: Handle naive/aware datetime comparison
+            is_expired = False
+            if w.expiration_date:
+                exp = w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date
+                # Remove timezone info from registry date to match local now()
+                if exp.replace(tzinfo=None) < now:
+                    is_expired = True
+            
+            # Status-Aware Alerting Logic
+            error_keywords = ["hold", "suspended", "expired", "redemption", "pendingdelete", "raa"]
+            if any(x in status_joined for x in error_keywords) or is_expired:
+                st.error(f"❌ Domain Alert: {status_joined.upper() if status_joined else 'EXPIRED'}")
+            elif "ok" in status_joined or "active" in status_joined:
+                st.success("✅ Domain Status: OK / ACTIVE")
+            else:
+                st.info(f"ℹ️ Current Status: {status_joined.upper()}")
+            
+            # Display registration details
+            st.markdown("### 📋 WHOIS Information")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("**Registration Details:**")
+                st.write(f"**Domain:** {w.domain_name if hasattr(w, 'domain_name') else 'N/A'}")
+                st.write(f"**Registrar:** {w.registrar if hasattr(w, 'registrar') else 'N/A'}")
+            
+            with col2:
+                st.markdown("**Important Dates:**")
+                if w.expiration_date:
+                    exp = w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date
+                    st.write(f"**Expires:** {str(exp).split()[0]}")
+                    
+                    # Quick Health Check
+                    try:
+                        from datetime import datetime
+                        days_left = (exp.replace(tzinfo=None) - datetime.now()).days
+                        if days_left < 30:
+                            st.warning(f"⚠️ Expires in {days_left} days!")
                         else:
-                            st.info(f"ℹ️ Current Status: {status_joined.upper()}")
+                            st.success(f"✅ {days_left} days remaining")
+                    except:
+                        pass
+            
+            with st.expander("📄 View Full WHOIS Output", expanded=False):
+                st.code(str(w), language=None)
+                
+        except Exception as e:
+            st.error(f"❌ WHOIS lookup failed: {type(e).__name__}")
+            st.info(f"**Try manual lookup:**\n- https://who.is/whois/{domain}\n- https://lookup.icann.org/en/lookup?name={domain}")
 
-                        with st.expander("📄 View Full WHOIS Output", expanded=False):
-                            st.code(str(w), language=None)
-
-                    # ==========================================
-                    # COMMON FOOTER (Neutral DNSSEC & Live NS)
-                    # ==========================================
-                    st.markdown("---")
-                    c1, c2 = st.columns(2)
-                    with c1:
-                        st.info(f"🛡️ {dnssec_status}")
-                    with c2:
-                        st.write("**Live Nameservers:**")
-                        if ns_list:
-                            for ns in ns_list:
-                                st.write(f"- `{ns}`")
-                        else:
-                            st.warning("No nameservers found.")
-
-                except Exception as e:
-                    st.error(f"Analysis failed: {str(e)}")
-        else:
-            st.warning("⚠️ Please enter a domain name.")
+# ==========================================
+# COMMON FOOTER (Neutral DNSSEC & Live NS)
+# ==========================================
+st.markdown("---")
+c1, c2 = st.columns(2)
+with c1:
+    st.info(f"🛡️ {dnssec_status}")
+with c2:
+    st.write("**Live Nameservers:**")
+    if ns_list:
+        for ns in ns_list:
+            st.write(f"- `{ns}`")
+    else:
+        st.warning("No nameservers found.")
             
 # EMAIL TOOLS
 elif tool == "📮 MX Record Checker":
