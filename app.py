@@ -394,104 +394,49 @@ if tool == "Home":
         st.metric("AI Assistant", "✅ Available" if GEMINI_AVAILABLE else "⚠️ Configure API")
 
 # ADMIN TOOLS
+# --- PIN Checker ---
 if tool == "🔐 PIN Checker":
     st.title("🔐 PIN Checker")
-    st.markdown("Verify customer PINs for account access")
+    st.markdown("Verify customer PINs for secure account access and verification.")
     
-    # Create two columns for the inputs
-    col1, col2 = st.columns(2)
-    
+    col1, col2 = st.columns([3, 1])
     with col1:
-        customer_pin = st.text_input("Customer PIN:", type="password", placeholder="e.g. 1234")
-    
+        st.info("Check the provided customer PIN against the WHMCS records.")
     with col2:
-        # Note: You can use this for Account ID or a secondary verification
-        account_id = st.text_input("Account ID / Email:", placeholder="Optional")
+        st.link_button("Open Tool", "https://my.hostafrica.com/admin/admin_tool/client-pin", use_container_width=True)
 
-    # To retain the "Lookup" functionality from the WHMCS link:
-    st.divider() # Visual separator
-    
-    if st.button("Verify PIN on WHMCS", use_container_width=True):
-        if customer_pin:
-            # Construct the link with the PIN as a parameter (if your backend supports GET)
-            # If your backend ONLY supports POST, this button acts as a trigger to the page
-            lookup_url = f"https://my.hostafrica.com/admin/admin_tool/admin_tool_php_backend/index.php/client-pin/client-lookup?pin={customer_pin}"
-            
-            st.success(f"Ready to verify PIN: {customer_pin}")
-            st.link_button("🚀 Open WHMCS Lookup", lookup_url, type="primary", use_container_width=True)
-        else:
-            st.error("Please enter a PIN before attempting a lookup.")
-
+# --- IP Unban ---
 elif tool == "🔓 IP Unban":
-    st.title("🔓 IP Unban Tool")
-    st.markdown("Generate commands to unban IP addresses from firewall")
+    st.title("🔓 IP Unban")
+    st.markdown("Search for and remove IP addresses from server firewalls.")
     
-    ip_address = st.text_input("IP Address:", placeholder="192.168.1.1")
-    reason = st.text_area("Reason:", placeholder="Customer confirmed legitimate access")
-    
-    if st.button("🔓 Generate Unban Command", type="primary"):
-        if ip_address and reason:
-            valid, result = validate_ip(ip_address)
-            if not valid:
-                st.error(f"❌ {result}")
-            else:
-                st.success("### Command Generated:")
-                st.code(f"csf -dr {ip_address}", language="bash")
-                st.info(f"📝 Log: Unbanned {ip_address}. Reason: {reason}")
-                st.warning("⚠️ Remember to document this action in the ticket")
-        else:
-            st.warning("⚠️ Please provide both IP address and reason")
-
-elif tool == "📝 Bulk NS Updater":
-    st.title("📝 Bulk Nameserver Updater")
-    st.markdown("Generate nameserver update commands for multiple domains")
-    
-    domains_input = st.text_area("Domains (one per line):", height=150, placeholder="example.com\nanotherdomain.com")
-    
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([3, 1])
     with col1:
-        ns1 = st.text_input("Nameserver 1:", placeholder="ns1.example.com")
-        ns3 = st.text_input("Nameserver 3 (Optional):")
+        st.info("Use this to quickly unblock clients who are locked out.")
     with col2:
-        ns2 = st.text_input("Nameserver 2:", placeholder="ns2.example.com")
-        ns4 = st.text_input("Nameserver 4 (Optional):")
-    
-    if st.button("📋 Generate Commands", type="primary"):
-        if domains_input and ns1 and ns2:
-            domains = [d.strip() for d in domains_input.split('\n') if d.strip()]
-            st.success(f"✅ Commands generated for {len(domains)} domain(s)")
-            
-            nameservers = [ns for ns in [ns1, ns2, ns3, ns4] if ns]
-            
-            st.markdown("### Commands:")
-            for domain in domains:
-                st.code(f"{domain}: {', '.join(nameservers)}")
-        else:
-            st.warning("⚠️ Please provide domains and at least NS1 and NS2")
+        st.link_button("Open Tool", "https://my.hostafrica.com/admin/custom/scripts/unban/", use_container_width=True)
 
-elif tool == "📋 cPanel Account List":
-    st.title("📋 cPanel Account List")
-    st.markdown("Parse and search through cPanel accounts")
+# --- Bulk NS Updater ---
+elif tool == "🔄 Bulk NS Updater":
+    st.title("🔄 Bulk Nameserver Updater")
+    st.markdown("Update nameservers for multiple domains simultaneously in WHMCS.")
     
-    st.markdown("**Command to get account list:**")
-    st.code("cat /etc/trueuserdomains | cut -d: -f1 | sort", language="bash")
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.info("Save time by modifying NS records for domain batches.")
+    with col2:
+        st.link_button("🔄 Open Updater", "https://my.hostafrica.com/admin/addonmodules.php?module=nameserv_changer", use_container_width=True)
+
+# --- cPanel Account List ---
+elif tool == "📂 cPanel Account List":
+    st.title("📂 cPanel Account List")
+    st.markdown("View a comprehensive list of all hosted cPanel accounts and their details.")
     
-    account_list = st.text_area("Paste Account List:", height=200, placeholder="domain1.com\ndomain2.com")
-    
-    if account_list:
-        accounts = [line.strip() for line in account_list.split('\n') if line.strip()]
-        st.success(f"✅ Found {len(accounts)} accounts")
-        
-        search = st.text_input("🔍 Search:")
-        if search:
-            filtered = [acc for acc in accounts if search.lower() in acc.lower()]
-            st.info(f"Showing {len(filtered)} matching results")
-            for acc in filtered:
-                st.code(acc)
-        else:
-            st.info(f"Showing first 50 of {len(accounts)} accounts")
-            for acc in accounts[:50]:
-                st.code(acc)
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.info("Access account status, package types, and owner details.")
+    with col2:
+        st.link_button("📂 Open List", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
 
 # TICKET MANAGEMENT TOOLS
 elif tool == "✅ Support Ticket Checklist":
