@@ -1849,8 +1849,8 @@ elif tool == "🔌 Port Checker":
                     except smtplib.SMTPException as e:
                         st.error(f"❌ SMTP Error: {str(e)}")
                     except Exception as e:
-    st.error(f"❌ Connection failed: {str(e)}")
-    st.info("💡 Check your connection details and try again")
+                        st.error(f"❌ Connection failed: {str(e)}")
+                        st.info("💡 Check your connection details and try again")
 
 elif tool == "🗺️ Traceroute":
     st.title("🗺️ Traceroute")
