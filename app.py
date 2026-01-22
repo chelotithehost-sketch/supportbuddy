@@ -394,17 +394,33 @@ if tool == "Home":
         st.metric("AI Assistant", "✅ Available" if GEMINI_AVAILABLE else "⚠️ Configure API")
 
 # ADMIN TOOLS
-elif tool == "🔐 PIN Checker":
-     st.title("🔐 PIN Checker")
-     st.markdown("Verify customer PINs for account access")
+if tool == "🔐 PIN Checker":
+    st.title("🔐 PIN Checker")
+    st.markdown("Verify customer PINs for account access")
     
-     customer_pin = st.text_input("Enter PIN to verify:")
+    # Create two columns for the inputs
+    col1, col2 = st.columns(2)
     
-    # Construct a search URL if the target script supports it
-     search_url = f"https://my.hostafrica.com/admin/admin_tool/client-pin?pin={customer_pin}"
+    with col1:
+        customer_pin = st.text_input("Customer PIN:", type="password", placeholder="e.g. 1234")
     
-if st.button("Verify on WHMCS"):
-   st.link_button("Click here to see results", search_url)
+    with col2:
+        # Note: You can use this for Account ID or a secondary verification
+        account_id = st.text_input("Account ID / Email:", placeholder="Optional")
+
+    # To retain the "Lookup" functionality from the WHMCS link:
+    st.divider() # Visual separator
+    
+    if st.button("Verify PIN on WHMCS", use_container_width=True):
+        if customer_pin:
+            # Construct the link with the PIN as a parameter (if your backend supports GET)
+            # If your backend ONLY supports POST, this button acts as a trigger to the page
+            lookup_url = f"https://my.hostafrica.com/admin/admin_tool/admin_tool_php_backend/index.php/client-pin/client-lookup?pin={customer_pin}"
+            
+            st.success(f"Ready to verify PIN: {customer_pin}")
+            st.link_button("🚀 Open WHMCS Lookup", lookup_url, type="primary", use_container_width=True)
+        else:
+            st.error("Please enter a PIN before attempting a lookup.")
 
 elif tool == "🔓 IP Unban":
     st.title("🔓 IP Unban Tool")
