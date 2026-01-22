@@ -374,7 +374,7 @@ elif category == "🎫 Ticket Management":
 elif category == "🤖 AI Tools":
     tool = st.sidebar.radio("AI Assistants", ["💬 AI Support Chat", "📧 AI Mail Error Assistant", "❓ Error Code Explainer"])
 elif category == "🌐 Domain & DNS":
-    tool = st.sidebar.radio("Domain Tools", ["🔍 Domain Status Check", "🔎 DNS Analyzer", "📋 NS Authority Checker", "📊 WHOIS Lookup"])
+    tool = st.sidebar.radio("Domain Tools", ["🔍 Domain Status Check", "🔎 DNS Analyzer", "📋 NS Authority Checker", "🌍 WHOIS Lookup"])
 elif category == "📧 Email":
     tool = st.sidebar.radio("Email Tools", ["📮 MX Record Checker", "✉️ Email Account Tester", "🔒 SPF/DKIM Check", "📄 Email Header Analyzer"])
 elif category == "🌍 Web & HTTP":
