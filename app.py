@@ -952,7 +952,7 @@ elif tool == "📋 NS Authority Checker":
                     st.markdown("---")
 
 elif tool == "🌍 WHOIS Lookup":
-    st.title("🌍 Advanced WHOIS & Health Check")
+    st.title("🌍 WHOIS & Health Check")
     st.markdown("Detailed registration analysis with status-aware reporting.")
     
     domain_input = st.text_input("Enter domain name:", placeholder="hostafrica.co.za or .ng", key="whois_main_input")
@@ -976,11 +976,6 @@ elif tool == "🌍 WHOIS Lookup":
                         reg_info = sections.get('Registration Info', {})
                         status_str = reg_info.get('Domain Status', '').lower()
                         
-                        if "ok" in status_str:
-                            st.success(f"✅ Domain Status: {status_str.upper()}")
-                        else:
-                            st.error(f"❌ Status Alert: {status_str.upper() if status_str else 'UNKNOWN'}")
-
                         st.markdown("### 🇳🇬 Registration Data")
                         for section, data in sections.items():
                             with st.expander(f"📋 {section}", expanded=True):
