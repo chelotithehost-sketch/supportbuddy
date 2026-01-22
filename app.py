@@ -317,29 +317,78 @@ def check_password_strength(password):
     
     return strength, score, feedback, color
 
-def query_ng_whois(domain):
-    """Direct socket query for .ng domains"""
-    import socket
-    whois_server = "whois.nic.net.ng"
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(10)
-        s.connect((whois_server, 43))
-        s.send((domain + "\r\n").encode("utf-8"))
-        response = b""
-        while True:
-            data = s.recv(4096)
-            if not data:
-                break
-            response += data
-        s.close()
-        return response.decode("utf-8", errors="ignore")
-    except Exception as e:
-        return f"Error connecting to .ng WHOIS server: {e}"
+# --- .ng WHOIS UTILITIES ---
+ng_session = requests.Session()
+ng_session.headers.update({
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+})
 
-def parse_ng_whois(raw_data):
-    """Simple parser for .ng WHOIS response"""
-    return {'Raw Whois Result': raw_data}    
+def query_ng_whois(domain):
+    """Query WHOIS information for .ng domains"""
+    if not domain.lower().endswith(".ng"):
+        return "Error: whois.net.ng supports .ng domains only"
+    url = "https://whois.net.ng/whois/"
+    try:
+        response = ng_session.get(
+            url,
+            params={"domain": domain},
+            timeout=10
+        )
+        return response.text
+    except Exception as e:
+        return f"Error: {e}"
+
+def parse_ng_whois(html):
+    """Parse .ng WHOIS HTML into structured data"""
+    soup = BeautifulSoup(html, 'html.parser')
+    sections = {}
+    
+    cards = soup.find_all('div', class_='card mb-4')
+    for card in cards:
+        header = card.find('h5', class_='card-header whois_bg')
+        if header:
+            section_name = header.text.strip()
+            data = {}
+            table = card.find('table', class_='table')
+            if table:
+                for tr in table.find_all('tr'):
+                    tds = tr.find_all('td')
+                    if len(tds) == 2:
+                        key = tds[0].text.strip().rstrip(':')
+                        value = tds[1].get_text(separator='\n').strip()
+                        data[key] = value
+            sections[section_name] = data
+    
+    raw_pre = soup.find('pre')
+    if raw_pre:
+        sections['Raw Whois Result'] = raw_pre.get_text().strip()
+    return sections
+
+def check_ng_nameservers(domain):
+    """Check nameservers for .ng domains using DNS lookup"""
+    try:
+        url = f"https://dns.google/resolve?name={domain}&type=NS"
+        response = requests.get(url, timeout=10)
+        dns_data = response.json()
+        if dns_data.get('Status') == 0 and 'Answer' in dns_data:
+            nameservers = []
+            for record in dns_data.get('Answer', []):
+                if record.get('type') == 2: 
+                    ns = record.get('data', '').lower().rstrip('.')
+                    nameservers.append(ns)
+            return nameservers
+        return None
+    except:
+        return None
+
+def check_dnssec_status(domain):
+    """Check if domain is DNSSEC signed"""
+    try:
+        url = f"https://dns.google/resolve?name={domain}&type=DS"
+        res = requests.get(url, timeout=5).json()
+        return "✅ Signed" if "Answer" in res else "❌ Not Signed"
+    except:
+        return "❓ Unknown"   
 
 # ============================================================================
 # SIDEBAR NAVIGATION
@@ -923,82 +972,68 @@ elif tool == "📋 NS Authority Checker":
                     st.markdown("---")
 
 elif tool == "🌍 WHOIS Lookup":
-    st.title("🌍 WHOIS Information Lookup")
-    st.markdown("Get WHOIS registration details for any domain (including .ng)")
+    st.title("🌍 Advanced WHOIS & Security Lookup")
+    st.markdown("Comprehensive registration, status, and DNSSEC analysis.")
     
-    whois_domain = st.text_input(
-        "Enter domain name:",
-        placeholder="example.com or example.ng",
-        help="Enter a domain to look up its WHOIS information",
-        key="whois_input_tool"
-    )
+    domain_input = st.text_input("Enter domain name:", placeholder="example.com.ng", key="whois_tool_input")
     
-    if st.button("🔍 Lookup WHOIS", type="primary"):
-        if whois_domain:
-            # Clean domain input
-            domain = whois_domain.strip().lower().replace('https://', '').replace('http://', '').replace('/', '')
-            is_ng_domain = domain.endswith('.ng')
+    if st.button("🔍 Run Full Analysis", type="primary"):
+        if domain_input:
+            domain = domain_input.strip().lower().replace('https://', '').replace('http://', '').split('/')[0]
             
-            # --- SECTION 1: .ng SPECIALIZED LOOKUP ---
-            if is_ng_domain:
-                st.info("🇳🇬 Using specialized .ng WHOIS lookup")
-                with st.spinner("Querying .ng WHOIS database..."):
-                    try:
-                        whois_data = query_ng_whois(domain)
-                        parsed = parse_ng_whois(whois_data)
+            with st.spinner(f"Performing deep analysis of {domain}..."):
+                # 1. Check DNSSEC and Nameservers (Works for all TLDs)
+                dnssec = check_dnssec_status(domain)
+                ns_list = check_ng_nameservers(domain)
+                
+                try:
+                    # --- .ng SPECIALIZED LOGUP ---
+                    if domain.endswith('.ng'):
+                        html_content = query_ng_whois(domain)
+                        whois_data = parse_ng_whois(html_content)
                         
-                        st.markdown('<div class="info-box">', unsafe_allow_html=True)
-                        st.markdown("### 🇳🇬 .ng WHOIS Information")
-                        
-                        # Check if parsing worked
-                        if isinstance(parsed, dict) and 'Raw Whois Result' in parsed:
-                            st.code(parsed['Raw Whois Result'], language=None)
-                        else:
-                            st.code(whois_data, language=None)
-                        
-                        st.markdown('</div>', unsafe_allow_html=True)
-                    except Exception as e:
-                        st.error(f"❌ .ng Lookup failed: {str(e)}")
-
-            # --- SECTION 2: STANDARD WHOIS LOOKUP (.com, .net, etc) ---
-            else:
-                with st.spinner(f"Looking up WHOIS for {domain}..."):
-                    try:
+                        # Extract Status and Registrar from parsed sections
+                        reg_info = whois_data.get('Registration Info', {})
+                        status = reg_info.get('Domain Status', 'N/A')
+                        registrar = reg_info.get('Registrar', 'N/A')
+                        raw_result = whois_data.get('Raw Whois Result', 'No raw data found.')
+                    
+                    # --- STANDARD LOOKUP ---
+                    else:
                         w = whois.whois(domain)
-                        st.markdown('<div class="success-box">', unsafe_allow_html=True)
-                        st.markdown("### ✅ WHOIS Information Retrieved")
-                        
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.markdown("**Registration Details:**")
-                            st.write(f"**Domain:** {w.domain_name if hasattr(w, 'domain_name') else 'N/A'}")
-                            st.write(f"**Registrar:** {w.registrar if hasattr(w, 'registrar') else 'N/A'}")
-                        
-                        with col2:
-                            st.markdown("**Important Dates:**")
-                            if w.expiration_date:
-                                exp = w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date
-                                st.write(f"**Expires:** {str(exp).split()[0]}")
-                                
-                                # Quick Health Check
-                                try:
-                                    days_left = (exp - datetime.now()).days
-                                    if days_left < 30:
-                                        st.warning(f"⚠️ Expires in {days_left} days!")
-                                    else:
-                                        st.success(f"✅ {days_left} days remaining")
-                                except:
-                                    pass
-                        
-                        with st.expander("📄 View Full Raw WHOIS Data"):
-                            st.json(str(w))
-                        st.markdown('</div>', unsafe_allow_html=True)
-                        
-                    except Exception as e:
-                        st.error(f"❌ WHOIS lookup failed: {type(e).__name__}")
-                        st.info(f"**Try manual lookup:**\n- https://who.is/whois/{domain}")
+                        status = w.status[0] if isinstance(w.status, list) else w.status
+                        registrar = w.registrar
+                        raw_result = str(w)
+
+                    # --- UI DISPLAY ---
+                    st.markdown('<div class="success-box">', unsafe_allow_html=True)
+                    st.markdown(f"### 🛡️ Security & Status: {domain}")
+                    
+                    m_col1, m_col2, m_col3 = st.columns(3)
+                    m_col1.metric("DNSSEC Status", dnssec)
+                    m_col2.metric("Domain Status", str(status).split(' ')[0] if status else "N/A")
+                    m_col3.metric("Registrar", str(registrar)[:15] + ".." if registrar else "N/A")
+                    
+                    # Nameserver display
+                    if ns_list:
+                        st.write("**Active Nameservers:**")
+                        for ns in ns_list:
+                            st.write(f"- `{ns}`")
+                    
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+                    with st.expander("📄 View Full WHOIS Data"):
+                        if domain.endswith('.ng'):
+                            for section, details in whois_data.items():
+                                if section != 'Raw Whois Result':
+                                    st.subheader(section)
+                                    st.json(details)
+                        st.text_area("Raw Output", raw_result, height=300)
+
+                except Exception as e:
+                    st.error(f"❌ Analysis failed: {str(e)}")
         else:
-            st.warning("⚠️ Please enter a domain name")
+            st.warning("⚠️ Please enter a domain name.")
             
 # EMAIL TOOLS
 elif tool == "📮 MX Record Checker":
