@@ -319,12 +319,10 @@ def check_password_strength(password):
 
 # --- Specialized .ng Session & Utilities ---
 ng_session = requests.Session()
-ng_session.headers.update({
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-})
+ng_session.headers.update({"User-Agent": "Mozilla/5.0 SupportBuddy/1.0"})
 
 def query_ng_whois(domain):
-    """Query WHOIS information for .ng domains via whois.net.ng"""
+    """Query WHOIS information for .ng domains"""
     url = "https://whois.net.ng/whois/"
     try:
         response = ng_session.get(url, params={"domain": domain}, timeout=10)
@@ -333,7 +331,7 @@ def query_ng_whois(domain):
         return f"Error: {e}"
 
 def parse_ng_whois(html):
-    """Parse .ng WHOIS HTML into structured sections"""
+    """Parse .ng WHOIS HTML into beautified structured data"""
     soup = BeautifulSoup(html, 'html.parser')
     sections = {}
     cards = soup.find_all('div', class_='card mb-4')
@@ -351,25 +349,20 @@ def parse_ng_whois(html):
                         value = tds[1].get_text(separator=' ').strip()
                         data[key] = value
             sections[section_name] = data
-    
-    raw_pre = soup.find('pre')
-    if raw_pre:
-        sections['Raw Registry Data'] = raw_pre.get_text().strip()
     return sections
 
 def get_live_ns(domain):
-    """Fetch live NS records via Google DNS API"""
+    """Direct NS lookup bypassing WHOIS cache"""
     try:
         url = f"https://dns.google/resolve?name={domain}&type=NS"
         res = requests.get(url, timeout=5).json()
         if res.get('Status') == 0 and 'Answer' in res:
             return [r['data'].lower().rstrip('.') for r in res['Answer'] if r['type'] == 2]
-    except:
-        pass
+    except: pass
     return []
 
 def get_dnssec_info(domain):
-    """Neutral DNSSEC check - No icons, just info"""
+    """Neutral DNSSEC check - Info only, no icons"""
     try:
         url = f"https://dns.google/resolve?name={domain}&type=DS"
         res = requests.get(url, timeout=5).json()
