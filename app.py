@@ -418,8 +418,8 @@ elif tool == "🔓 IP Unban":
     with col2:
         st.link_button("Open Tool", "https://my.hostafrica.com/admin/custom/scripts/unban/", use_container_width=True)
 
-elif tool == "🔄 Bulk NS Updater":
-    st.title("🔄 Bulk Nameserver Updater")
+elif tool == "📝 Bulk NS Updater":
+    st.title("📝 Bulk Nameserver Updater")
     st.markdown("Update nameservers for multiple domains simultaneously in WHMCS.")
     
     col1, col2 = st.columns([3, 1])
@@ -428,8 +428,8 @@ elif tool == "🔄 Bulk NS Updater":
     with col2:
         st.link_button("🔄 Open Updater", "https://my.hostafrica.com/admin/addonmodules.php?module=nameserv_changer", use_container_width=True)
 
-elif tool == "📂 cPanel Account List":
-    st.title("📂 cPanel Account List")
+elif tool == "📋 cPanel Account List":
+    st.title("📋 cPanel Account List")
     st.markdown("View a comprehensive list of all hosted cPanel accounts and their details.")
     
     col1, col2 = st.columns([3, 1])
