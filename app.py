@@ -394,24 +394,17 @@ if tool == "Home":
         st.metric("AI Assistant", "✅ Available" if GEMINI_AVAILABLE else "⚠️ Configure API")
 
 # ADMIN TOOLS
-elif tool == "🔐 PIN Checker":
-    st.title("🔐 PIN Checker")
-    st.markdown("Verify customer PINs for account access")
+    elif tool == "🔐 PIN Checker":
+     st.title("🔐 PIN Checker")
+     st.markdown("Verify customer PINs for account access")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        customer_pin = st.text_input("Customer PIN:", type="password")
-    with col2:
-        account_pin = st.text_input("Account PIN:", type="password")
+     customer_pin = st.text_input("Enter PIN to verify:")
     
-    if st.button("🔍 Verify PIN", type="primary"):
-        if customer_pin and account_pin:
-            if customer_pin == account_pin:
-                st.success("✅ PIN verified! Access granted.")
-            else:
-                st.error("❌ PIN does not match!")
-        else:
-            st.warning("⚠️ Please enter both PINs")
+    # Construct a search URL if the target script supports it
+    search_url = f"https://my.hostafrica.com/admin/admin_tool/client-pin?pin={customer_pin}"
+    
+    if st.button("Verify on WHMCS"):
+       st.link_button("Click here to see results", search_url)
 
 elif tool == "🔓 IP Unban":
     st.title("🔓 IP Unban Tool")
