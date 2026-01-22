@@ -974,7 +974,6 @@ elif tool == "🌍 WHOIS Lookup":
                         html = query_ng_whois(domain)
                         sections = parse_ng_whois(html)
                         reg_info = sections.get('Registration Info', {})
-                        status_str = reg_info.get('Domain Status', '').lower()
                         
                         st.markdown("### 🇳🇬 Registration Data")
                         for section, data in sections.items():
