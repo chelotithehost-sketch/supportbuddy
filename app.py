@@ -393,9 +393,11 @@ if tool == "Home":
         st.metric("FTP Testing", "✅ Available" if FEATURES['ftp'] else "⚠️ Limited")
         st.metric("AI Assistant", "✅ Available" if GEMINI_AVAILABLE else "⚠️ Configure API")
 
-# ADMIN TOOLS
-# --- PIN Checker ---
-if tool == "🔐 PIN Checker":
+# ============================================================================
+# PART: ADMIN TOOLS
+# ============================================================================
+
+elif tool == "🔐 PIN Checker":
     st.title("🔐 PIN Checker")
     st.markdown("Verify customer PINs for secure account access and verification.")
     
@@ -403,9 +405,9 @@ if tool == "🔐 PIN Checker":
     with col1:
         st.info("Check the provided customer PIN against the WHMCS records.")
     with col2:
+        # Reverted to your original working link
         st.link_button("Open Tool", "https://my.hostafrica.com/admin/admin_tool/client-pin", use_container_width=True)
 
-# --- IP Unban ---
 elif tool == "🔓 IP Unban":
     st.title("🔓 IP Unban")
     st.markdown("Search for and remove IP addresses from server firewalls.")
@@ -416,7 +418,6 @@ elif tool == "🔓 IP Unban":
     with col2:
         st.link_button("Open Tool", "https://my.hostafrica.com/admin/custom/scripts/unban/", use_container_width=True)
 
-# --- Bulk NS Updater ---
 elif tool == "🔄 Bulk NS Updater":
     st.title("🔄 Bulk Nameserver Updater")
     st.markdown("Update nameservers for multiple domains simultaneously in WHMCS.")
@@ -427,7 +428,6 @@ elif tool == "🔄 Bulk NS Updater":
     with col2:
         st.link_button("🔄 Open Updater", "https://my.hostafrica.com/admin/addonmodules.php?module=nameserv_changer", use_container_width=True)
 
-# --- cPanel Account List ---
 elif tool == "📂 cPanel Account List":
     st.title("📂 cPanel Account List")
     st.markdown("View a comprehensive list of all hosted cPanel accounts and their details.")
