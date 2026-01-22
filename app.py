@@ -2580,3 +2580,4 @@ elif tool == "🗑️ Clear Cache Instructions":
         2. Select "All time" from the time range dropdown
         3. Check "Cached images and files"
         4. Click "Clear data"             
+        """)
