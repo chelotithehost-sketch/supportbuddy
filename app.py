@@ -953,89 +953,85 @@ elif tool == "📋 NS Authority Checker":
 
 elif tool == "🌍 WHOIS Lookup":
     st.title("🌍 Advanced WHOIS & Health Check")
-    st.markdown("Detailed registration analysis for standard and .ng domains.")
+    st.markdown("Detailed registration analysis with status-aware reporting.")
     
-    domain_input = st.text_input("Enter domain name:", placeholder="hostafrica.com.ng", key="whois_main_input")
+    domain_input = st.text_input("Enter domain name:", placeholder="hostafrica.co.za or .ng", key="whois_main_input")
     
-    if st.button("🔍 Analyze Domain", type="primary"):
+    if st.button("🔍 Run Analysis", type="primary"):
         if domain_input:
             domain = domain_input.strip().lower().replace('https://', '').replace('http://', '').split('/')[0]
             
-            with st.spinner(f"Running deep lookup for {domain}..."):
+            with st.spinner(f"Analyzing {domain}..."):
                 dnssec_status = get_dnssec_info(domain)
                 ns_list = get_live_ns(domain)
+                now = datetime.now().replace(tzinfo=None) # Timezone-neutral for comparison
                 
                 try:
                     # ==========================================
-                    # CASE 1: UNIQUE .ng TREATMENT
+                    # UNIQUE .ng TREATMENT
                     # ==========================================
                     if domain.endswith('.ng'):
                         html = query_ng_whois(domain)
                         sections = parse_ng_whois(html)
-                        
-                        # Use first card (Registration Info) for status logic
                         reg_info = sections.get('Registration Info', {})
                         status_str = reg_info.get('Domain Status', '').lower()
                         
                         if "ok" in status_str:
                             st.success(f"✅ Domain Status: {status_str.upper()}")
                         else:
-                            st.error(f"❌ Domain Status: {status_str.upper() if status_str else 'UNKNOWN'}")
+                            st.error(f"❌ Status Alert: {status_str.upper() if status_str else 'UNKNOWN'}")
 
-                        # Beautified HTML-style Output (Structured Data)
+                        st.markdown("### 🇳🇬 Registration Data")
                         for section, data in sections.items():
-                            if section == 'Raw Registry Data':
-                                with st.expander("📄 View Raw Registry Output"):
-                                    st.code(data, language=None)
-                            else:
-                                with st.expander(f"📋 {section}", expanded=True):
-                                    cols = st.columns(2)
-                                    for i, (k, v) in enumerate(data.items()):
-                                        cols[i % 2].write(f"**{k}:** {v}")
+                            with st.expander(f"📋 {section}", expanded=True):
+                                # Display in a clean grid
+                                cols = st.columns(2)
+                                for i, (k, v) in enumerate(data.items()):
+                                    cols[i % 2].markdown(f"**{k}:** {v}")
 
                     # ==========================================
-                    # CASE 2: STANDARD DOMAINS (.com, .net, etc)
+                    # STANDARD TLD TREATMENT (.com, .net, .org, etc)
                     # ==========================================
                     else:
                         w = whois.whois(domain)
+                        # Consolidate status to string for logic check
                         status_list = w.status if isinstance(w.status, list) else [w.status]
                         status_joined = " ".join([str(s) for s in status_list]).lower()
                         
-                        # Check Expiration Dates
+                        # Fix: Handle naive/aware datetime comparison
                         is_expired = False
                         if w.expiration_date:
                             exp = w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date
-                            if exp < datetime.now():
+                            # Remove timezone info from registry date to match local now()
+                            if exp.replace(tzinfo=None) < now:
                                 is_expired = True
 
-                        # Color Logic based on Status and Expiry
+                        # Status-Aware Alerting Logic
                         error_keywords = ["hold", "suspended", "expired", "redemption", "pendingdelete", "raa"]
                         if any(x in status_joined for x in error_keywords) or is_expired:
-                            st.error(f"❌ Status Alert: {status_joined.upper() if status_joined else 'EXPIRED'}")
+                            st.error(f"❌ Domain Alert: {status_joined.upper() if status_joined else 'EXPIRED'}")
                         elif "ok" in status_joined or "active" in status_joined:
                             st.success("✅ Domain Status: OK / ACTIVE")
                         else:
-                            st.info(f"ℹ️ Status: {status_joined.upper() if status_joined else 'N/A'}")
+                            st.info(f"ℹ️ Current Status: {status_joined.upper()}")
 
-                        with st.expander("📄 Raw WHOIS Result", expanded=False):
+                        with st.expander("📄 View Full WHOIS Output", expanded=False):
                             st.code(str(w), language=None)
 
                     # ==========================================
-                    # COMMON FOOTER: DNSSEC & NAMESERVERS
+                    # COMMON FOOTER (Neutral DNSSEC & Live NS)
                     # ==========================================
                     st.markdown("---")
-                    foot_col1, foot_col2 = st.columns(2)
-                    
-                    with foot_col1:
-                        st.markdown(f'<div class="info-box" style="text-align:center">🛡️ <b>{dnssec_status}</b></div>', unsafe_allow_html=True)
-                    
-                    with foot_col2:
-                        st.write("**Nameservers:**")
+                    c1, c2 = st.columns(2)
+                    with c1:
+                        st.info(f"🛡️ {dnssec_status}")
+                    with c2:
+                        st.write("**Live Nameservers:**")
                         if ns_list:
                             for ns in ns_list:
                                 st.write(f"- `{ns}`")
                         else:
-                            st.warning("No nameservers found in live DNS.")
+                            st.warning("No nameservers found.")
 
                 except Exception as e:
                     st.error(f"Analysis failed: {str(e)}")
