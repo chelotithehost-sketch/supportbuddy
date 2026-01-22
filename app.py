@@ -317,12 +317,14 @@ def check_password_strength(password):
     
     return strength, score, feedback, color
 
-# --- ADVANCED WHOIS UTILITIES ---
+# --- Specialized .ng Session & Utilities ---
 ng_session = requests.Session()
-ng_session.headers.update({"User-Agent": "Mozilla/5.0 SupportBuddy/1.0"})
+ng_session.headers.update({
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+})
 
 def query_ng_whois(domain):
-    """Query WHOIS information for .ng domains"""
+    """Query WHOIS information for .ng domains via whois.net.ng"""
     url = "https://whois.net.ng/whois/"
     try:
         response = ng_session.get(url, params={"domain": domain}, timeout=10)
@@ -331,7 +333,7 @@ def query_ng_whois(domain):
         return f"Error: {e}"
 
 def parse_ng_whois(html):
-    """Parse .ng WHOIS HTML into structured data"""
+    """Parse .ng WHOIS HTML into structured sections"""
     soup = BeautifulSoup(html, 'html.parser')
     sections = {}
     cards = soup.find_all('div', class_='card mb-4')
@@ -349,10 +351,14 @@ def parse_ng_whois(html):
                         value = tds[1].get_text(separator=' ').strip()
                         data[key] = value
             sections[section_name] = data
+    
+    raw_pre = soup.find('pre')
+    if raw_pre:
+        sections['Raw Registry Data'] = raw_pre.get_text().strip()
     return sections
 
-def get_any_nameservers(domain):
-    """Generic NS lookup for any TLD"""
+def get_live_ns(domain):
+    """Fetch live NS records via Google DNS API"""
     try:
         url = f"https://dns.google/resolve?name={domain}&type=NS"
         res = requests.get(url, timeout=5).json()
@@ -362,14 +368,14 @@ def get_any_nameservers(domain):
         pass
     return []
 
-def check_dnssec_info(domain):
-    """Neutral DNSSEC check (no error icons)"""
+def get_dnssec_info(domain):
+    """Neutral DNSSEC check - No icons, just info"""
     try:
         url = f"https://dns.google/resolve?name={domain}&type=DS"
         res = requests.get(url, timeout=5).json()
         return "DNSSEC Signed" if "Answer" in res else "DNSSEC Unsigned"
     except:
-        return "DNSSEC Status Unknown"   
+        return "DNSSEC Unknown"   
 
 # ============================================================================
 # SIDEBAR NAVIGATION
