@@ -317,7 +317,7 @@ def check_password_strength(password):
     
     return strength, score, feedback, color
 
-# --- Specialized .ng Session & Utilities ---
+# --- Specialized .ng Session & Utilities
 ng_session = requests.Session()
 ng_session.headers.update({"User-Agent": "Mozilla/5.0 SupportBuddy/1.0"})
 
@@ -330,17 +330,37 @@ def query_ng_whois(domain):
     except Exception as e:
         return f"Error: {e}"
 
-def parse_ng_whois(html):
-    """Parse .ng WHOIS HTML into beautified structured data"""
+def parse_ng_whois_simplified(html):
+    """
+    Parse .ng WHOIS HTML - ONLY extract essential sections:
+    - Domain Information
+    - Registrar Information  
+    - DNSSEC status (from Domain Information section)
+    - Name Servers
+    
+    Returns a dictionary with only these 4 sections
+    """
     soup = BeautifulSoup(html, 'html.parser')
-    sections = {}
+    essential_sections = {}
+    
+    # Define which sections we want to capture
+    target_sections = ['Domain Information', 'Registrar Information']
+    
+    # Find all WHOIS data cards
     cards = soup.find_all('div', class_='card mb-4')
+    
     for card in cards:
         header = card.find('h5', class_='card-header whois_bg')
-        if header:
-            section_name = header.text.strip()
+        if not header:
+            continue
+            
+        section_name = header.text.strip()
+        
+        # Only process target sections
+        if section_name in target_sections:
             data = {}
             table = card.find('table', class_='table')
+            
             if table:
                 for tr in table.find_all('tr'):
                     tds = tr.find_all('td')
@@ -348,27 +368,61 @@ def parse_ng_whois(html):
                         key = tds[0].text.strip().rstrip(':')
                         value = tds[1].get_text(separator=' ').strip()
                         data[key] = value
-            sections[section_name] = data
-    return sections
-
-def get_live_ns(domain):
-    """Direct NS lookup bypassing WHOIS cache"""
-    try:
-        url = f"https://dns.google/resolve?name={domain}&type=NS"
-        res = requests.get(url, timeout=5).json()
-        if res.get('Status') == 0 and 'Answer' in res:
-            return [r['data'].lower().rstrip('.') for r in res['Answer'] if r['type'] == 2]
-    except: pass
-    return []
+            
+            essential_sections[section_name] = data
+    
+    return essential_sections
+    
+def display_ng_whois_simplified(domain):
+    """Display only essential .ng WHOIS data"""
+    html = query_ng_whois(domain)
+    sections = parse_ng_whois_simplified(html)
+    dnssec_status = get_dnssec_info(domain)
+    ns_list = get_live_ns(domain)
+    
+    st.markdown("### 🇳🇬 Registration Data")
+    
+    if 'Domain Information' in sections:
+        with st.expander("📋 Domain Information", expanded=True):
+            cols = st.columns(2)
+            for i, (k, v) in enumerate(sections['Domain Information'].items()):
+                cols[i % 2].markdown(f"**{k}:** {v}")
+    
+    if 'Registrar Information' in sections:
+        with st.expander("📋 Registrar Information", expanded=True):
+            cols = st.columns(2)
+            for i, (k, v) in enumerate(sections['Registrar Information'].items()):
+                cols[i % 2].markdown(f"**{k}:** {v}")
+    
+    with st.expander("🛡️ DNSSEC Status", expanded=True):
+        st.info(f"**Status:** {dnssec_status}")
+    
+    with st.expander("🌐 Name Servers", expanded=True):
+        if ns_list:
+            for ns in ns_list:
+                st.code(ns)
+        else:
+            st.warning("No nameservers found")    
 
 def get_dnssec_info(domain):
-    """Neutral DNSSEC check - Info only, no icons"""
+    """Get DNSSEC status - Info only"""
     try:
         url = f"https://dns.google/resolve?name={domain}&type=DS"
         res = requests.get(url, timeout=5).json()
         return "DNSSEC Signed" if "Answer" in res else "DNSSEC Unsigned"
     except:
-        return "DNSSEC Unknown"   
+        return "DNSSEC Unknown"
+
+def get_live_ns(domain):
+    """Direct NS lookup for live nameservers"""
+    try:
+        url = f"https://dns.google/resolve?name={domain}&type=NS"
+        res = requests.get(url, timeout=5).json()
+        if res.get('Status') == 0 and 'Answer' in res:
+            return [r['data'].lower().rstrip('.') for r in res['Answer'] if r['type'] == 2]
+    except:
+        pass
+    return []  
 
 # ============================================================================
 # SIDEBAR NAVIGATION
@@ -971,17 +1025,7 @@ elif tool == "🌍 WHOIS Lookup":
                     # UNIQUE .ng TREATMENT
                     # ==========================================
                     if domain.endswith('.ng'):
-                        html = query_ng_whois(domain)
-                        sections = parse_ng_whois(html)
-                        reg_info = sections.get('Registration Info', {})
-                        
-                        st.markdown("### 🇳🇬 Registration Data")
-                        for section, data in sections.items():
-                            with st.expander(f"📋 {section}", expanded=True):
-                                # Display in a clean grid
-                                cols = st.columns(2)
-                                for i, (k, v) in enumerate(data.items()):
-                                    cols[i % 2].markdown(f"**{k}:** {v}")
+                        display_ng_whois_simplified(domain)
                     
                     # ==========================================
                     # STANDARD TLD TREATMENT (.com, .net, .org, etc)
@@ -1040,8 +1084,9 @@ elif tool == "🌍 WHOIS Lookup":
                     # ==========================================
                     # COMMON FOOTER (Neutral DNSSEC & Live NS)
                     # ==========================================
-                    st.markdown("---")
-                    c1, c2 = st.columns(2)
+                    if not domain.endswith('.ng'):
+                        st.markdown("---")
+                        c1, c2 = st.columns(2)
                     with c1:
                         st.info(f"🛡️ {dnssec_status}")
                     with c2:
