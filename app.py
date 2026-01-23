@@ -440,7 +440,7 @@ category = st.sidebar.selectbox(
         "🤖 AI Tools",
         "🌐 Domain & DNS",
         "📧 Email",
-        "🌍 Web & HTTP",
+        "🌍 WEB & SSL TOOLS",
         "📡 Network",
         "💾 Server & Database",
         "🛠️ Utilities"
