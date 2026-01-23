@@ -1084,18 +1084,21 @@ elif tool == "🌍 WHOIS Lookup":
                     # ==========================================
                     # COMMON FOOTER (Neutral DNSSEC & Live NS)
                     # ==========================================
+                    # ==========================================
+                    # COMMON FOOTER (Only for non-.ng domains)
+                    # ==========================================
                     if not domain.endswith('.ng'):
                         st.markdown("---")
                         c1, c2 = st.columns(2)
-                    with c1:
-                        st.info(f"🛡️ {dnssec_status}")
-                    with c2:
-                        st.write("**Live Nameservers:**")
-                        if ns_list:
-                            for ns in ns_list:
-                                st.write(f"- `{ns}`")
-                        else:
-                            st.warning("No nameservers found.")
+                        with c1:
+                            st.info(f"🛡️ {dnssec_status}")
+                        with c2:
+                            st.write("**Live Nameservers:**")
+                            if ns_list:
+                                for ns in ns_list:
+                                    st.write(f"- `{ns}`")
+                            else:
+                                st.warning("No nameservers found.")
                             
                 except Exception as e:
                     st.error(f"❌ Analysis failed: {str(e)}")
