@@ -1656,20 +1656,125 @@ elif tool == "⚠️ Mixed Content Detector":
                 if not success:
                     st.error(f"❌ {response}")
                 else:
-                    http_count = response.text.count('http://')
+                    # Parse HTML to find resources
+                    from bs4 import BeautifulSoup
+                    soup = BeautifulSoup(response.text, 'html.parser')
+                    
+                    # Find all resources with src or href attributes
+                    mixed_content = {
+                        'images': [],
+                        'scripts': [],
+                        'stylesheets': [],
+                        'iframes': [],
+                        'links': [],
+                        'other': []
+                    }
+                    
+                    # Check images
+                    for img in soup.find_all('img', src=True):
+                        if img['src'].startswith('http://'):
+                            mixed_content['images'].append(img['src'])
+                    
+                    # Check scripts
+                    for script in soup.find_all('script', src=True):
+                        if script['src'].startswith('http://'):
+                            mixed_content['scripts'].append(script['src'])
+                    
+                    # Check stylesheets
+                    for link in soup.find_all('link', href=True):
+                        if link.get('rel') and 'stylesheet' in link['rel']:
+                            if link['href'].startswith('http://'):
+                                mixed_content['stylesheets'].append(link['href'])
+                    
+                    # Check iframes
+                    for iframe in soup.find_all('iframe', src=True):
+                        if iframe['src'].startswith('http://'):
+                            mixed_content['iframes'].append(iframe['src'])
+                    
+                    # Check other links
+                    for link in soup.find_all('a', href=True):
+                        if link['href'].startswith('http://'):
+                            mixed_content['links'].append(link['href'])
+                    
+                    # Check for other HTTP references in attributes
+                    for tag in soup.find_all(True):
+                        for attr, value in tag.attrs.items():
+                            if isinstance(value, str) and value.startswith('http://'):
+                                if attr not in ['src', 'href']:  # Already checked these
+                                    mixed_content['other'].append(f"{tag.name}[{attr}]: {value}")
+                    
+                    # Count total mixed content
+                    total_mixed = sum(len(v) for v in mixed_content.values())
+                    
+                    # Also count HTTPS resources for comparison
                     https_count = response.text.count('https://')
                     
-                    col1, col2 = st.columns(2)
+                    # Display summary
+                    col1, col2, col3 = st.columns(3)
                     with col1:
-                        st.metric("HTTP Resources", http_count)
+                        st.metric("HTTP Resources (Mixed)", total_mixed)
                     with col2:
                         st.metric("HTTPS Resources", https_count)
+                    with col3:
+                        if total_mixed > 0:
+                            st.metric("Security Status", "⚠️ Issues Found", delta_color="inverse")
+                        else:
+                            st.metric("Security Status", "✅ Secure", delta_color="normal")
                     
-                    if http_count > 0:
-                        st.warning(f"⚠️ Found {http_count} HTTP resources that should be HTTPS")
+                    # Display results
+                    if total_mixed > 0:
+                        st.error(f"⚠️ Found {total_mixed} HTTP resource(s) that should be HTTPS")
                         st.info("💡 Mixed content can cause browser warnings and security issues")
+                        
+                        # Show details for each type
+                        if mixed_content['images']:
+                            with st.expander(f"🖼️ Images ({len(mixed_content['images'])})", expanded=True):
+                                for img in mixed_content['images']:
+                                    st.code(img, language=None)
+                        
+                        if mixed_content['scripts']:
+                            with st.expander(f"📜 Scripts ({len(mixed_content['scripts'])})", expanded=True):
+                                st.warning("⚠️ Scripts are critical security issues!")
+                                for script in mixed_content['scripts']:
+                                    st.code(script, language=None)
+                        
+                        if mixed_content['stylesheets']:
+                            with st.expander(f"🎨 Stylesheets ({len(mixed_content['stylesheets'])})", expanded=True):
+                                for css in mixed_content['stylesheets']:
+                                    st.code(css, language=None)
+                        
+                        if mixed_content['iframes']:
+                            with st.expander(f"🖼️ iFrames ({len(mixed_content['iframes'])})", expanded=True):
+                                st.warning("⚠️ iFrames are critical security issues!")
+                                for iframe in mixed_content['iframes']:
+                                    st.code(iframe, language=None)
+                        
+                        if mixed_content['links']:
+                            with st.expander(f"🔗 Links ({len(mixed_content['links'])})", expanded=False):
+                                # Show only first 20 to avoid overwhelming display
+                                for link in mixed_content['links'][:20]:
+                                    st.code(link, language=None)
+                                if len(mixed_content['links']) > 20:
+                                    st.info(f"... and {len(mixed_content['links']) - 20} more links")
+                        
+                        if mixed_content['other']:
+                            with st.expander(f"🔧 Other Resources ({len(mixed_content['other'])})", expanded=False):
+                                for item in mixed_content['other']:
+                                    st.code(item, language=None)
+                        
+                        # Provide fix suggestions
+                        st.markdown("---")
+                        st.markdown("### 🔧 How to Fix:")
+                        st.markdown("""
+                        1. **Replace** `http://` with `https://` in all resource URLs
+                        2. **Use protocol-relative URLs**: `//example.com/style.css` (inherits page protocol)
+                        3. **Host resources locally** if external HTTPS version is unavailable
+                        4. **Update CMS/theme settings** to force HTTPS for all resources
+                        5. **Check .htaccess or web.config** for mixed content rules
+                        """)
                     else:
-                        st.success("✅ No mixed content detected")
+                        st.success("✅ No mixed content detected - all resources use HTTPS!")
+                        st.balloons()
 
 elif tool == "📊 HTTP Status Code Checker":
     st.title("📊 HTTP Status Code Checker")
