@@ -938,7 +938,7 @@ elif tool == "🔍 Domain Status Check":
                                         st.warning(f"Could not parse all WHOIS data")
                                 else:
                                     st.warning(f"⚠️ {whois_data}")
-                            else:
+                       else:
                                 st.warning("⚠️ WHOIS library not available")
 elif tool == "🔎 DNS Analyzer":
     st.title("🔎 DNS Analyzer")
