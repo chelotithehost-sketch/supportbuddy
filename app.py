@@ -881,7 +881,7 @@ elif tool == "🔍 Domain Status Check":
                         else:
                             st.warning(f"⚠️ {mx_records}")
                         
-# WHOIS Information - handles both .ng and other TLDs
+  # WHOIS Information - handles both .ng and other TLDs
                         st.markdown("### 📋 WHOIS Information")
                         
                         # Check if it's a .ng domain
@@ -917,7 +917,7 @@ elif tool == "🔍 Domain Status Check":
                             else:
                                 st.warning("⚠️ Could not retrieve .ng WHOIS data")
                         
-                        else:
+                        else:  # ← LINE 920: REMOVE 4 SPACES OF INDENTATION HERE
                             # Use standard WHOIS for other TLDs
                             if WHOIS_AVAILABLE:
                                 success, whois_data = lookup_whois(domain)
@@ -938,7 +938,7 @@ elif tool == "🔍 Domain Status Check":
                                         st.warning(f"Could not parse all WHOIS data")
                                 else:
                                     st.warning(f"⚠️ {whois_data}")
-                       else:
+                            else:
                                 st.warning("⚠️ WHOIS library not available")
 elif tool == "🔎 DNS Analyzer":
     st.title("🔎 DNS Analyzer")
