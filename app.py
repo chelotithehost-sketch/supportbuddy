@@ -2637,5 +2637,164 @@ elif tool == "🗑️ Clear Cache Instructions":
         1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
         2. Select "All time" from the time range dropdown
         3. Check "Cached images and files"
-        4. Click "Clear data"             
+        4. Click "Clear data"
+        
+        **Manual Method:**
+        1. Click the three dots (⋮) in the top-right corner
+        2. Go to **More tools** → **Clear browsing data**
+        3. Select **Advanced** tab
+        4. Choose time range: **All time**
+        5. Check **Cached images and files**
+        6. Click **Clear data**
+        
+        **Hard Refresh (for current page only):**
+        - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
+        - Mac: `Cmd+Shift+R`
         """)
+    
+    elif browser == "Firefox":
+        st.markdown("""
+        ### Mozilla Firefox
+        
+        **Quick Method:**
+        1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
+        2. Select "Everything" from time range
+        3. Check "Cache"
+        4. Click "Clear Now"
+        
+        **Manual Method:**
+        1. Click the hamburger menu (☰) in the top-right corner
+        2. Go to **Settings**
+        3. Click **Privacy & Security** in the left sidebar
+        4. Scroll to **Cookies and Site Data**
+        5. Click **Clear Data...**
+        6. Check **Cached Web Content**
+        7. Click **Clear**
+        
+        **Hard Refresh (for current page only):**
+        - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
+        - Mac: `Cmd+Shift+R`
+        """)
+    
+    elif browser == "Safari":
+        st.markdown("""
+        ### Safari (macOS)
+        
+        **Quick Method:**
+        1. Press `Cmd+Option+E` to empty cache
+        2. Or go to **Develop** → **Empty Caches**
+        
+        **Enable Develop Menu (if not visible):**
+        1. Go to **Safari** → **Preferences**
+        2. Click **Advanced** tab
+        3. Check "Show Develop menu in menu bar"
+        
+        **Manual Method:**
+        1. Go to **Safari** → **Preferences**
+        2. Click **Advanced** tab
+        3. Enable "Show Develop menu in menu bar"
+        4. Click **Develop** in menu bar
+        5. Select **Empty Caches**
+        
+        **Clear All History & Cache:**
+        1. Go to **Safari** → **Clear History...**
+        2. Select "all history" from dropdown
+        3. Click **Clear History**
+        
+        **Hard Refresh (for current page only):**
+        - Mac: `Cmd+Option+R` or `Cmd+Shift+R`
+        
+        **Safari (iOS - iPhone/iPad):**
+        1. Go to **Settings** → **Safari**
+        2. Scroll down and tap **Clear History and Website Data**
+        3. Confirm by tapping **Clear History and Data**
+        """)
+    
+    elif browser == "Edge":
+        st.markdown("""
+        ### Microsoft Edge
+        
+        **Quick Method:**
+        1. Press `Ctrl+Shift+Delete` (Windows) or `Cmd+Shift+Delete` (Mac)
+        2. Select "All time" from time range
+        3. Check "Cached images and files"
+        4. Click "Clear now"
+        
+        **Manual Method:**
+        1. Click the three dots (...) in the top-right corner
+        2. Go to **Settings**
+        3. Click **Privacy, search, and services** in the left sidebar
+        4. Under "Clear browsing data", click **Choose what to clear**
+        5. Select time range: **All time**
+        6. Check **Cached images and files**
+        7. Click **Clear now**
+        
+        **Hard Refresh (for current page only):**
+        - Windows: `Ctrl+F5` or `Ctrl+Shift+R`
+        - Mac: `Cmd+Shift+R`
+        """)
+    
+    elif browser == "Opera":
+        st.markdown("""
+        ### Opera
+        
+        **Quick Method:**
+        1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
+        2. Select "All time" from time range
+        3. Check "Cached images and files"
+        4. Click "Clear data"
+        
+        **Manual Method:**
+        1. Click the **Opera menu** (O icon) in the top-left corner
+        2. Go to **Settings** (or press `Alt+P`)
+        3. Click **Privacy & security** in the left sidebar
+        4. Under "Privacy", click **Clear browsing data**
+        5. Select **Advanced** tab
+        6. Choose time range: **All time**
+        7. Check **Cached images and files**
+        8. Click **Clear data**
+        
+        **Hard Refresh (for current page only):**
+        - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
+        - Mac: `Cmd+Shift+R`
+        """)
+    
+    # Common tips for all browsers
+    st.markdown("---")
+    st.markdown("### 💡 Additional Tips")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.info("""
+        **Why Clear Cache?**
+        - Fix loading issues
+        - See website updates
+        - Resolve display problems
+        - Free up disk space
+        - Troubleshoot errors
+        """)
+    
+    with col2:
+        st.warning("""
+        **What Gets Deleted:**
+        - Cached images
+        - Cached files
+        - Temporary data
+        
+        **What Stays:**
+        - Passwords (unless selected)
+        - Bookmarks
+        - History (unless selected)
+        """)
+    
+    st.markdown("---")
+    st.markdown("### 🔄 Incognito/Private Mode Alternative")
+    st.markdown("""
+    If you just want to test without cache:
+    - **Chrome**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
+    - **Firefox**: `Ctrl+Shift+P` (Windows) or `Cmd+Shift+P` (Mac)
+    - **Safari**: `Cmd+Shift+N` (Mac)
+    - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
+    - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
+    """)
