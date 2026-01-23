@@ -460,8 +460,8 @@ elif category == "🌐 Domain & DNS":
     tool = st.sidebar.radio("Domain Tools", ["🔍 Domain Status Check", "🔎 DNS Analyzer", "📋 NS Authority Checker", "🌍 WHOIS Lookup"])
 elif category == "📧 Email":
     tool = st.sidebar.radio("Email Tools", ["📮 MX Record Checker", "✉️ Email Account Tester", "🔒 SPF/DKIM Check", "📄 Email Header Analyzer"])
-elif category == "🌍 Web & HTTP":
-    tool = st.sidebar.radio("Web Tools", ["🔧 Web Error Troubleshooting", "🔒 SSL Certificate Checker", "🔀 HTTPS Redirect Test", "⚠️ Mixed Content Detector", "📊 HTTP Status Code Checker", "🔗 Redirect Checker"])
+elif category == "🌍 WEB & SSL TOOLS":
+    tool = st.sidebar.radio("WEB & SSL TOOLS", ["🔧 Web Error Troubleshooting", "🔒 SSL Certificate Checker", "🔀 HTTPS Redirect Test", "⚠️ Mixed Content Detector", "📊 HTTP Status Code Checker", "🔗 Redirect Checker"])
 elif category == "📡 Network":
     tool = st.sidebar.radio("Network Tools", ["🔍 IP Address Lookup", "🗂️ DNS Analyzer", "🧹 Flush DNS Cache"])
 elif category == "💾 Server & Database":
@@ -1430,7 +1430,7 @@ elif tool == "📄 Email Header Analyzer":
                         with st.expander(f"📋 {key}"):
                             st.code(value)
 
-# WEB & HTTP TOOLS
+# WEB & SSL TOOLS
 elif tool == "🔧 Web Error Troubleshooting":
     st.title("🔧 Web Error Troubleshooting")
     st.markdown("Quick guides for common web errors")
