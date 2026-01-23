@@ -461,13 +461,13 @@ elif category == "🌐 Domain & DNS":
 elif category == "📧 Email":
     tool = st.sidebar.radio("Email Tools", ["📮 MX Record Checker", "✉️ Email Account Tester", "🔒 SPF/DKIM Check", "📄 Email Header Analyzer"])
 elif category == "🌍 Web & HTTP":
-    tool = st.sidebar.radio("Web Tools", ["🔧 Web Error Troubleshooting", "🔒 SSL Certificate Checker", "🔀 HTTPS Redirect Test", "⚠️ Mixed Content Detector", "📊 HTTP Status Code Checker", "🔗 Redirect Checker", "🤖 robots.txt Viewer", "⚡ Website Speed Test"])
+    tool = st.sidebar.radio("Web Tools", ["🔧 Web Error Troubleshooting", "🔒 SSL Certificate Checker", "🔀 HTTPS Redirect Test", "⚠️ Mixed Content Detector", "📊 HTTP Status Code Checker", "🔗 Redirect Checker"])
 elif category == "📡 Network":
-    tool = st.sidebar.radio("Network Tools", ["🌐 My IP Address", "📡 Ping Tool", "🔌 Port Checker", "🗺️ Traceroute"])
+    tool = st.sidebar.radio("Network Tools", ["🔍 IP Address Lookup", "🗂️ DNS Analyzer", "🧹 Flush DNS Cache"])
 elif category == "💾 Server & Database":
-    tool = st.sidebar.radio("Server Tools", ["🗄️ MySQL Connection Tester", "📊 Database Size Calculator", "📁 FTP Connection Tester", "🔐 File Permission Checker"])
+    tool = st.sidebar.radio("Server Tools", ["📊 Database Size Calculator", "🔐 File Permission Checker"])
 elif category == "🛠️ Utilities":
-    tool = st.sidebar.radio("Utilities", ["📚 Help Center", "🔑 Password Strength Meter", "🌍 Timezone Converter", "📋 Copy-Paste Utilities", "📸 Screenshot Annotator", "📝 Session Notes", "🗑️ Clear Cache Instructions", "🧹 Flush DNS Cache"])
+    tool = st.sidebar.radio("Utilities", ["📚 Help Center", "🔑 Password Strength Meter", "📋 Copy-Paste Utilities", "📸 Screenshot Annotator", "📝 Session Notes", "🗑️ Clear Cache Instructions", "🧹 Flush DNS Cache"])
 
 # ============================================================================
 # MAIN CONTENT - TOOL IMPLEMENTATIONS
@@ -881,27 +881,65 @@ elif tool == "🔍 Domain Status Check":
                         else:
                             st.warning(f"⚠️ {mx_records}")
                         
-                        if WHOIS_AVAILABLE:
-                            st.markdown("### 📋 WHOIS Information")
-                            success, whois_data = lookup_whois(domain)
-                            if success:
-                                try:
-                                    info_col1, info_col2 = st.columns(2)
-                                    with info_col1:
-                                        if hasattr(whois_data, 'registrar'):
-                                            st.info(f"**Registrar:** {whois_data.registrar}")
-                                        if hasattr(whois_data, 'creation_date'):
-                                            st.info(f"**Created:** {whois_data.creation_date}")
-                                    with info_col2:
-                                        if hasattr(whois_data, 'expiration_date'):
-                                            st.info(f"**Expires:** {whois_data.expiration_date}")
-                                        if hasattr(whois_data, 'status'):
-                                            st.info(f"**Status:** {whois_data.status}")
-                                except Exception as e:
-                                    st.warning(f"Could not parse all WHOIS data")
+# WHOIS Information - handles both .ng and other TLDs
+                        st.markdown("### 📋 WHOIS Information")
+                        
+                        # Check if it's a .ng domain
+                        if domain.endswith('.ng'):
+                            # Use the .ng specific WHOIS
+                            html = query_ng_whois(domain)
+                            sections = parse_ng_whois_simplified(html)
+                            
+                            if sections:
+                                info_col1, info_col2 = st.columns(2)
+                                
+                                with info_col1:
+                                    # Get registrar from Registrar Information
+                                    if 'Registrar Information' in sections:
+                                        reg_info = sections['Registrar Information']
+                                        if 'Registrar' in reg_info:
+                                            st.info(f"**Registrar:** {reg_info['Registrar']}")
+                                    
+                                    # Get created date from Domain Information
+                                    if 'Domain Information' in sections:
+                                        dom_info = sections['Domain Information']
+                                        if 'Registered On' in dom_info:
+                                            st.info(f"**Created:** {dom_info['Registered On']}")
+                                
+                                with info_col2:
+                                    # Get expiration from Domain Information
+                                    if 'Domain Information' in sections:
+                                        dom_info = sections['Domain Information']
+                                        if 'Expires On' in dom_info:
+                                            st.info(f"**Expires:** {dom_info['Expires On']}")
+                                        if 'Status' in dom_info:
+                                            st.info(f"**Status:** {dom_info['Status']}")
                             else:
-                                st.warning(f"⚠️ {whois_data}")
-
+                                st.warning("⚠️ Could not retrieve .ng WHOIS data")
+                        
+                            else:
+                            # Use standard WHOIS for other TLDs
+                            if WHOIS_AVAILABLE:
+                                success, whois_data = lookup_whois(domain)
+                                if success:
+                                    try:
+                                        info_col1, info_col2 = st.columns(2)
+                                        with info_col1:
+                                            if hasattr(whois_data, 'registrar'):
+                                                st.info(f"**Registrar:** {whois_data.registrar}")
+                                            if hasattr(whois_data, 'creation_date'):
+                                                st.info(f"**Created:** {whois_data.creation_date}")
+                                        with info_col2:
+                                            if hasattr(whois_data, 'expiration_date'):
+                                                st.info(f"**Expires:** {whois_data.expiration_date}")
+                                            if hasattr(whois_data, 'status'):
+                                                st.info(f"**Status:** {whois_data.status}")
+                                    except Exception as e:
+                                        st.warning(f"Could not parse all WHOIS data")
+                                else:
+                                    st.warning(f"⚠️ {whois_data}")
+                            else:
+                                st.warning("⚠️ WHOIS library not available")
 elif tool == "🔎 DNS Analyzer":
     st.title("🔎 DNS Analyzer")
     st.markdown("Comprehensive DNS record analysis")
@@ -1844,320 +1882,207 @@ elif tool == "🔗 Redirect Checker":
                         st.info("ℹ️ No redirects - page loads directly")
                         st.code(response.url)
 
-elif tool == "🤖 robots.txt Viewer":
-    st.title("🤖 robots.txt Viewer")
-    st.markdown("View and analyze robots.txt files")
-    
-    domain = st.text_input("Domain:", placeholder="example.com")
-    
-    if st.button("🔍 Fetch robots.txt", type="primary"):
-        if not domain:
-            st.warning("⚠️ Please enter a domain name")
-        else:
-            valid, result = validate_domain(domain)
-            if not valid:
-                st.error(f"❌ {result}")
-            else:
-                domain = result
-                url = f"https://{domain}/robots.txt"
-                
-                with st.spinner(f"Fetching robots.txt from {domain}..."):
-                    success, response = safe_request(url)
-                    
-                    if not success:
-                        st.error(f"❌ {response}")
-                    elif response.status_code == 200:
-                        st.success("✅ robots.txt found")
-                        st.code(response.text, language="text")
-                        
-                        lines = response.text.split('\n')
-                        user_agents = [l for l in lines if l.startswith('User-agent:')]
-                        disallows = [l for l in lines if l.startswith('Disallow:')]
-                        
-                        col1, col2 = st.columns(2)
-                        with col1:
-                            st.metric("User-Agents", len(user_agents))
-                        with col2:
-                            st.metric("Disallow Rules", len(disallows))
-                    else:
-                        st.warning(f"⚠️ robots.txt not found ({response.status_code})")
-
-elif tool == "⚡ Website Speed Test":
-    st.title("⚡ Website Speed Test")
-    st.markdown("Test website loading speed")
-    
-    url = st.text_input("URL:", placeholder="https://example.com")
-    
-    if st.button("⚡ Test Speed", type="primary"):
-        if not url:
-            st.warning("⚠️ Please enter a URL")
-        elif not url.startswith('http'):
-            st.error("❌ URL must include protocol")
-        else:
-            with st.spinner(f"Testing speed for {url}..."):
-                start_time = time.time()
-                success, response = safe_request(url)
-                load_time = time.time() - start_time
-                
-                if not success:
-                    st.error(f"❌ {response}")
-                else:
-                    col1, col2, col3 = st.columns(3)
-                    
-                    with col1:
-                        st.metric("Load Time", f"{load_time:.2f}s")
-                    with col2:
-                        size_kb = len(response.content) / 1024
-                        st.metric("Page Size", f"{size_kb:.2f} KB")
-                    with col3:
-                        st.metric("Status", response.status_code)
-                    
-                    if load_time < 1:
-                        st.success("✅ Excellent - Very Fast!")
-                    elif load_time < 3:
-                        st.success("✅ Good - Fast enough")
-                    elif load_time < 5:
-                        st.warning("⚠️ Moderate - Could be faster")
-                    else:
-                        st.error("❌ Slow - Optimization needed")
-
 # NETWORK TOOLS
-elif tool == "🌐 My IP Address":
-    st.title("🌐 My IP Address")
-    ip = get_client_ip()
-    st.markdown(f'<div class="success-box"><h2 style="text-align:center">{ip}</h2></div>', unsafe_allow_html=True)
+elif tool == "🔍 IP Address Lookup":
+    st.header("🔍 IP Address Lookup")
+    st.markdown("Get detailed geolocation and ISP information for any IP address")
     
-    if ip != "Unable to determine":
-        st.info("💡 This is your public IP address")
-
-elif tool == "📡 Ping Tool":
-    st.title("📡 Ping Tool")
-    st.markdown("Test network connectivity")
-    st.warning("⚠️ Ping may not work on some cloud platforms (e.g., Streamlit Cloud)")
+    ip = st.text_input("Enter IP address:", placeholder="8.8.8.8", key="ip_input")
     
-    hostname = st.text_input("Hostname or IP:", placeholder="example.com or 8.8.8.8")
-    count = st.slider("Number of pings:", 1, 10, 4)
-    
-    if st.button("📡 Ping", type="primary"):
-        if not hostname:
-            st.warning("⚠️ Please enter a hostname or IP")
-        else:
-            param = '-n' if platform.system().lower() == 'windows' else '-c'
-            
-            with st.spinner(f"Pinging {hostname}..."):
-                try:
-                    result = subprocess.run(
-                        ['ping', param, str(count), hostname],
-                        capture_output=True,
-                        text=True,
-                        timeout=30
-                    )
-                    
-                    if result.returncode == 0:
-                        st.success("✅ Ping successful")
-                    else:
-                        st.error("❌ Ping failed")
-                    
-                    st.code(result.stdout)
-                    
-                except subprocess.TimeoutExpired:
-                    st.error("❌ Ping timed out")
-                except FileNotFoundError:
-                    st.error("❌ Ping command not available on this system")
-                except Exception as e:
-                    st.error(f"❌ Error: {str(e)}")
-
-elif tool == "🔌 Port Checker":
-    st.title("🔌 Port Checker")
-    st.markdown("Check if a port is open")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        host = st.text_input("Host:", placeholder="example.com or 192.168.1.1")
-    with col2:
-        port = st.number_input("Port:", min_value=1, max_value=65535, value=80)
-    
-    common_ports = {
-        'HTTP': 80,
-        'HTTPS': 443,
-        'FTP': 21,
-        'SSH': 22,
-        'SMTP': 25,
-        'MySQL': 3306,
-        'cPanel': 2083
-    }
-    
-    st.markdown("**Common Ports:**")
-    port_cols = st.columns(len(common_ports))
-    for i, (name, port_num) in enumerate(common_ports.items()):
-        with port_cols[i]:
-            if st.button(f"{name} ({port_num})"):
-                port = port_num
-    
-    if st.button("🔌 Check Port", type="primary"):
-        if not host:
-            st.warning("⚠️ Please enter a host")
-        else:
-            with st.spinner(f"Checking port {port} on {host}..."):
-                try:
-                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    sock.settimeout(5)
-                    result = sock.connect_ex((host, int(port)))
-                    sock.close()
-                    
-                    if result == 0:
-                        st.success(f"✅ Port {port} is OPEN on {host}")
-                    else:
-                        st.error(f"❌ Port {port} is CLOSED or filtered on {host}")
-                        
-                except socket.gaierror:
-                    st.error("❌ Could not resolve hostname")
-                except socket.timeout:
-                    st.error("❌ Connection timed out")
-                except Exception as e:
-                    st.error(f"❌ Error: {str(e)}")
-    
-    with col_test2:
-        if st.button("🧪 Test SMTP", type="primary"):
-            if not all([email_addr, password, smtp_server]):
-                st.warning("⚠️ Please fill in all SMTP fields")
-            elif not SMTPLIB_AVAILABLE:
-                show_missing_dependency("Email Testing", "built-in (should be available)")
+    if st.button("🔍 Lookup IP", use_container_width=True):
+        if ip:
+            # Validate IP format
+            ip_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
+            if not re.match(ip_pattern, ip):
+                st.error("❌ Invalid IP address format")
             else:
-                with st.spinner("Testing SMTP connection..."):
+                with st.spinner(f"Looking up {ip}..."):
                     try:
-                        if use_ssl_smtp:
-                            smtp = smtplib.SMTP_SSL(smtp_server, smtp_port)
-                        else:
-                            smtp = smtplib.SMTP(smtp_server, smtp_port)
-                            smtp.starttls()
+                        # Try primary API
+                        geo_data = None
+                        try:
+                            response = requests.get(f"https://ipapi.co/{ip}/json/", timeout=5)
+                            if response.status_code == 200:
+                                geo_data = response.json()
+                        except:
+                            pass
                         
-                        smtp.login(email_addr, password)
-                        st.success("✅ SMTP connection successful!")
-                        st.info("📤 Account can send emails")
-                        smtp.quit()
-                    except smtplib.SMTPAuthenticationError:
-                        st.error("❌ Authentication failed - check email/password")
-                    except smtplib.SMTPException as e:
-                        st.error(f"❌ SMTP Error: {str(e)}")
+                        # Fallback API
+                        if not geo_data or geo_data.get('error'):
+                            response = requests.get(f"http://ip-api.com/json/{ip}", timeout=5)
+                            if response.status_code == 200:
+                                fallback = response.json()
+                                if fallback.get('status') == 'success':
+                                    geo_data = {
+                                        'ip': ip,
+                                        'city': fallback.get('city'),
+                                        'region': fallback.get('regionName'),
+                                        'country_name': fallback.get('country'),
+                                        'postal': fallback.get('zip'),
+                                        'latitude': fallback.get('lat'),
+                                        'longitude': fallback.get('lon'),
+                                        'org': fallback.get('isp'),
+                                        'timezone': fallback.get('timezone'),
+                                        'asn': fallback.get('as')
+                                    }
+                        
+                        if geo_data and not geo_data.get('error'):
+                            st.success(f"✅ Information found for {ip}")
+                            
+                            col1, col2, col3 = st.columns(3)
+                            
+                            with col1:
+                                st.metric("🌐 IP Address", ip)
+                                st.metric("🏙️ City", geo_data.get('city', 'N/A'))
+                                st.metric("📮 Postal Code", geo_data.get('postal', 'N/A'))
+                            
+                            with col2:
+                                st.metric("🗺️ Region", geo_data.get('region', 'N/A'))
+                                st.metric("🌍 Country", geo_data.get('country_name', 'N/A'))
+                                st.metric("🕐 Timezone", geo_data.get('timezone', 'N/A'))
+                            
+                            with col3:
+                                st.metric("📡 ISP/Organization", geo_data.get('org', 'N/A')[:25])
+                                if geo_data.get('latitude') and geo_data.get('longitude'):
+                                    st.metric("📍 Coordinates", f"{geo_data['latitude']:.4f}, {geo_data['longitude']:.4f}")
+                                if geo_data.get('asn'):
+                                    st.metric("🔢 ASN", geo_data.get('asn', 'N/A'))
+                            
+                            # Map link
+                            if geo_data.get('latitude') and geo_data.get('longitude'):
+                                map_url = f"https://www.google.com/maps?q={geo_data['latitude']},{geo_data['longitude']}"
+                                st.markdown(f"🗺️ [View on Google Maps]({map_url})")
+                            
+                            # Full details
+                            with st.expander("🔍 View Full IP Details"):
+                                st.json(geo_data)
+                        else:
+                            st.error("❌ Could not retrieve information for this IP address")
+                            st.info("The IP might be private, invalid, or the lookup service is unavailable")
                     except Exception as e:
-                        st.error(f"❌ Connection failed: {str(e)}")
-                        st.info("💡 Check your connection details and try again")
-
-elif tool == "🗺️ Traceroute":
-    st.title("🗺️ Traceroute")
-    st.markdown("Trace the route packets take to reach a host")
-    st.warning("⚠️ Traceroute may not work on some cloud platforms (e.g., Streamlit Cloud)")
-    
-    hostname = st.text_input("Hostname or IP:", placeholder="example.com")
-    
-    if st.button("🗺️ Trace Route", type="primary"):
-        if not hostname:
-            st.warning("⚠️ Please enter a hostname or IP")
+                        st.error(f"❌ Error: {str(e)}")
         else:
-            st.info("⏳ Traceroute may take up to a minute...")
+            st.warning("⚠️ Please enter an IP address")
+
+elif tool == "🗂️ DNS Analyzer":
+    st.header("🗂️ DNS Analyzer")
+    st.markdown("Comprehensive DNS analysis with all record types")
+    
+    domain_dns = st.text_input("Enter domain:", placeholder="example.com")
+    
+    if st.button("🔍 Analyze DNS", use_container_width=True):
+        if domain_dns:
+            domain_dns = domain_dns.strip().lower()
             
-            with st.spinner(f"Tracing route to {hostname}..."):
+            with st.spinner("Analyzing DNS..."):
+                issues, warnings, success_checks = [], [], []
+                
+                # A Records
+                st.subheader("🌐 A Records")
                 try:
-                    if platform.system().lower() == 'windows':
-                        cmd = ['tracert', '-d', '-w', '1000', hostname]
+                    a_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=A", timeout=5).json()
+                    if a_res.get('Answer'):
+                        st.success(f"✅ Found {len(a_res['Answer'])} A record(s)")
+                        for r in a_res['Answer']:
+                            st.code(f"A: {r['data']} (TTL: {r.get('TTL', 'N/A')}s)")
+                        success_checks.append("A record found")
                     else:
-                        cmd = ['traceroute', '-m', '15', '-w', '2', hostname]
-                    
-                    result = subprocess.run(
-                        cmd,
-                        capture_output=True,
-                        text=True,
-                        timeout=60
-                    )
-                    
-                    st.success("✅ Traceroute complete")
-                    st.code(result.stdout)
-                    
-                except subprocess.TimeoutExpired:
-                    st.error("❌ Traceroute timed out")
-                except FileNotFoundError:
-                    st.error("❌ Traceroute command not available on this system")
+                        issues.append("Missing A record")
+                        st.error("❌ No A records")
                 except Exception as e:
-                    st.error(f"❌ Error: {str(e)}")
+                    st.error(f"Error: {str(e)}")
 
-# SERVER & DATABASE TOOLS
-elif tool == "🗄️ MySQL Connection Tester":
-    st.title("🗄️ MySQL Connection Tester")
-    st.warning("🔒 Security: Credentials are processed locally and never stored")
-    st.markdown("Test MySQL/MariaDB database connections")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        host = st.text_input("Host:", placeholder="localhost")
-        db = st.text_input("Database:", placeholder="mydatabase")
-        port = st.number_input("Port:", value=3306, min_value=1, max_value=65535)
-    
-    with col2:
-        user = st.text_input("Username:", placeholder="dbuser")
-        pwd = st.text_input("Password:", type="password")
-    
-    if st.button("🧪 Test Connection", type="primary"):
-        if not all([host, user, pwd, db]):
-            st.warning("⚠️ Please fill in all fields")
-        else:
-            if not MYSQL_AVAILABLE:
-                show_missing_dependency("MySQL Testing", "pymysql")
-            else:
-                with st.spinner("Testing MySQL connection..."):
-                    try:
-                        connection = pymysql.connect(
-                            host=host,
-                            user=user,
-                            password=pwd,
-                            database=db,
-                            port=port,
-                            connect_timeout=10
-                        )
+                # MX Records
+                st.subheader("📧 MX Records")
+                try:
+                    mx_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=MX", timeout=5).json()
+                    if mx_res.get('Answer'):
+                        st.success(f"✅ Found {len(mx_res['Answer'])} mail server(s)")
+                        mx_sorted = sorted(mx_res['Answer'], key=lambda x: int(x['data'].split()[0]))
+                        for r in mx_sorted:
+                            parts = r['data'].split()
+                            st.code(f"MX: Priority {parts[0]} → {parts[1].rstrip('.')}")
+                        success_checks.append("MX configured")
+                    else:
+                        issues.append("No MX records")
+                        st.error("❌ No MX records")
+                except:
+                    pass
+
+                # TXT Records
+                st.subheader("📝 TXT Records (SPF/DKIM/DMARC)")
+                try:
+                    txt_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=TXT", timeout=5).json()
+                    if txt_res.get('Answer'):
+                        found_spf = False
+                        for r in txt_res['Answer']:
+                            val = r['data'].strip('"')
+                            if val.startswith('v=spf1'):
+                                st.success("🛡️ SPF Found")
+                                st.code(f"SPF: {val}")
+                                found_spf = True
+                            elif val.startswith('v=DMARC'):
+                                st.success("🛡️ DMARC Found")
+                                st.code(f"DMARC: {val}")
+                            else:
+                                st.code(f"TXT: {val[:100]}...")
                         
-                        st.success("✅ Connection successful!")
-                        
-                        cursor = connection.cursor()
-                        cursor.execute("SELECT VERSION()")
-                        version = cursor.fetchone()
-                        st.info(f"📊 MySQL Version: {version[0]}")
-                        
-                        cursor.execute(f"""
-                            SELECT 
-                                ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'Size (MB)'
-                            FROM information_schema.TABLES
-                            WHERE table_schema = '{db}'
-                        """)
-                        size = cursor.fetchone()
-                        if size and size[0]:
-                            st.info(f"💾 Database Size: {size[0]} MB")
-                        
-                        cursor.execute(f"SHOW TABLES FROM {db}")
-                        tables = cursor.fetchall()
-                        if tables:
-                            st.success(f"📋 Found {len(tables)} table(s)")
-                            with st.expander("View Tables"):
-                                for table in tables:
-                                    st.code(table[0])
-                        
-                        cursor.close()
-                        connection.close()
-                        
-                    except pymysql.err.OperationalError as e:
-                        error_code = e.args[0]
-                        if error_code == 1045:
-                            st.error("❌ Access denied - check username/password")
-                        elif error_code == 2003:
-                            st.error("❌ Can't connect to MySQL server - check host/port")
-                        elif error_code == 1049:
-                            st.error(f"❌ Unknown database '{db}'")
+                        if found_spf:
+                            success_checks.append("SPF found")
                         else:
-                            st.error(f"❌ MySQL Error ({error_code}): {e.args[1]}")
-                    except Exception as e:
-                        st.error(f"❌ Connection failed: {str(e)}")
+                            warnings.append("No SPF record")
+                    else:
+                        warnings.append("No TXT records")
+                except:
+                    pass
 
+                # Nameservers
+                st.subheader("🖥️ Nameservers")
+                try:
+                    ns_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=NS", timeout=5).json()
+                    if ns_res.get('Answer'):
+                        st.success(f"✅ Found {len(ns_res['Answer'])} nameserver(s)")
+                        for r in ns_res['Answer']:
+                            ns = r['data'].rstrip('.')
+                            st.code(f"NS: {ns}")
+                            if 'host-ww.net' in ns:
+                                st.caption("✅ HostAfrica NS")
+                        success_checks.append("NS configured")
+                    else:
+                        issues.append("No nameservers")
+                except:
+                    pass
+
+                # Summary
+                st.divider()
+                st.subheader("📊 Summary")
+                if not issues and not warnings:
+                    st.success("🎉 All DNS checks passed!")
+                else:
+                    col_a, col_b = st.columns(2)
+                    with col_a:
+                        for i in issues: st.error(f"• {i}")
+                        for w in warnings: st.warning(f"• {w}")
+                    with col_b:
+                        for s in success_checks: st.success(f"• {s}")
+                            
+elif tool == "🧹 Flush DNS Cache":
+    st.title("🧹 Flush Google DNS Cache")
+    st.markdown("Clear Google's DNS cache to force fresh lookups")
+    
+    st.markdown('<div class="info-box">', unsafe_allow_html=True)
+    st.markdown("""
+    **When to flush DNS cache:**
+    - After changing nameservers
+    - After updating DNS records
+    - When experiencing DNS propagation issues
+    - To force fresh DNS lookups
+    """)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
+    
+# SERVER TOOLS
 elif tool == "📊 Database Size Calculator":
     st.title("📊 Database Size Calculator")
     st.markdown("Calculate and convert database sizes")
@@ -2213,82 +2138,6 @@ ORDER BY SUM(data_length + index_length) DESC;""", language="sql")
 FROM information_schema.TABLES
 WHERE table_schema = '{db_name}'
 ORDER BY (data_length + index_length) DESC;""", language="sql")
-
-elif tool == "📁 FTP Connection Tester":
-    st.title("📁 FTP Connection Tester")
-    st.warning("🔒 Security: Credentials are processed locally and never stored")
-    st.markdown("Test FTP/FTPS connections")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        ftp_host = st.text_input("Host:", placeholder="ftp.example.com")
-        ftp_user = st.text_input("Username:", placeholder="ftpuser")
-    
-    with col2:
-        ftp_pass = st.text_input("Password:", type="password")
-        ftp_port = st.number_input("Port:", value=21, min_value=1, max_value=65535)
-    
-    use_tls = st.checkbox("Use TLS (FTPS)", value=False)
-    
-    if st.button("🧪 Test FTP Connection", type="primary"):
-        if not all([ftp_host, ftp_user, ftp_pass]):
-            st.warning("⚠️ Please fill in all fields")
-        else:
-            if not FTPLIB_AVAILABLE:
-                show_missing_dependency("FTP Testing", "built-in (should be available)")
-            else:
-                with st.spinner("Testing FTP connection..."):
-                    try:
-                        if use_tls:
-                            ftp = ftplib.FTP_TLS()
-                        else:
-                            ftp = ftplib.FTP()
-                        
-                        ftp.connect(ftp_host, ftp_port, timeout=10)
-                        st.info("📡 Connected to server")
-                        
-                        ftp.login(ftp_user, ftp_pass)
-                        st.success("✅ Login successful!")
-                        
-                        if use_tls:
-                            ftp.prot_p()
-                            st.info("🔒 Secure data channel enabled")
-                        
-                        welcome = ftp.getwelcome()
-                        if welcome:
-                            st.info(f"💬 Server: {welcome}")
-                        
-                        current_dir = ftp.pwd()
-                        st.info(f"📂 Current directory: {current_dir}")
-                        
-                        try:
-                            files = []
-                            ftp.retrlines('LIST', files.append)
-                            if files:
-                                st.success(f"📋 Found {len(files)} item(s)")
-                                with st.expander("View Directory Listing"):
-                                    for file in files[:20]:
-                                        st.code(file)
-                                    if len(files) > 20:
-                                        st.info(f"... and {len(files) - 20} more")
-                        except Exception as e:
-                            st.warning(f"⚠️ Could not list directory: {e}")
-                        
-                        ftp.quit()
-                        
-                    except ftplib.error_perm as e:
-                        error_msg = str(e)
-                        if '530' in error_msg:
-                            st.error("❌ Login failed - check username/password")
-                        else:
-                            st.error(f"❌ FTP Error: {error_msg}")
-                    except socket.gaierror:
-                        st.error("❌ Could not resolve hostname")
-                    except socket.timeout:
-                        st.error("❌ Connection timed out")
-                    except Exception as e:
-                        st.error(f"❌ Connection failed: {str(e)}")
 
 elif tool == "🔐 File Permission Checker":
     st.title("🔐 File Permission Checker")
@@ -2755,7 +2604,23 @@ elif tool == "📝 Session Notes":
         word_count = len(st.session_state.session_notes.split())
         char_count = len(st.session_state.session_notes)
         st.info(f"📊 {word_count} words, {char_count} characters")
-
+        
+elif tool == "🧹 Flush DNS Cache":
+    st.title("🧹 Flush Google DNS Cache")
+    st.markdown("Clear Google's DNS cache to force fresh lookups")
+    
+    st.markdown('<div class="info-box">', unsafe_allow_html=True)
+    st.markdown("""
+    **When to flush DNS cache:**
+    - After changing nameservers
+    - After updating DNS records
+    - When experiencing DNS propagation issues
+    - To force fresh DNS lookups
+    """)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
+    
 elif tool == "🗑️ Clear Cache Instructions":
     st.title("🗑️ Clear Cache Instructions")
     st.markdown("Step-by-step guide to clear browser cache")
