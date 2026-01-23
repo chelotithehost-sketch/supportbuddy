@@ -917,7 +917,7 @@ elif tool == "🔍 Domain Status Check":
                             else:
                                 st.warning("⚠️ Could not retrieve .ng WHOIS data")
                         
-                           else:
+                            else:
                             # Use standard WHOIS for other TLDs
                             if WHOIS_AVAILABLE:
                                 success, whois_data = lookup_whois(domain)
