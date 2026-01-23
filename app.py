@@ -422,8 +422,141 @@ def get_live_ns(domain):
             return [r['data'].lower().rstrip('.') for r in res['Answer'] if r['type'] == 2]
     except:
         pass
-    return []  
+    return []
 
+def search_kb(query):
+    """Search knowledge base for relevant articles"""
+    query = query.lower()
+    results = []
+   
+    for category, articles in HOSTAFRICA_KB.items():
+        for article in articles:
+            # Check if query matches title or keywords
+            if query in article['title'].lower():
+                results.append({**article, 'category': category, 'relevance': 2})
+            elif any(query in keyword for keyword in article['keywords']):
+                results.append({**article, 'category': category, 'relevance': 1})
+   
+    # Sort by relevance
+    results.sort(key=lambda x: x['relevance'], reverse=True)
+    return results[:10]
+    
+# Knowledge Base Articles Database
+HOSTAFRICA_KB = {
+    'email': [
+        {
+            'title': 'DirectAdmin and cPanel Email',
+            'url': 'https://help.hostafrica.com/category/control-panel-and-emails',
+            'keywords': ['email', 'setup', 'imap', 'smtp', 'outlook', 'thunderbird', 'mail', 'configure', 'client']
+        },
+        {
+            'title': 'HMail and Workspace',
+            'url': 'https://help.hostafrica.com/category/professional-email-and-workspace',
+            'keywords': ['Hmail', 'Professional Mail', 'email', 'setup', 'imap', 'smtp', 'outlook', 'thunderbird', 'mail', 'configure', 'client']
+        }
+    ],
+    'domain': [
+        {
+            'title': 'How to Point Your Domain to HostAfrica',
+            'url': 'https://help.hostafrica.com/category/domains',
+            'keywords': ['domain', 'nameservers', 'dns', 'pointing', 'ns1', 'ns2', 'setup']
+        },
+        {
+            'title': 'Understanding DNS Records (A, CNAME, MX, TXT)',
+            'url': 'https://help.hostafrica.com/category/dns-and-nameservers',
+            'keywords': ['dns', 'records', 'a record', 'cname', 'mx', 'txt', 'zone', 'propagation']
+        },
+        {
+            'title': 'Domain Transfer Guide',
+            'url': 'https://help.hostafrica.com/category/domains',
+            'keywords': ['domain', 'transfer', 'epp', 'auth code', 'registrar', 'migrate']
+        }
+    ],
+    'cpanel': [
+        {
+            'title': 'cPanel Getting Started Guide',
+            'url': 'https://help.hostafrica.com/category/control-panel-and-emails/cpanel',
+            'keywords': ['cpanel', 'getting started', 'basics', 'login', 'dashboard', 'control panel']
+        },
+        {
+            'title': 'DirectAdmin Getting Started Guide',
+            'url': 'https://help.hostafrica.com/category/control-panel-and-emails/directadmin',
+            'keywords': ['DirectAdmin', 'getting started', 'basics', 'login', 'dashboard']
+        }
+    ],
+    'ssl': [
+        {
+            'title': 'SSL Certificate',
+            'url': 'https://help.hostafrica.com/category/ssl-certificates',
+            'keywords': ['ssl', 'https', 'certificate', 'secure']
+        }
+    ],
+    'wordpress': [
+        {
+            'title': 'WordPress',
+            'url': 'https://help.hostafrica.com/category/wordpress',
+            'keywords': ['wordpress', 'install', 'softaculous', 'one click', 'wp', 'setup']
+        },
+        {
+            'title': 'Softaculous',
+            'url': 'https://help.hostafrica.com/category/softaculous',
+            'keywords': ['softaculous', 'one click']
+        }
+    ]
+} 
+
+def search_kb(query):
+    """Search knowledge base for relevant articles with improved relevance scoring"""
+    if not query:
+        return []
+    
+    query = query.lower().strip()
+    results = []
+    
+    for category, articles in HOSTAFRICA_KB.items():
+        for article in articles:
+            relevance_score = 0
+            
+            # Title match (highest relevance)
+            if query in article['title'].lower():
+                relevance_score += 10
+            
+            # Exact keyword match
+            if query in article['keywords']:
+                relevance_score += 8
+            
+            # Partial keyword match
+            for keyword in article['keywords']:
+                if query in keyword or keyword in query:
+                    relevance_score += 5
+                    break
+            
+            # Word-by-word matching for multi-word queries
+            query_words = query.split()
+            if len(query_words) > 1:
+                for word in query_words:
+                    if len(word) > 2:  # Ignore short words
+                        if word in article['title'].lower():
+                            relevance_score += 3
+                        for keyword in article['keywords']:
+                            if word in keyword:
+                                relevance_score += 2
+                                break
+            
+            # Add to results if any relevance found
+            if relevance_score > 0:
+                results.append({
+                    **article,
+                    'category': category,
+                    'relevance': relevance_score
+                })
+    
+    # Sort by relevance (highest first)
+    results.sort(key=lambda x: x['relevance'], reverse=True)
+    
+    # Return top 10 results
+    return results[:10]
+    
 # ============================================================================
 # SIDEBAR NAVIGATION
 # ============================================================================
@@ -2288,84 +2421,77 @@ elif tool == "🔐 File Permission Checker":
 
 # UTILITIES
 elif tool == "📚 Help Center":
-    st.title("📚 Help Center")
-    st.markdown("Quick access to common help topics")
+    st.title("📚 HostAfrica Knowledge Base")
+    st.markdown("Search our comprehensive knowledge base for guides and documentation")
     
-    search = st.text_input("🔍 Search:", placeholder="email setup, dns, cpanel...")
+    # Search input
+    search_query = st.text_input(
+        "🔍 Search:",
+        placeholder="e.g., email setup, dns, cpanel, ssl certificate",
+        help="Enter keywords to search the knowledge base"
+    )
     
-    if search:
-        st.info(f"Searching for: {search}")
+    if search_query:
+        results = search_kb(search_query)
+        
+        if results:
+            st.success(f"✅ Found {len(results)} relevant article(s)")
+            
+            for idx, result in enumerate(results, 1):
+                with st.expander(f"📄 {result['title']}", expanded=(idx <= 3)):
+                    col1, col2 = st.columns([3, 1])
+                    
+                    with col1:
+                        st.markdown(f"**Category:** {result['category'].replace('_', ' ').title()}")
+                        st.markdown(f"**Related Topics:** {', '.join(result['keywords'][:6])}")
+                    
+                    with col2:
+                        st.link_button("📖 Read", result['url'], use_container_width=True)
+        else:
+            st.info("💡 No articles found. Try different keywords or browse categories below.")
     
-    st.markdown("### 📂 Popular Categories")
+    # Popular Categories
+    st.markdown("---")
+    st.markdown("### 📂 Browse by Category")
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("📧 Email Setup", use_container_width=True):
-            st.markdown("""
-            **Email Setup Guide:**
-            1. Log into cPanel
-            2. Go to Email Accounts
-            3. Create new account
-            4. Configure email client:
-               - IMAP: mail.yourdomain.com:993
-               - SMTP: mail.yourdomain.com:465
-            """)
+        if st.button("📧 Email", use_container_width=True):
+            st.session_state.kb_category = 'email'
+        if st.button("🌐 Domain & DNS", use_container_width=True):
+            st.session_state.kb_category = 'domain'
     
     with col2:
-        if st.button("🌐 Domain Setup", use_container_width=True):
-            st.markdown("""
-            **Domain Setup:**
-            1. Point nameservers to hosting
-            2. Wait for DNS propagation (24-48 hours)
-            3. Add domain in cPanel
-            4. Upload files to public_html
-            """)
+        if st.button("🔧 cPanel", use_container_width=True):
+            st.session_state.kb_category = 'cpanel'
+        if st.button("🔒 SSL & HTTPS", use_container_width=True):
+            st.session_state.kb_category = 'ssl'
     
     with col3:
-        if st.button("🗄️ Database Setup", use_container_width=True):
-            st.markdown("""
-            **Database Setup:**
-            1. Create database in cPanel
-            2. Create database user
-            3. Add user to database
-            4. Note credentials for app config
-            """)
-    
-    st.markdown("---")
-    
-    col4, col5, col6 = st.columns(3)
+        if st.button("💻 WordPress", use_container_width=True):
+            st.session_state.kb_category = 'wordpress'
+        if st.button("📁 FTP", use_container_width=True):
+            st.session_state.kb_category = 'ftp'
     
     with col4:
-        if st.button("🔒 SSL Setup", use_container_width=True):
-            st.markdown("""
-            **SSL Certificate:**
-            1. Go to SSL/TLS in cPanel
-            2. Click "Manage SSL"
-            3. Install Let's Encrypt (AutoSSL)
-            4. Force HTTPS in .htaccess
-            """)
+        if st.button("💳 Billing", use_container_width=True):
+            st.session_state.kb_category = 'billing'
+        if st.button("🔍 Troubleshooting", use_container_width=True):
+            st.session_state.kb_category = 'troubleshooting'
     
-    with col5:
-        if st.button("📁 FTP Setup", use_container_width=True):
-            st.markdown("""
-            **FTP Access:**
-            - Host: ftp.yourdomain.com
-            - Username: your-cpanel-user
-            - Password: your-cpanel-password
-            - Port: 21 (or 22 for SFTP)
-            """)
+    # Show category articles if selected
+    if 'kb_category' in st.session_state:
+        category = st.session_state.kb_category
+        st.markdown(f"### {category.title()} Articles")
+        
+        for article in HOSTAFRICA_KB.get(category, []):
+            with st.expander(f"📄 {article['title']}"):
+                st.markdown(f"**Keywords:** {', '.join(article['keywords'][:8])}")
+                st.link_button("📖 Read Article", article['url'], use_container_width=True)
     
-    with col6:
-        if st.button("🔧 Troubleshooting", use_container_width=True):
-            st.markdown("""
-            **Common Issues:**
-            - Check error logs first
-            - Verify DNS is correct
-            - Check file permissions
-            - Clear browser cache
-            - Test in incognito mode
-            """)
+    st.markdown("---")
+    st.link_button("🌐 Browse Full Help Center", "https://help.hostafrica.com", use_container_width=True, type="primary")
 
 elif tool == "🔑 Password Strength Meter":
     st.title("🔑 Password Strength Meter")
