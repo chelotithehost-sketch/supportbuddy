@@ -1211,12 +1211,11 @@ else:
             st.session_state.selected_tool = None
             st.rerun()
             
-# ============================================================================
-    # MAIN CONTENT - TOOL IMPLEMENTATIONS
-    # ============================================================================
-    # Note: All tool code below is inside the else block (indented once)
-    
-    if tool == "🔐 PIN Checker":
+   # ============================================================================
+   # MAIN CONTENT - TOOL IMPLEMENTATIONS
+   # ============================================================================
+
+  if tool == "🔐 PIN Checker":
         st.title("🔐 PIN Checker")
         st.markdown("Verify customer PINs for secure account access and verification.")
         
