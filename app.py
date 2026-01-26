@@ -485,7 +485,7 @@ TOOL_CATEGORIES = {
 # HELPER FUNCTIONS
 # ============================================================================
 
- def search_tools(query):
+def search_tools(query):
     """Search for tools across all categories"""
     query = query.lower().strip()
     results = []
