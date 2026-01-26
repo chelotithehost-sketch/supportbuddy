@@ -556,131 +556,125 @@ def search_tools(query):
 # ENHANCED NAVIGATION FUNCTIONS
 # ============================================================================
 def render_category_home():
-    """Render the enhanced category selection home page with search"""
-    st.title("🔧 Support Buddy - Complete Toolkit")
-    st.markdown("### Your comprehensive technical support toolkit")
-    
-    # Search functionality
-    st.markdown('<div class="search-container">', unsafe_allow_html=True)
-    col1, col2 = st.columns([4, 1])
-    with col1:
-        search_query = st.text_input(
-            "🔍 Search Tools",
-            placeholder="Type to search across all tools...",
-            key="tool_search",
-            label_visibility="collapsed"
-        )
-    with col2:
-        st.markdown("<div style='height: 20px'></div>", unsafe_allow_html=True)
-        if st.button("Clear", key="clear_search", use_container_width=True):
-            st.session_state.tool_search = ""
-            st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Show search results if query exists
-    if search_query and len(search_query) >= 2:
-        results = search_tools(search_query)
-        
-        st.markdown(f"### 🔍 Search Results for '{search_query}'")
-        
-        if results:
-            st.markdown(f"Found **{len(results)}** matching tool(s)")
-            st.markdown("---")
-            
-            for result in results:
-                col1, col2 = st.columns([4, 1])
-                with col1:
-                    st.markdown(f"""
-                    <div class="search-result-card">
-                        <div class="search-tool-name">{result['tool']}</div>
-                        <div class="search-category-badge">
-                            {result['icon']} {result['category']}
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                with col2:
-                    if st.button("Open →", key=f"open_{result['tool']}", use_container_width=True):
-                        st.session_state.selected_category = result['category']
-                        st.session_state.selected_tool = result['tool']
-                        st.rerun()
-        else:
-            st.markdown("""
-            <div class="no-results">
-                <h3>😔 No tools found</h3>
-                <p>Try a different search term or browse categories below</p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        st.markdown("---")
-        st.markdown("### 📂 Or browse by category:")
-    
-    # Category cards
-    st.markdown("<br>", unsafe_allow_html=True)
-    
-    # Create 3 columns for category cards
-    cols = st.columns(3)
-    categories = list(TOOL_CATEGORIES.keys())
-    
-    for idx, category in enumerate(categories):
-        with cols[idx % 3]:
-            category_info = TOOL_CATEGORIES[category]
-            tool_count = len(category_info['tools'])
-            
-            # Custom styled button with gradient background
-            button_html = f"""
-            <div style='background: {category_info["color"]}; 
-                        padding: 2rem; 
-                        border-radius: 16px; 
-                        text-align: center; 
-                        min-height: 200px;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: center;
-                        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-                        margin-bottom: 1rem;'>
-                <div style='font-size: 3.5rem; margin-bottom: 1rem;'>{category_info['icon']}</div>
-                <div style='font-size: 1.5rem; font-weight: bold; color: white; margin-bottom: 0.5rem;'>
-                    {category.replace(category_info['icon'], '').strip()}
-                </div>
-                <div style='background: rgba(255,255,255,0.2); 
-                           color: white; 
-                           padding: 0.3rem 0.8rem; 
-                           border-radius: 20px; 
-                           display: inline-block; 
-                           margin: 0.5rem auto;
-                           font-size: 0.9rem;'>
-                        {tool_count} tools
-                </div>
-                <div style='color: white; 
-                           opacity: 0.9; 
-                           font-size: 0.85rem; 
-                           margin-top: 0.5rem; 
-                           font-style: italic;'>
-                    {category_info['description']}
-                </div>
-            </div>
-            """
-            st.markdown(button_html, unsafe_allow_html=True)
-            
-            if st.button(
-                f"Open {category_info['icon']}",
-                key=f"cat_{category}",
-                use_container_width=True,
-                type="primary"
-            ):
-                st.session_state.selected_category = category
-                st.session_state.selected_tool = None
-                st.rerun()
-    
-    # Quick stats with enhanced styling
-    st.markdown("<br>", unsafe_allow_html=True)
-    total_tools = sum(len(cat['tools']) for cat in TOOL_CATEGORIES.values())
+    """Polished Home dashboard that shows all tools as visible buttons (icons next to labels)."""
+    # Header / Hero
     st.markdown(f"""
-    <div class="stats-badge">
-        📊 <strong>{total_tools} tools</strong> available across <strong>{len(TOOL_CATEGORIES)} categories</strong>
+    <div style="background: linear-gradient(90deg, {ACCENT_START}, {ACCENT_END}); padding: 1.6rem; border-radius: 12px; color: white;">
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <div style="font-size:2.6rem;">🏠</div>
+        <div>
+          <h1 style="margin:0; font-size:1.8rem; font-weight:800;">Support Buddy — Technical Support Console</h1>
+          <div style="opacity:0.95; margin-top:0.25rem; font-size:0.95rem;">Fast tools for support agents — DNS, Email, Tickets, Servers and more.</div>
+        </div>
+      </div>
     </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Search bar (will filter visible tool buttons)
+    col1, col2 = st.columns([4, 1])
+    with col1:
+        q = st.text_input("Search tools or topics", value=st.session_state.get('tool_search', ''), key="home_tool_search")
+    with col2:
+        if st.button("Clear", key="home_clear_search"):
+            st.session_state.home_tool_search = ""
+            st.session_state.tool_search = ""
+            st.rerun()
+
+    # Three featured info boxes (your snippet) — make buttons below each box to open category
+    st.markdown("---")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.markdown('<div class="info-box"><h4>🎫 Ticket Management</h4><p>Analyze tickets, check symptoms, gather information</p></div>', unsafe_allow_html=True)
+        if st.button("Open Ticket Management", key="home_feat_ticket", use_container_width=True):
+            st.session_state.selected_category = "🎫 Ticket Management"
+            st.session_state.selected_tool = None
+            st.rerun()
+    with col2:
+        st.markdown('<div class="info-box"><h4>🤖 AI Tools</h4><p>Get instant help with AI-powered analysis</p></div>', unsafe_allow_html=True)
+        if st.button("Open AI Tools", key="home_feat_ai", use_container_width=True):
+            st.session_state.selected_category = "🤖 AI Tools"
+            st.session_state.selected_tool = None
+            st.rerun()
+    with col3:
+        st.markdown('<div class="info-box"><h4>🌐 Domain & DNS</h4><p>Check domain status, analyze DNS records</p></div>', unsafe_allow_html=True)
+        if st.button("Open Domain & DNS", key="home_feat_dns", use_container_width=True):
+            st.session_state.selected_category = "🌐 Domain & DNS"
+            st.session_state.selected_tool = None
+            st.rerun()
+
+    st.markdown("---")
+
+    # Feature Availability
+    st.markdown("### 📊 Feature Availability")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("DNS Tools", "✅ Available" if FEATURES.get('dns') else "⚠️ Limited")
+        st.metric("Email Tools", "✅ Available" if FEATURES.get('email') else "⚠️ Limited")
+        st.metric("Database Tools", "✅ Available" if FEATURES.get('mysql') else "⚠️ Limited")
+    with col2:
+        st.metric("WHOIS Lookup", "✅ Available" if FEATURES.get('whois') else "⚠️ Limited")
+        st.metric("FTP Testing", "✅ Available" if FEATURES.get('ftp') else "⚠️ Limited")
+        st.metric("AI Assistant", "✅ Available" if GEMINI_AVAILABLE else "⚠️ Configure API")
+
+    st.markdown("---")
+
+    # Show all tools (grouped by category) with visible buttons and icons next to labels.
+    search_query = (q or "").strip().lower()
+
+    for category_name, category_info in TOOL_CATEGORIES.items():
+        tools = category_info.get('tools', [])
+        # Filter tools by search query if provided
+        if search_query:
+            filtered = []
+            for t in tools:
+                disp = strip_leading_emoji(t).lower()
+                if search_query in disp or search_query in category_name.lower():
+                    filtered.append(t)
+            if not filtered:
+                continue
+            tools_to_show = filtered
+        else:
+            tools_to_show = tools
+
+        # Category heading
+        st.markdown(
+            f"<div class='breadcrumb'> {category_info['icon']} <strong>{category_name.replace(category_info['icon'], '').strip()}</strong> — {category_info['description']}</div>",
+            unsafe_allow_html=True
+        )
+
+        # Render tool buttons in rows (3 per row). Each button shows icon + label.
+        num_cols = 3
+        num_rows = (len(tools_to_show) + num_cols - 1) // num_cols if tools_to_show else 0
+
+        for r in range(num_rows):
+            cols = st.columns(num_cols)
+            for c in range(num_cols):
+                idx = r * num_cols + c
+                if idx < len(tools_to_show):
+                    tool = tools_to_show[idx]
+
+                    # Extract leading emoji/icon (if any)
+                    m = re.match(r'^([^\w\d\s]+)', tool)
+                    icon = m.group(1) if m else category_info.get('icon', '')
+                    label = strip_leading_emoji(tool)
+
+                    # safe key for Streamlit widgets
+                    safe_key = re.sub(r'\W+', '_', tool)
+
+                    with cols[c]:
+                        # Display icon and label together.
+                        if st.button(f"{icon}  {label}", key=f"home_tool_{safe_key}", use_container_width=True):
+                            st.session_state.selected_category = category_name
+                            st.session_state.selected_tool = tool
+                            st.rerun()
+
+    # Footer quick stats
+    st.markdown("<br>", unsafe_allow_html=True)
+    total_tools = sum(len(cat['tools']) for cat in TOOL_CATEGORIES.values())
+    st.markdown(f"<div class='stats-badge'>📊 {total_tools} tools available</div>", unsafe_allow_html=True)
+    
 def render_tool_selection():
     """Render enhanced tool selection within a category"""
     category = st.session_state.selected_category
