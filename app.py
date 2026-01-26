@@ -1215,7 +1215,7 @@ else:
    # MAIN CONTENT - TOOL IMPLEMENTATIONS
    # ============================================================================
 
-   elif tool == "🔐 PIN Checker":
+elif tool == "🔐 PIN Checker":
         st.title("🔐 PIN Checker")
         st.markdown("Verify customer PINs for secure account access and verification.")
         
