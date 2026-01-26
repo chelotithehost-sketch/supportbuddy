@@ -1203,9 +1203,6 @@ elif st.session_state.selected_tool is None:
 else:
     # Show selected tool
     tool = st.session_state.selected_tool
-        # DEBUG - remove this later
-    st.write(f"DEBUG: tool = '{tool}'")
-    st.write(f"DEBUG: tool repr = {repr(tool)}")
     
     # Back button
     col1, col2 = st.columns([1, 4])
@@ -1229,7 +1226,7 @@ else:
         with col2:
             st.link_button("Open Tool", "https://my.hostafrica.com/admin/admin_tool/client-pin", use_container_width=True)
 
-elif tool == "🔓 IP Unban":
+    elif tool == "🔓 IP Unban":
     st.title("🔓 IP Unban")
     st.markdown("Search for and remove IP addresses from server firewalls.")
     
@@ -1239,7 +1236,7 @@ elif tool == "🔓 IP Unban":
     with col2:
         st.link_button("Open Tool", "https://my.hostafrica.com/admin/custom/scripts/unban/", use_container_width=True)
 
-elif tool == "📝 Bulk NS Updater":
+   elif tool == "📝 Bulk NS Updater":
     st.title("📝 Bulk Nameserver Updater")
     st.markdown("Update nameservers for multiple domains simultaneously in WHMCS.")
     
@@ -1249,7 +1246,7 @@ elif tool == "📝 Bulk NS Updater":
     with col2:
         st.link_button("🔄 Open Updater", "https://my.hostafrica.com/admin/addonmodules.php?module=nameserv_changer", use_container_width=True)
 
-elif tool == "📋 cPanel Account List":
+    elif tool == "📋 cPanel Account List":
     st.title("📋 cPanel Account List")
     st.markdown("View a comprehensive list of all hosted cPanel accounts and their details.")
     
@@ -1260,7 +1257,7 @@ elif tool == "📋 cPanel Account List":
         st.link_button("📂 Open List", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
 
 # TICKET MANAGEMENT TOOLS
-elif tool == "✅ Support Ticket Checklist":
+    elif tool == "✅ Support Ticket Checklist":
     st.title("✅ Support Ticket Checklist")
     st.markdown("Ensure all necessary steps are completed for ticket resolution")
     
@@ -1314,7 +1311,7 @@ elif tool == "✅ Support Ticket Checklist":
         else:
             st.metric("Status", "🔄 In Progress")
 
-elif tool == "🔍 AI Ticket Analysis":
+    elif tool == "🔍 AI Ticket Analysis":
     st.title("🔍 AI Ticket Analysis")
     st.markdown("Let AI analyze support tickets and provide insights")
     
@@ -1358,7 +1355,7 @@ Be specific and actionable."""
             else:
                 st.warning("⚠️ Please provide either a screenshot or ticket text")
 
-elif tool == "🩺 Smart Symptom Checker":
+    elif tool == "🩺 Smart Symptom Checker":
     st.title("🩺 Smart Symptom Checker")
     st.markdown("Diagnose issues based on symptoms")
     
@@ -1408,7 +1405,7 @@ Be specific, technical, and actionable."""
                 st.warning("⚠️ Please describe the symptoms")
 
 # AI TOOLS
-elif tool == "💬 AI Support Chat":
+    elif tool == "💬 AI Support Chat":
     st.title("💬 AI Support Chat")
     st.markdown("Chat with AI assistant for instant support guidance")
     
@@ -1466,7 +1463,7 @@ elif tool == "💬 AI Support Chat":
                 st.session_state.chat_history = []
                 st.rerun()
 
-elif tool == "📧 AI Mail Error Assistant":
+    elif tool == "📧 AI Mail Error Assistant":
     st.title("📧 AI Mail Error Assistant")
     st.markdown("Analyze email error messages and get solutions")
     
@@ -1506,7 +1503,7 @@ Be specific about server settings, DNS records, and authentication methods."""
             else:
                 st.warning("⚠️ Please paste an error message")
 
-elif tool == "❓ Error Code Explainer":
+    elif tool == "❓ Error Code Explainer":
     st.title("❓ Error Code Explainer")
     st.markdown("Get detailed explanations for error codes")
     
@@ -1547,7 +1544,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                 st.warning("⚠️ Please enter an error code")
 
 # DOMAIN & DNS TOOLS
-elif tool == "🔍 Domain Status Check":
+    elif tool == "🔍 Domain Status Check":
     st.title("🔍 Domain Status Check")
     st.markdown("Check domain registration status and key DNS records")
     
@@ -1654,7 +1651,8 @@ elif tool == "🔍 Domain Status Check":
                                     st.warning(f"⚠️ {whois_data}")
                             else:
                                 st.warning("⚠️ WHOIS library not available")
-elif tool == "🔎 DNS Analyzer":
+                            
+    elif tool == "🔎 DNS Analyzer":
     st.title("🔎 DNS Analyzer")
     st.markdown("Comprehensive DNS record analysis")
     
@@ -1694,8 +1692,7 @@ elif tool == "🔎 DNS Analyzer":
                             else:
                                 st.error(f"❌ {result['data']}")
                             st.markdown("---")
-
-elif tool == "📋 NS Authority Checker":
+    elif tool == "📋 NS Authority Checker":
     st.title("📋 NS Authority Checker")
     st.markdown("Verify nameserver authority for domains")
     st.info("💡 Format: domain, ns1, ns2 (one per line)")
@@ -1757,7 +1754,7 @@ elif tool == "📋 NS Authority Checker":
                     
                     st.markdown("---")
 
-elif tool == "🌍 WHOIS Lookup":
+    elif tool == "🌍 WHOIS Lookup":
     st.title("🌍 WHOIS & Health Check")
     st.markdown("Detailed registration analysis with status-aware reporting.")
     
@@ -1859,7 +1856,7 @@ elif tool == "🌍 WHOIS Lookup":
             st.warning("⚠️ Please enter a domain name.")
             
 # EMAIL TOOLS
-elif tool == "📮 MX Record Checker":
+    elif tool == "📮 MX Record Checker":
     st.title("📮 MX Record Checker")
     st.markdown("Check mail exchanger records for a domain")
     
@@ -1917,7 +1914,7 @@ elif tool == "📮 MX Record Checker":
                                         except:
                                             st.warning("⚠️ Unknown")
 
-elif tool == "✉️ Email Account Tester":
+    elif tool == "✉️ Email Account Tester":
     st.title("✉️ Email Account Tester")
     st.warning("🔒 Security: Credentials are processed locally and never stored")
     st.markdown("Test IMAP and SMTP connections")
@@ -1968,7 +1965,7 @@ elif tool == "✉️ Email Account Tester":
                     except Exception as e:
                         st.error(f"❌ Connection failed: {str(e)}")
 
-elif tool == "🔒 SPF/DKIM Check":
+    elif tool == "🔒 SPF/DKIM Check":
     st.title("🔒 SPF/DKIM/DMARC Check")
     st.markdown("Verify email authentication records")
     
@@ -2080,7 +2077,7 @@ elif tool == "🔒 SPF/DKIM Check":
                         else:
                             st.warning(f"⚠️ Only {enabled}/{total} authentication methods configured")
 
-elif tool == "📄 Email Header Analyzer":
+    elif tool == "📄 Email Header Analyzer":
     st.title("📄 Email Header Analyzer")
     st.markdown("Analyze email headers to troubleshoot delivery issues")
     
@@ -2145,7 +2142,7 @@ elif tool == "📄 Email Header Analyzer":
                             st.code(value)
 
 # WEB & SSL TOOLS
-elif tool == "🔧 Web Error Troubleshooting":
+    elif tool == "🔧 Web Error Troubleshooting":
     st.title("🔧 Web Error Troubleshooting")
     st.markdown("Quick guides for common web errors")
     
@@ -2303,7 +2300,7 @@ elif tool == "🔧 Web Error Troubleshooting":
         - Optimize scripts
         """)
 
-elif tool == "🔒 SSL Certificate Checker":
+    elif tool == "🔒 SSL Certificate Checker":
     st.title("🔒 SSL Certificate Checker")
     st.markdown("Check SSL/TLS certificate status")
     
@@ -2352,7 +2349,7 @@ elif tool == "🔒 SSL Certificate Checker":
                     except Exception as e:
                         st.error(f"❌ Error: {str(e)}")
 
-elif tool == "🔀 HTTPS Redirect Test":
+    elif tool == "🔀 HTTPS Redirect Test":
     st.title("🔀 HTTPS Redirect Test")
     st.markdown("Test if HTTP redirects to HTTPS")
     
@@ -2390,7 +2387,7 @@ elif tool == "🔀 HTTPS Redirect Test":
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="apache")
 
-elif tool == "⚠️ Mixed Content Detector":
+    elif tool == "⚠️ Mixed Content Detector":
     st.title("⚠️ Mixed Content Detector")
     st.markdown("Scan for HTTP resources on HTTPS pages")
     
@@ -2528,7 +2525,7 @@ elif tool == "⚠️ Mixed Content Detector":
                         st.success("✅ No mixed content detected - all resources use HTTPS!")
                         st.balloons()
 
-elif tool == "📊 HTTP Status Code Checker":
+    elif tool == "📊 HTTP Status Code Checker":
     st.title("📊 HTTP Status Code Checker")
     st.markdown("Check HTTP response status codes")
     
@@ -2561,7 +2558,7 @@ elif tool == "📊 HTTP Status Code Checker":
                     for key, value in response.headers.items():
                         st.code(f"{key}: {value}")
 
-elif tool == "🔗 Redirect Checker":
+    elif tool == "🔗 Redirect Checker":
     st.title("🔗 Redirect Checker")
     st.markdown("Track redirect chains")
     
@@ -2597,7 +2594,7 @@ elif tool == "🔗 Redirect Checker":
                         st.code(response.url)
 
 # NETWORK TOOLS
-elif tool == "🔍 IP Address Lookup":
+    elif tool == "🔍 IP Address Lookup":
     st.header("🔍 IP Address Lookup")
     st.markdown("Get detailed geolocation and ISP information for any IP address")
     
@@ -2678,7 +2675,7 @@ elif tool == "🔍 IP Address Lookup":
         else:
             st.warning("⚠️ Please enter an IP address")
 
-elif tool == "🗂️ DNS Analyzer":
+    elif tool == "🗂️ DNS Analyzer":
     st.header("🗂️ DNS Analyzer")
     st.markdown("Comprehensive DNS analysis with all record types")
     
@@ -2780,7 +2777,7 @@ elif tool == "🗂️ DNS Analyzer":
                     with col_b:
                         for s in success_checks: st.success(f"• {s}")
                             
-elif tool == "🧹 Flush DNS Cache":
+    elif tool == "🧹 Flush DNS Cache":
     st.title("🧹 Flush Google DNS Cache")
     st.markdown("Clear Google's DNS cache to force fresh lookups")
     
@@ -2797,7 +2794,7 @@ elif tool == "🧹 Flush DNS Cache":
     st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
     
 # SERVER TOOLS
-elif tool == "📊 Database Size Calculator":
+    elif tool == "📊 Database Size Calculator":
     st.title("📊 Database Size Calculator")
     st.markdown("Calculate and convert database sizes")
     
@@ -2853,7 +2850,7 @@ FROM information_schema.TABLES
 WHERE table_schema = '{db_name}'
 ORDER BY (data_length + index_length) DESC;""", language="sql")
 
-elif tool == "🔐 File Permission Checker":
+    elif tool == "🔐 File Permission Checker":
     st.title("🔐 File Permission Checker")
     st.markdown("Convert and understand Unix file permissions")
     
@@ -3001,7 +2998,7 @@ elif tool == "🔐 File Permission Checker":
         st.dataframe(df_common, use_container_width=True)
 
 # UTILITIES
-elif tool == "📚 Help Center":
+    elif tool == "📚 Help Center":
     st.title("📚 HostAfrica Knowledge Base")
     st.markdown("Search our comprehensive knowledge base for guides and documentation")
     
@@ -3074,7 +3071,7 @@ elif tool == "📚 Help Center":
     st.markdown("---")
     st.link_button("🌐 Browse Full Help Center", "https://help.hostafrica.com", use_container_width=True, type="primary")
 
-elif tool == "🔑 Password Strength Meter":
+    elif tool == "🔑 Password Strength Meter":
     st.title("🔑 Password Strength Meter")
     st.warning("🔒 Checked locally - password never sent anywhere")
     
@@ -3127,7 +3124,7 @@ elif tool == "🔑 Password Strength Meter":
         st.code(generated)
         st.success("✅ Copy this password to a secure location")
 
-elif tool == "🌍 Timezone Converter":
+    elif tool == "🌍 Timezone Converter":
     st.title("🌍 Timezone Converter")
     
     if not PYTZ_AVAILABLE:
@@ -3159,7 +3156,7 @@ elif tool == "🌍 Timezone Converter":
             st.info(f"**To (UTC{offset_to:+d})**")
             st.code(to_dt.strftime('%H:%M:%S'))
 
-elif tool == "📋 Copy-Paste Utilities":
+    elif tool == "📋 Copy-Paste Utilities":
     st.title("📋 Copy-Paste Utilities")
     
     tab1, tab2, tab3 = st.tabs(["🔤 Case Converter", "📝 Line Tools", "🔧 Text Tools"])
@@ -3222,7 +3219,7 @@ elif tool == "📋 Copy-Paste Utilities":
                 st.metric("Alphanumeric", sum(c.isalnum() for c in text_tool))
                 st.metric("Special Chars", sum(not c.isalnum() and not c.isspace() for c in text_tool))
 
-elif tool == "📸 Screenshot Annotator":
+    elif tool == "📸 Screenshot Annotator":
     st.title("📸 Screenshot Annotator")
     st.markdown("Upload screenshots and add notes")
     
@@ -3269,7 +3266,7 @@ elif tool == "📸 Screenshot Annotator":
                     "image/png"
                 )
 
-elif tool == "📝 Session Notes":
+    elif tool == "📝 Session Notes":
     st.title("📝 Session Notes")
     st.markdown("Take notes during support sessions")
     
@@ -3312,7 +3309,7 @@ elif tool == "📝 Session Notes":
         char_count = len(st.session_state.session_notes)
         st.info(f"📊 {word_count} words, {char_count} characters")
         
-elif tool == "🧹 Flush DNS Cache":
+    elif tool == "🧹 Flush DNS Cache":
     st.title("🧹 Flush Google DNS Cache")
     st.markdown("Clear Google's DNS cache to force fresh lookups")
     
@@ -3328,7 +3325,7 @@ elif tool == "🧹 Flush DNS Cache":
     
     st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
     
-elif tool == "🗑️ Clear Cache Instructions":
+    elif tool == "🗑️ Clear Cache Instructions":
     st.title("🗑️ Clear Cache Instructions")
     st.markdown("Step-by-step guide to clear browser cache")
     
