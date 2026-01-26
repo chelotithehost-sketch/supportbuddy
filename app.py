@@ -118,38 +118,596 @@ st.set_page_config(
 st.markdown("""
     <style>
     .main { padding: 1rem 2rem; }
+    
+    /* Category Cards with Dynamic Colors */
+    .category-card {
+        padding: 2rem;
+        border-radius: 16px;
+        color: white;
+        text-align: center;
+        cursor: pointer;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin: 1rem 0;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .category-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    }
+    
+    .category-card:hover::before {
+        opacity: 1;
+    }
+    
+    .category-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        animation: float 3s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .category-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    
+    .category-count {
+        font-size: 0.9rem;
+        opacity: 0.95;
+        background: rgba(255,255,255,0.2);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+    
+    .category-description {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        margin-top: 0.5rem;
+        font-style: italic;
+    }
+    
+    /* Search Box Styling */
+    .search-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .search-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .search-result-card {
+        background: white;
+        border-left: 4px solid #667eea;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .search-result-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        border-left-width: 6px;
+    }
+    
+    .search-tool-name {
+        font-weight: bold;
+        color: #333;
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .search-category-badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 12px;
+        background: #f0f2f6;
+        color: #666;
+        font-size: 0.8rem;
+        margin-top: 0.3rem;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: 2rem;
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    /* Tool Button Styling */
+    .tool-button {
+        margin: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        background: #f0f2f6;
+        border: 2px solid #e0e2e6;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .tool-button:hover {
+        background: #667eea;
+        color: white;
+        border-color: #667eea;
+        transform: translateY(-2px);
+    }
+    
+    /* Status Boxes */
     .success-box {
-        padding: 1.5rem; border-radius: 12px;
+        padding: 1.5rem;
+        border-radius: 12px;
         background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-        border-left: 6px solid #10b981; margin: 1rem 0;
+        border-left: 6px solid #10b981;
+        margin: 1rem 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
+    
     .warning-box {
-        padding: 1.5rem; border-radius: 12px;
+        padding: 1.5rem;
+        border-radius: 12px;
         background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-        border-left: 6px solid #f59e0b; margin: 1rem 0;
+        border-left: 6px solid #f59e0b;
+        margin: 1rem 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
+    
     .error-box {
-        padding: 1.5rem; border-radius: 12px;
+        padding: 1.5rem;
+        border-radius: 12px;
         background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-        border-left: 6px solid #ef4444; margin: 1rem 0;
+        border-left: 6px solid #ef4444;
+        margin: 1rem 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
+    
     .info-box {
-        padding: 1.5rem; border-radius: 12px;
-        border-left: 6px solid #3b82f6; margin: 1rem 0;
+        padding: 1.5rem;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border-left: 6px solid #3b82f6;
+        margin: 1rem 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Stats Badge */
+    .stats-badge {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 1.1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        margin: 2rem 0;
+    }
+    
+    /* Breadcrumb */
+    .breadcrumb {
+        background: #f8f9fa;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .category-icon {
+            font-size: 2.5rem;
+        }
+        .category-title {
+            font-size: 1.2rem;
+        }
+        .search-container {
+            padding: 1.5rem;
+        }
     }
     </style>
 """, unsafe_allow_html=True)
+
 
 # Session state initialization
 if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 if 'session_notes' not in st.session_state:
     st.session_state.session_notes = ""
+# New session state for category navigation
+if 'selected_category' not in st.session_state:
+    st.session_state.selected_category = None
+if 'selected_tool' not in st.session_state:
+    st.session_state.selected_tool = None
+# Define tool categories
+# ============================================================================
+# TOOL CATEGORIES WITH VISUAL IMPROVEMENTS
+# ============================================================================
 
+# Define color gradients for each category
+CATEGORY_COLORS = {
+    "🏠 Home": "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    "👨‍💼 Admin Links": "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    "🎫 Ticket Management": "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    "🤖 AI Tools": "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+    "🌐 Domain & DNS": "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    "🌍 WEB & SSL TOOLS": "linear-gradient(135deg, #30cfd0 0%, #330867 100%)",
+    "📧 Email": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    "💾 Server & Database": "linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)",
+    "📡 Network": "linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)",
+    "🛠️ Utilities": "linear-gradient(135deg, #ff6e7f 0%, #bfe9ff 100%)"
+}
+
+TOOL_CATEGORIES = {
+    "🏠 Home": {
+        "icon": "🏠",
+        "tools": [
+            "🎫 Ticket Management",
+            "🤖 AI Tools", 
+            "🌐 Domain & DNS"
+        ],
+        "description": "Navigate to access support tools organised by category",
+        "color": CATEGORY_COLORS["🏠 Home"]
+    },
+    "👨‍💼 Admin Links": {
+        "icon": "👨‍💼",
+        "tools": [
+            "🔐 PIN Checker",
+            "🔓 IP Unban",
+            "📝 Bulk NS Updater",
+            "📋 cPanel Account List"
+        ],
+        "description": "Your essential admin tools",
+        "color": CATEGORY_COLORS["👨‍💼 Admin Links"]
+    },
+    "🎫 Ticket Management": {
+        "icon": "🎫",
+        "tools": [
+            "✅ Support Ticket Checklist",
+            "🔍 AI Ticket Analysis",
+            "🩺 Smart Symptom Checker"
+        ],
+        "description": "Let's analyse the tickets",
+        "color": CATEGORY_COLORS["🎫 Ticket Management"]
+    },
+    "🤖 AI Tools": {
+        "icon": "🤖",
+        "tools": [
+            "💬 AI Support Chat",
+            "📧 AI Mail Error Assistant",
+            "❓ Error Code Explainer"
+        ],
+        "description": "AI tools for you",
+        "color": CATEGORY_COLORS["🤖 AI Tools"]
+    },
+    "🌐 Domain & DNS": {
+        "icon": "🌐",
+        "tools": [
+            "🔍 Domain Status Check",
+            "🔎 DNS Analyzer",
+            "📋 NS Authority Checker",
+            "🌍 WHOIS Lookup"
+        ],
+        "description": "Domain Tools",
+        "color": CATEGORY_COLORS["🌐 Domain & DNS"]
+    },
+    "🌍 WEB & SSL TOOLS": {
+        "icon": "🌍",
+        "tools": [
+            "🔧 Web Error Troubleshooting",
+            "🔒 SSL Certificate Checker",
+            "🔀 HTTPS Redirect Test",
+            "⚠️ Mixed Content Detector",
+            "📊 HTTP Status Code Checker",
+            "🔗 Redirect Checker"
+        ],
+        "description": "Web and SSL Tools for You",
+        "color": CATEGORY_COLORS["🌍 WEB & SSL TOOLS"]
+    },
+    "📧 Email": {
+        "icon": "📧",
+        "tools": [
+            "📮 MX Record Checker",
+            "✉️ Email Account Tester",
+            "🔒 SPF/DKIM Check",
+            "📄 Email Header Analyzer"
+        ],
+        "description": "Essential Email Tools",
+        "color": CATEGORY_COLORS["📧 Email"]
+    },
+    "💾 Server & Database": {
+        "icon": "💾",
+        "tools": [
+            "📊 Database Size Calculator",
+            "🔐 File Permission Checker"
+        ],
+        "description": "Server Tools",
+        "color": CATEGORY_COLORS["💾 Server & Database"]
+    },
+    "📡 Network": {
+        "icon": "📡",
+        "tools": [
+            "🔍 IP Address Lookup",
+            "🗂️ DNS Analyzer",
+            "🧹 Flush DNS Cache"
+        ],
+        "description": "Your Essential Network Tools",
+        "color": CATEGORY_COLORS["📡 Network"]
+    },
+    "🛠️ Utilities": {
+        "icon": "🛠️",
+        "tools": [
+            "📚 Help Center",
+            "🔑 Password Strength Meter",
+            "📋 Copy-Paste Utilities",
+            "📸 Screenshot Annotator",
+            "📝 Session Notes",
+            "🗑️ Clear Cache Instructions",
+            "🧹 Flush DNS Cache"
+        ],
+        "description": "Utilities",
+        "color": CATEGORY_COLORS["🛠️ Utilities"]
+    }
+}
+    
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
 
+ def search_tools(query):
+    """Search for tools across all categories"""
+    query = query.lower().strip()
+    results = []
+    
+    for category_name, category_info in TOOL_CATEGORIES.items():
+        for tool in category_info['tools']:
+            # Search in tool name
+            if query in tool.lower():
+                results.append({
+                    'tool': tool,
+                    'category': category_name,
+                    'description': category_info['description'],
+                    'icon': category_info['icon']
+                })
+            # Also search in category name
+            elif query in category_name.lower():
+                results.append({
+                    'tool': tool,
+                    'category': category_name,
+                    'description': category_info['description'],
+                    'icon': category_info['icon']
+                })
+    
+    return results
+
+# ============================================================================
+# ENHANCED NAVIGATION FUNCTIONS
+# ============================================================================
+
+def render_category_home():
+    """Render the enhanced category selection home page with search"""
+    st.title("🔧 Support Buddy - Complete Toolkit")
+    st.markdown("### Your comprehensive technical support toolkit")
+    
+    # Search functionality
+    st.markdown('<div class="search-container">', unsafe_allow_html=True)
+    col1, col2 = st.columns([4, 1])
+    with col1:
+        search_query = st.text_input(
+            "🔍 Search Tools",
+            placeholder="Type to search across all tools...",
+            key="tool_search",
+            label_visibility="collapsed"
+        )
+    with col2:
+        st.markdown("<div style='height: 20px'></div>", unsafe_allow_html=True)
+        if st.button("Clear", key="clear_search", use_container_width=True):
+            st.session_state.tool_search = ""
+            st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Show search results if query exists
+    if search_query and len(search_query) >= 2:
+        results = search_tools(search_query)
+        
+        st.markdown(f"### 🔍 Search Results for '{search_query}'")
+        
+        if results:
+            st.markdown(f"Found **{len(results)}** matching tool(s)")
+            st.markdown("---")
+            
+            for result in results:
+                col1, col2 = st.columns([4, 1])
+                with col1:
+                    st.markdown(f"""
+                    <div class="search-result-card">
+                        <div class="search-tool-name">{result['tool']}</div>
+                        <div class="search-category-badge">
+                            {result['icon']} {result['category']}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                with col2:
+                    if st.button("Open →", key=f"open_{result['tool']}", use_container_width=True):
+                        st.session_state.selected_category = result['category']
+                        st.session_state.selected_tool = result['tool']
+                        st.rerun()
+        else:
+            st.markdown("""
+            <div class="no-results">
+                <h3>😔 No tools found</h3>
+                <p>Try a different search term or browse categories below</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown("---")
+        st.markdown("### 📂 Or browse by category:")
+    
+    # Category cards
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # Create 3 columns for category cards
+    cols = st.columns(3)
+    categories = list(TOOL_CATEGORIES.keys())
+    
+    for idx, category in enumerate(categories):
+        with cols[idx % 3]:
+            category_info = TOOL_CATEGORIES[category]
+            tool_count = len(category_info['tools'])
+            
+            # Custom styled button with gradient background
+            button_html = f"""
+            <div style='background: {category_info["color"]}; 
+                        padding: 2rem; 
+                        border-radius: 16px; 
+                        text-align: center; 
+                        min-height: 200px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+                        margin-bottom: 1rem;'>
+                <div style='font-size: 3.5rem; margin-bottom: 1rem;'>{category_info['icon']}</div>
+                <div style='font-size: 1.5rem; font-weight: bold; color: white; margin-bottom: 0.5rem;'>
+                    {category.replace(category_info['icon'], '').strip()}
+                </div>
+                <div style='background: rgba(255,255,255,0.2); 
+                           color: white; 
+                           padding: 0.3rem 0.8rem; 
+                           border-radius: 20px; 
+                           display: inline-block; 
+                           margin: 0.5rem auto;
+                           font-size: 0.9rem;'>
+                    {tool_count} tools
+                </div>
+                <div style='color: white; 
+                           opacity: 0.9; 
+                           font-size: 0.85rem; 
+                           margin-top: 0.5rem; 
+                           font-style: italic;'>
+                    {category_info['description']}
+                </div>
+            </div>
+            """
+            st.markdown(button_html, unsafe_allow_html=True)
+            
+            if st.button(
+                f"Open {category_info['icon']}",
+                key=f"cat_{category}",
+                use_container_width=True,
+                type="primary"
+            ):
+                st.session_state.selected_category = category
+                st.session_state.selected_tool = None
+                st.rerun()
+    
+    # Quick stats with enhanced styling
+    st.markdown("<br>", unsafe_allow_html=True)
+    total_tools = sum(len(cat['tools']) for cat in TOOL_CATEGORIES.values())
+    st.markdown(f"""
+    <div class="stats-badge">
+        📊 <strong>{total_tools} tools</strong> available across <strong>{len(TOOL_CATEGORIES)} categories</strong>
+    </div>
+    """, unsafe_allow_html=True)
+
+def render_tool_selection():
+    """Render enhanced tool selection within a category"""
+    category = st.session_state.selected_category
+    category_info = TOOL_CATEGORIES[category]
+    
+    # Breadcrumb navigation
+    st.markdown(f"""
+    <div class="breadcrumb">
+        🏠 Home > {category_info['icon']} {category}
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Back button
+    if st.button("← Back to Categories", key="back_btn", type="secondary"):
+        st.session_state.selected_category = None
+        st.session_state.selected_tool = None
+        st.rerun()
+    
+    # Category header with gradient
+    st.markdown(f"""
+    <div style='background: {category_info["color"]}; 
+                padding: 2rem; 
+                border-radius: 16px; 
+                text-align: center;
+                margin: 1rem 0;
+                color: white;
+                box-shadow: 0 8px 16px rgba(0,0,0,0.2);'>
+        <div style='font-size: 4rem; margin-bottom: 0.5rem;'>{category_info['icon']}</div>
+        <h1 style='color: white; margin: 0;'>{category.replace(category_info['icon'], '').strip()}</h1>
+        <p style='opacity: 0.9; font-style: italic; margin-top: 0.5rem;'>{category_info['description']}</p>
+        <div style='background: rgba(255,255,255,0.2); 
+                   color: white; 
+                   padding: 0.3rem 0.8rem; 
+                   border-radius: 20px; 
+                   display: inline-block; 
+                   margin-top: 0.5rem;'>
+            {len(category_info['tools'])} tools available
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    st.markdown("### 🎯 Select a tool:")
+    
+    # Tool selection as enhanced buttons
+    tools = category_info['tools']
+    
+    # Create columns for tool buttons (3 per row for better visibility)
+    num_cols = 3
+    num_rows = (len(tools) + num_cols - 1) // num_cols
+    
+    for row in range(num_rows):
+        cols = st.columns(num_cols)
+        for col_idx in range(num_cols):
+            tool_idx = row * num_cols + col_idx
+            if tool_idx < len(tools):
+                tool = tools[tool_idx]
+                with cols[col_idx]:
+                    if st.button(
+                        tool, 
+                        key=f"tool_{tool}", 
+                        use_container_width=True,
+                        type="primary"
+                    ):
+                        st.session_state.selected_tool = tool
+                        st.rerun()
+                        
 def show_missing_dependency(feature_name, package_name):
     """Display a helpful message when a required package is missing"""
     st.error(f"❌ {feature_name} requires additional packages")
@@ -558,50 +1116,101 @@ def search_kb(query):
     return results[:10]
     
 # ============================================================================
-# SIDEBAR NAVIGATION
+# MAIN NAVIGATION SYSTEM
 # ============================================================================
 
-st.sidebar.title("🔧 Support Buddy")
-st.sidebar.markdown("---")
+def render_category_home():
+    """Render the category selection home page"""
+    st.title("🔧 Support Buddy - Complete Toolkit")
+    st.markdown("### Choose a category to get started")
+    st.markdown("---")
+    
+    # Create 3 columns for category cards
+    cols = st.columns(3)
+    categories = list(TOOL_CATEGORIES.keys())
+    
+    for idx, category in enumerate(categories):
+        with cols[idx % 3]:
+            category_info = TOOL_CATEGORIES[category]
+            tool_count = len(category_info['tools'])
+            
+            # Create clickable card using button
+            if st.button(
+                f"{category_info['icon']}\n\n**{category}**\n\n{tool_count} tools available",
+                key=f"cat_{category}",
+                use_container_width=True,
+                help=category_info['description']
+            ):
+                st.session_state.selected_category = category
+                st.session_state.selected_tool = None
+                st.rerun()
+            
+            # Show description below button
+            st.caption(category_info['description'])
+    
+    # Quick stats
+    st.markdown("---")
+    total_tools = sum(len(cat['tools']) for cat in TOOL_CATEGORIES.values())
+    st.info(f"📊 **{total_tools} tools** available across **{len(TOOL_CATEGORIES)} categories**")
 
-category = st.sidebar.selectbox(
-    "Select Category",
-    [
-        "🏠 Home",
-        "👨‍💼 Admin Links",
-        "🎫 Ticket Management",
-        "🤖 AI Tools",
-        "🌐 Domain & DNS",
-        "📧 Email",
-        "🌍 WEB & SSL TOOLS",
-        "📡 Network",
-        "💾 Server & Database",
-        "🛠️ Utilities"
-    ]
-)
+def render_tool_selection():
+    """Render tool selection within a category"""
+    category = st.session_state.selected_category
+    category_info = TOOL_CATEGORIES[category]
+    
+    # Back button
+    if st.button("← Back to Categories", key="back_btn"):
+        st.session_state.selected_category = None
+        st.session_state.selected_tool = None
+        st.rerun()
+    
+    st.title(f"{category_info['icon']} {category}")
+    st.markdown(f"*{category_info['description']}*")
+    st.markdown("---")
+    
+    # Tool selection as horizontal buttons
+    st.markdown("### Select a tool:")
+    tools = category_info['tools']
+    
+    # Create columns for tool buttons (4 per row)
+    num_cols = 4
+    num_rows = (len(tools) + num_cols - 1) // num_cols
+    
+    for row in range(num_rows):
+        cols = st.columns(num_cols)
+        for col_idx in range(num_cols):
+            tool_idx = row * num_cols + col_idx
+            if tool_idx < len(tools):
+                tool = tools[tool_idx]
+                with cols[col_idx]:
+                    if st.button(tool, key=f"tool_{tool}", use_container_width=True):
+                        st.session_state.selected_tool = tool
+                        st.rerun()
 
-# Tool selection based on category
-if category == "🏠 Home":
-    tool = "Home"
-elif category == "👨‍💼 Admin Links":
-    tool = st.sidebar.radio("Admin Tools", ["🔐 PIN Checker", "🔓 IP Unban", "📝 Bulk NS Updater", "📋 cPanel Account List"])
-elif category == "🎫 Ticket Management":
-    tool = st.sidebar.radio("Ticket Tools", ["✅ Support Ticket Checklist", "🔍 AI Ticket Analysis", "🩺 Smart Symptom Checker"])
-elif category == "🤖 AI Tools":
-    tool = st.sidebar.radio("AI Assistants", ["💬 AI Support Chat", "📧 AI Mail Error Assistant", "❓ Error Code Explainer"])
-elif category == "🌐 Domain & DNS":
-    tool = st.sidebar.radio("Domain Tools", ["🔍 Domain Status Check", "🔎 DNS Analyzer", "📋 NS Authority Checker", "🌍 WHOIS Lookup"])
-elif category == "📧 Email":
-    tool = st.sidebar.radio("Email Tools", ["📮 MX Record Checker", "✉️ Email Account Tester", "🔒 SPF/DKIM Check", "📄 Email Header Analyzer"])
-elif category == "🌍 WEB & SSL TOOLS":
-    tool = st.sidebar.radio("WEB & SSL TOOLS", ["🔧 Web Error Troubleshooting", "🔒 SSL Certificate Checker", "🔀 HTTPS Redirect Test", "⚠️ Mixed Content Detector", "📊 HTTP Status Code Checker", "🔗 Redirect Checker"])
-elif category == "📡 Network":
-    tool = st.sidebar.radio("Network Tools", ["🔍 IP Address Lookup", "🗂️ DNS Analyzer", "🧹 Flush DNS Cache"])
-elif category == "💾 Server & Database":
-    tool = st.sidebar.radio("Server Tools", ["📊 Database Size Calculator", "🔐 File Permission Checker"])
-elif category == "🛠️ Utilities":
-    tool = st.sidebar.radio("Utilities", ["📚 Help Center", "🔑 Password Strength Meter", "📋 Copy-Paste Utilities", "📸 Screenshot Annotator", "📝 Session Notes", "🗑️ Clear Cache Instructions", "🧹 Flush DNS Cache"])
+# ============================================================================
+# MAIN APP ROUTING
+# ============================================================================
 
+# Navigation logic
+if st.session_state.selected_category is None:
+    # Show category home page
+    render_category_home()
+
+elif st.session_state.selected_tool is None:
+    # Show tool selection for category
+    render_tool_selection()
+
+else:
+    # Show selected tool
+    tool = st.session_state.selected_tool
+    
+    # Back button
+    col1, col2 = st.columns([1, 4])
+    with col1:
+        if st.button("← Back", key="back_to_tools"):
+            st.session_state.selected_tool = None
+            st.rerun()
+            
 # ============================================================================
 # MAIN CONTENT - TOOL IMPLEMENTATIONS
 # ============================================================================
@@ -637,7 +1246,7 @@ if tool == "Home":
 # PART: ADMIN TOOLS
 # ============================================================================
 
-elif tool == "🔐 PIN Checker":
+ if tool == "🔐 PIN Checker":
     st.title("🔐 PIN Checker")
     st.markdown("Verify customer PINs for secure account access and verification.")
     
