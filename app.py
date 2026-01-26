@@ -1224,8 +1224,7 @@ else:
             st.info("Check the provided customer PIN against the WHMCS records.")
         with col2:
             st.link_button("Open Tool", "https://my.hostafrica.com/admin/admin_tool/client-pin", use_container_width=True)
-
-   elif tool == "🔓 IP Unban":
+    elif tool == "🔓 IP Unban":
     st.title("🔓 IP Unban")
     st.markdown("Search for and remove IP addresses from server firewalls.")
     
@@ -1235,7 +1234,7 @@ else:
     with col2:
         st.link_button("Open Tool", "https://my.hostafrica.com/admin/custom/scripts/unban/", use_container_width=True)
 
-   elif tool == "📝 Bulk NS Updater":
+    elif tool == "📝 Bulk NS Updater":
     st.title("📝 Bulk Nameserver Updater")
     st.markdown("Update nameservers for multiple domains simultaneously in WHMCS.")
     
@@ -1245,7 +1244,7 @@ else:
     with col2:
         st.link_button("🔄 Open Updater", "https://my.hostafrica.com/admin/addonmodules.php?module=nameserv_changer", use_container_width=True)
 
-   elif tool == "📋 cPanel Account List":
+    elif tool == "📋 cPanel Account List":
     st.title("📋 cPanel Account List")
     st.markdown("View a comprehensive list of all hosted cPanel accounts and their details.")
     
@@ -1256,7 +1255,7 @@ else:
         st.link_button("📂 Open List", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
 
    # TICKET MANAGEMENT TOOLS
-   elif tool == "✅ Support Ticket Checklist":
+    elif tool == "✅ Support Ticket Checklist":
     st.title("✅ Support Ticket Checklist")
     st.markdown("Ensure all necessary steps are completed for ticket resolution")
     
@@ -1353,7 +1352,7 @@ Be specific and actionable."""
                         st.error(f"❌ Analysis failed: {str(e)}")
             else:
                 st.warning("⚠️ Please provide either a screenshot or ticket text")
-
+ 
     elif tool == "🩺 Smart Symptom Checker":
     st.title("🩺 Smart Symptom Checker")
     st.markdown("Diagnose issues based on symptoms")
@@ -1402,8 +1401,7 @@ Be specific, technical, and actionable."""
                         st.error(f"❌ Diagnosis failed: {str(e)}")
             else:
                 st.warning("⚠️ Please describe the symptoms")
-
-# AI TOOLS
+   # AI TOOLS
     elif tool == "💬 AI Support Chat":
     st.title("💬 AI Support Chat")
     st.markdown("Chat with AI assistant for instant support guidance")
@@ -1542,7 +1540,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
             else:
                 st.warning("⚠️ Please enter an error code")
 
-# DOMAIN & DNS TOOLS
+   # DOMAIN & DNS TOOLS
     elif tool == "🔍 Domain Status Check":
     st.title("🔍 Domain Status Check")
     st.markdown("Check domain registration status and key DNS records")
@@ -1591,7 +1589,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                         else:
                             st.warning(f"⚠️ {mx_records}")
                         
-  # WHOIS Information - handles both .ng and other TLDs
+   # WHOIS Information - handles both .ng and other TLDs
                         st.markdown("### 📋 WHOIS Information")
                         
                         # Check if it's a .ng domain
@@ -1651,7 +1649,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                             else:
                                 st.warning("⚠️ WHOIS library not available")
                             
-    elif tool == "🔎 DNS Analyzer":
+   elif tool == "🔎 DNS Analyzer":
     st.title("🔎 DNS Analyzer")
     st.markdown("Comprehensive DNS record analysis")
     
@@ -1854,7 +1852,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
         else:
             st.warning("⚠️ Please enter a domain name.")
             
-# EMAIL TOOLS
+   # EMAIL TOOLS
     elif tool == "📮 MX Record Checker":
     st.title("📮 MX Record Checker")
     st.markdown("Check mail exchanger records for a domain")
@@ -2140,7 +2138,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                         with st.expander(f"📋 {key}"):
                             st.code(value)
 
-# WEB & SSL TOOLS
+   # WEB & SSL TOOLS
     elif tool == "🔧 Web Error Troubleshooting":
     st.title("🔧 Web Error Troubleshooting")
     st.markdown("Quick guides for common web errors")
@@ -2177,8 +2175,8 @@ Be specific about web hosting environments, cPanel, and common server configurat
         - Fix syntax errors shown in error logs
         - Restore from backup if recent change caused issue
         """)
-    
-    elif error == "503 Service Unavailable":
+
+        elif error == "503 Service Unavailable":
         st.markdown("""
         ### 503 Service Unavailable
         
@@ -2202,7 +2200,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
         - Enable caching
         """)
     
-    elif error == "404 Not Found":
+        elif error == "404 Not Found":
         st.markdown("""
         ### 404 Not Found
         
@@ -2226,7 +2224,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
         - Check .htaccess mod_rewrite rules
         """)
     
-    elif error == "403 Forbidden":
+        elif error == "403 Forbidden":
         st.markdown("""
         ### 403 Forbidden
         
@@ -2251,7 +2249,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
         - Unblock IP from firewall
         """)
     
-    elif error == "502 Bad Gateway":
+        elif error == "502 Bad Gateway":
         st.markdown("""
         ### 502 Bad Gateway
         
@@ -2275,7 +2273,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
         - Disable problematic plugins
         """)
     
-    elif error == "504 Gateway Timeout":
+        elif error == "504 Gateway Timeout":
         st.markdown("""
         ### 504 Gateway Timeout
         
@@ -2592,7 +2590,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         st.info("ℹ️ No redirects - page loads directly")
                         st.code(response.url)
 
-# NETWORK TOOLS
+   # NETWORK TOOLS
     elif tool == "🔍 IP Address Lookup":
     st.header("🔍 IP Address Lookup")
     st.markdown("Get detailed geolocation and ISP information for any IP address")
