@@ -1225,7 +1225,7 @@ else:
         with col2:
             st.link_button("Open Tool", "https://my.hostafrica.com/admin/admin_tool/client-pin", use_container_width=True)
 
-elif tool == "🔓 IP Unban":
+ elif tool == "🔓 IP Unban":
     st.title("🔓 IP Unban")
     st.markdown("Search for and remove IP addresses from server firewalls.")
     
