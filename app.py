@@ -1208,8 +1208,8 @@ else:
     col1, col2 = st.columns([1, 4])
     with col1:
         if st.button("← Back", key="back_to_tools"):
-           st.session_state.selected_tool = None
-           st.rerun()
+            st.session_state.selected_tool = None
+            st.rerun()
     
     # ============================================================================
     # MAIN CONTENT - TOOL IMPLEMENTATIONS
