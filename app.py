@@ -1229,10 +1229,10 @@ else:
      st.title("🔓 IP Unban")
      st.markdown("Search for and remove IP addresses from server firewalls.")
     
-    col1, col2 = st.columns([3, 1])
-    with col1:
+      col1, col2 = st.columns([3, 1])
+      with col1:
         st.info("Use this to quickly unblock clients who are locked out.")
-    with col2:
+      with col2:
         st.link_button("Open Tool", "https://my.hostafrica.com/admin/custom/scripts/unban/", use_container_width=True)
 
     elif tool == "📝 Bulk NS Updater":
