@@ -1203,6 +1203,9 @@ elif st.session_state.selected_tool is None:
 else:
     # Show selected tool
     tool = st.session_state.selected_tool
+        # DEBUG - remove this later
+    st.write(f"DEBUG: tool = '{tool}'")
+    st.write(f"DEBUG: tool repr = {repr(tool)}")
     
     # Back button
     col1, col2 = st.columns([1, 4])
