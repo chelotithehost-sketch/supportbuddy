@@ -1214,38 +1214,6 @@ else:
 # ============================================================================
 # MAIN CONTENT - TOOL IMPLEMENTATIONS
 # ============================================================================
-
-if tool == "Home":
-    st.title("🏠 Welcome to Support Buddy")
-    st.markdown("### Your Complete Technical Support Toolkit")
-    st.markdown("Navigate using the sidebar to access over 40 support tools organized by category.")
-    
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.markdown('<div class="info-box"><h4>🎫 Ticket Management</h4><p>Analyze tickets, check symptoms, gather information</p></div>', unsafe_allow_html=True)
-    with col2:
-        st.markdown('<div class="info-box"><h4>🤖 AI Tools</h4><p>Get instant help with AI-powered analysis</p></div>', unsafe_allow_html=True)
-    with col3:
-        st.markdown('<div class="info-box"><h4>🌐 Domain & DNS</h4><p>Check domain status, analyze DNS records</p></div>', unsafe_allow_html=True)
-    
-    st.markdown("---")
-    st.markdown("### 📊 Feature Availability")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.metric("DNS Tools", "✅ Available" if FEATURES['dns'] else "⚠️ Limited")
-        st.metric("Email Tools", "✅ Available" if FEATURES['email'] else "⚠️ Limited")
-        st.metric("Database Tools", "✅ Available" if FEATURES['mysql'] else "⚠️ Limited")
-    
-    with col2:
-        st.metric("WHOIS Lookup", "✅ Available" if FEATURES['whois'] else "⚠️ Limited")
-        st.metric("FTP Testing", "✅ Available" if FEATURES['ftp'] else "⚠️ Limited")
-        st.metric("AI Assistant", "✅ Available" if GEMINI_AVAILABLE else "⚠️ Configure API")
-
-# ============================================================================
-# PART: ADMIN TOOLS
-# ============================================================================
-
 if tool == "🔐 PIN Checker":
     st.title("🔐 PIN Checker")
     st.markdown("Verify customer PINs for secure account access and verification.")
