@@ -1236,16 +1236,16 @@ else:
         st.link_button("Open Tool", "https://my.hostafrica.com/admin/custom/scripts/unban/", use_container_width=True)
 
     elif tool == "📝 Bulk NS Updater":
-    st.title("📝 Bulk Nameserver Updater")
-    st.markdown("Update nameservers for multiple domains simultaneously in WHMCS.")
+     st.title("📝 Bulk Nameserver Updater")
+     st.markdown("Update nameservers for multiple domains simultaneously in WHMCS.")
     
-    col1, col2 = st.columns([3, 1])
-    with col1:
+     col1, col2 = st.columns([3, 1])
+     with col1:
         st.info("Save time by modifying NS records for domain batches.")
-    with col2:
+     with col2:
         st.link_button("🔄 Open Updater", "https://my.hostafrica.com/admin/addonmodules.php?module=nameserv_changer", use_container_width=True)
 
-    elif tool == "📋 cPanel Account List":
+   elif tool == "📋 cPanel Account List":
     st.title("📋 cPanel Account List")
     st.markdown("View a comprehensive list of all hosted cPanel accounts and their details.")
     
