@@ -1214,6 +1214,9 @@ else:
 # ============================================================================
 # MAIN CONTENT - TOOL IMPLEMENTATIONS
 # ============================================================================
+# Note: Home page is now handled by render_category_home() function
+
+# Start with first actual tool (changed from "elif" to "if")
 if tool == "🔐 PIN Checker":
     st.title("🔐 PIN Checker")
     st.markdown("Verify customer PINs for secure account access and verification.")
