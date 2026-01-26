@@ -1208,15 +1208,15 @@ else:
     col1, col2 = st.columns([1, 4])
     with col1:
         if st.button("← Back", key="back_to_tools"):
-            st.session_state.selected_tool = None
-            st.rerun()
-            
-   # ============================================================================
-   # MAIN CONTENT - TOOL IMPLEMENTATIONS
-   # ============================================================================
+           st.session_state.selected_tool = None
+           st.rerun()
+    
+    # ============================================================================
+    # MAIN CONTENT - TOOL IMPLEMENTATIONS
+    # ============================================================================
 
-elif tool == "🔐 PIN Checker":
-        st.title("🔐 PIN Checker")
+    if tool == "🔑 PIN Checker":
+        st.title("🔑 PIN Checker")
         st.markdown("Verify customer PINs for secure account access and verification.")
         
         col1, col2 = st.columns([3, 1])
