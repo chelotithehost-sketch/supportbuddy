@@ -1225,7 +1225,7 @@ else:
         with col2:
             st.link_button("Open Tool", "https://my.hostafrica.com/admin/admin_tool/client-pin", use_container_width=True)
 
-     elif tool == "🔓 IP Unban":
+   elif tool == "🔓 IP Unban":
     st.title("🔓 IP Unban")
     st.markdown("Search for and remove IP addresses from server firewalls.")
     
@@ -1245,7 +1245,7 @@ else:
     with col2:
         st.link_button("🔄 Open Updater", "https://my.hostafrica.com/admin/addonmodules.php?module=nameserv_changer", use_container_width=True)
 
-    elif tool == "📋 cPanel Account List":
+   elif tool == "📋 cPanel Account List":
     st.title("📋 cPanel Account List")
     st.markdown("View a comprehensive list of all hosted cPanel accounts and their details.")
     
@@ -1255,8 +1255,8 @@ else:
     with col2:
         st.link_button("📂 Open List", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
 
-# TICKET MANAGEMENT TOOLS
-    elif tool == "✅ Support Ticket Checklist":
+   # TICKET MANAGEMENT TOOLS
+   elif tool == "✅ Support Ticket Checklist":
     st.title("✅ Support Ticket Checklist")
     st.markdown("Ensure all necessary steps are completed for ticket resolution")
     
