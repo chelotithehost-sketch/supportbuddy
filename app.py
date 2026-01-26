@@ -1212,21 +1212,19 @@ else:
             st.rerun()
             
 # ============================================================================
-# MAIN CONTENT - TOOL IMPLEMENTATIONS
-# ============================================================================
-# Note: Home page is now handled by render_category_home() function
-
-# Start with first actual tool (changed from "elif" to "if")
-if tool == "🔐 PIN Checker":
-    st.title("🔐 PIN Checker")
-    st.markdown("Verify customer PINs for secure account access and verification.")
+    # MAIN CONTENT - TOOL IMPLEMENTATIONS
+    # ============================================================================
+    # Note: All tool code below is inside the else block (indented once)
     
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        st.info("Check the provided customer PIN against the WHMCS records.")
-    with col2:
-        # Reverted to your original working link
-        st.link_button("Open Tool", "https://my.hostafrica.com/admin/admin_tool/client-pin", use_container_width=True)
+    if tool == "🔐 PIN Checker":
+        st.title("🔐 PIN Checker")
+        st.markdown("Verify customer PINs for secure account access and verification.")
+        
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.info("Check the provided customer PIN against the WHMCS records.")
+        with col2:
+            st.link_button("Open Tool", "https://my.hostafrica.com/admin/admin_tool/client-pin", use_container_width=True)
 
 elif tool == "🔓 IP Unban":
     st.title("🔓 IP Unban")
