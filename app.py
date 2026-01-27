@@ -2581,6 +2581,7 @@ FROM information_schema.TABLES
 WHERE table_schema = '{db_name}'
 ORDER BY (data_length + index_length) DESC;""", language="sql")
 
+ # SERVER TOOLS   
     elif tool == "🔐 File Permission Checker":
      st.title("🔐 File Permission Checker")
      st.markdown("Convert and understand Unix file permissions")
