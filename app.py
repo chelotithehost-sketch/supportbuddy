@@ -2581,16 +2581,16 @@ FROM information_schema.TABLES
 WHERE table_schema = '{db_name}'
 ORDER BY (data_length + index_length) DESC;""", language="sql")
 
-    elif tool == "🔐 File Permission Checker":
-     st.title("🔐 File Permission Checker")
-     st.markdown("Convert and understand Unix file permissions")
-    
+elif tool == "🔐 File Permission Checker":
+    st.title("🔐 File Permission Checker")
+    st.markdown("Convert and understand Unix file permissions")
+
     tab1, tab2, tab3 = st.tabs(["🔢 Numeric to Symbolic", "🔤 Symbolic to Numeric", "📚 Guide"])
-    
+
     with tab1:
         st.markdown("### Numeric to Symbolic Converter")
         numeric = st.text_input("Enter numeric permissions (e.g., 644):", max_chars=3, key="num_input")
-        
+
         if numeric and len(numeric) == 3:
             try:
                 def num_to_perm(n):
@@ -2599,26 +2599,26 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     w = 'w' if n & 2 else '-'
                     x = 'x' if n & 1 else '-'
                     return r + w + x
-                
+
                 owner = num_to_perm(numeric[0])
                 group = num_to_perm(numeric[1])
                 other = num_to_perm(numeric[2])
-                
+
                 symbolic = owner + group + other
-                
+
                 col1, col2 = st.columns(2)
                 with col1:
                     st.markdown("**Symbolic Representation:**")
                     st.code(symbolic, language="bash")
-                
+
                 with col2:
                     st.markdown("**Breakdown:**")
                     st.info(f"Owner: {owner}")
                     st.info(f"Group: {group}")
                     st.info(f"Other: {other}")
-                
+
                 st.markdown("### 🔍 Security Assessment")
-                
+
                 if numeric == "777":
                     st.error("❌ DANGEROUS: Full access for everyone!")
                     st.warning("Never use 777 in production!")
@@ -2632,79 +2632,79 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     st.success("✅ SECURE: Owner-only access (with execute)")
                 else:
                     st.info("ℹ️ Custom permissions - verify appropriateness")
-                
+
             except (ValueError, IndexError):
                 st.error("❌ Invalid format - use numbers 0-7")
-    
+
     with tab2:
         st.markdown("### Symbolic to Numeric Converter")
         st.markdown("Check permissions for each group:")
-        
+
         col1, col2, col3 = st.columns(3)
-        
+
         with col1:
             st.markdown("**Owner**")
             owner_r = st.checkbox("Read", key="owner_r")
             owner_w = st.checkbox("Write", key="owner_w")
             owner_x = st.checkbox("Execute", key="owner_x")
-        
+
         with col2:
             st.markdown("**Group**")
             group_r = st.checkbox("Read", key="group_r")
             group_w = st.checkbox("Write", key="group_w")
             group_x = st.checkbox("Execute", key="group_x")
-        
+
         with col3:
             st.markdown("**Other**")
             other_r = st.checkbox("Read", key="other_r")
             other_w = st.checkbox("Write", key="other_w")
             other_x = st.checkbox("Execute", key="other_x")
-        
+
         owner_num = (4 if owner_r else 0) + (2 if owner_w else 0) + (1 if owner_x else 0)
         group_num = (4 if group_r else 0) + (2 if group_w else 0) + (1 if group_x else 0)
         other_num = (4 if other_r else 0) + (2 if other_w else 0) + (1 if other_x else 0)
-        
+
         result = f"{owner_num}{group_num}{other_num}"
-        
+
         st.markdown("### Result")
         st.code(result, language="bash")
         st.code(f"chmod {result} filename", language="bash")
-    
+
     with tab3:
         st.markdown("### 📚 Permission Guide")
-        
+
         st.markdown("**Recommended Permissions:**")
-        
+
         col1, col2 = st.columns(2)
-        
+
         with col1:
             st.info("**Files:**")
             st.code("644 - Standard files")
             st.code("600 - Sensitive files (config)")
             st.code("640 - Group readable")
-        
+
         with col2:
             st.info("**Directories:**")
             st.code("755 - Standard folders")
             st.code("750 - Group accessible")
             st.code("700 - Private folders")
-        
+
         st.markdown("---")
         st.markdown("**Permission Values:**")
-        
+
         perm_data = {
             'Number': ['4', '2', '1'],
             'Permission': ['Read (r)', 'Write (w)', 'Execute (x)'],
             'Files': ['View content', 'Modify content', 'Run as program'],
             'Directories': ['List files', 'Add/delete files', 'Access directory']
         }
-        
+
         df = pd.DataFrame(perm_data)
         st.dataframe(df, use_container_width=True)
-        
+
         st.markdown("---")
         st.markdown("**Common Combinations:**")
-        
+
         common = {
             'Permission': ['644', '755', '600', '700', '666', '777'],
             'Description': [
@@ -2724,7 +2724,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                 '❌ Never use'
             ]
         }
-        
+
         df_common = pd.DataFrame(common)
         st.dataframe(df_common, use_container_width=True)
 
@@ -3180,5 +3180,6 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
     - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
     """)
+
 
 
