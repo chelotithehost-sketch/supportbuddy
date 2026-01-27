@@ -1083,7 +1083,7 @@ else:
                 if uploaded_file or ticket_text:
                     with st.spinner("🤖 Analyzing ticket..."):
                         try:
-                            model = genai.GenerativeModel('gemini-2.0-flash-exp')
+                            model = genai.GenerativeModel('gemini-2.5-flash-lite')
                             prompt = """Analyze this support ticket and provide:
                             
 1. **Issue Summary**: Brief description of the problem
@@ -1132,7 +1132,7 @@ Be specific and actionable."""
                 if symptom:
                     with st.spinner("🤖 Diagnosing..."):
                         try:
-                            model = genai.GenerativeModel('gemini-2.0-flash-exp')
+                            model = genai.GenerativeModel('gemini-2.5-flash-lite')
                             prompt = f"""Diagnose this technical support issue:
 
 **Symptoms**: {symptom}
@@ -1188,7 +1188,7 @@ Be specific, technical, and actionable."""
                         
                         with st.spinner("🤖 Thinking..."):
                             try:
-                                model = genai.GenerativeModel('gemini-2.0-flash-exp')
+                                model = genai.GenerativeModel('gemini-2.5-flash-lite')
                                 
                                 context = """You are a technical support assistant for a web hosting company. 
                                 Provide clear, helpful, step-by-step answers about:
@@ -1234,7 +1234,7 @@ Be specific, technical, and actionable."""
                 if error_msg:
                     with st.spinner("🤖 Analyzing error..."):
                         try:
-                            model = genai.GenerativeModel('gemini-2.0-flash-exp')
+                            model = genai.GenerativeModel('gemini-2.5-flash-lite')
                             prompt = f"""Analyze this email error message:
 
 {error_msg}
@@ -1275,7 +1275,7 @@ Be specific about server settings, DNS records, and authentication methods."""
                 if error_code:
                     with st.spinner("🤖 Looking up error..."):
                         try:
-                            model = genai.GenerativeModel('gemini-2.0-flash-exp')
+                            model = genai.GenerativeModel('gemini-2.5-flash-lite')
                             prompt = f"""Explain this error code: {error_code}
 {f"Context: {context}" if context else ""}
 
@@ -3177,3 +3177,4 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         """)
+
