@@ -412,17 +412,7 @@ CATEGORY_COLORS = {
 }
 
 TOOL_CATEGORIES = {
-    "🏠 Home": {
-        "icon": "🏠",
-        "tools": [
-            "🎫 Ticket Management",
-            "🤖 AI Tools",
-            "🌐 Domain & DNS"
-        ],
-        "description": "Navigate to access support tools organised by category",
-        "color": CATEGORY_COLORS["🏠 Home"]
-    },
-    "👨‍💼 Admin Links": {
+    "Admin Links": {
         "icon": "👨‍💼",
         "tools": [
             "🔐 PIN Checker",
@@ -431,9 +421,9 @@ TOOL_CATEGORIES = {
             "📋 cPanel Account List"
         ],
         "description": "Your essential admin tools",
-        "color": CATEGORY_COLORS["👨‍💼 Admin Links"]
+        "color": CATEGORY_COLORS["Admin Links"]
     },
-    "🎫 Ticket Management": {
+    "Ticket Management": {
         "icon": "🎫",
         "tools": [
             "✅ Support Ticket Checklist",
@@ -441,9 +431,9 @@ TOOL_CATEGORIES = {
             "🩺 Smart Symptom Checker"
         ],
         "description": "Let's analyse the tickets",
-        "color": CATEGORY_COLORS["🎫 Ticket Management"]
+        "color": CATEGORY_COLORS["Ticket Management"]
     },
-    "🤖 AI Tools": {
+    "AI Tools": {
         "icon": "🤖",
         "tools": [
             "💬 AI Support Chat",
@@ -451,9 +441,9 @@ TOOL_CATEGORIES = {
             "❓ Error Code Explainer"
         ],
         "description": "AI tools for you",
-        "color": CATEGORY_COLORS["🤖 AI Tools"]
+        "color": CATEGORY_COLORS["AI Tools"]
     },
-    "🌐 Domain & DNS": {
+    "Domain & DNS": {
         "icon": "🌐",
         "tools": [
             "🔍 Domain Status Check",
@@ -462,9 +452,9 @@ TOOL_CATEGORIES = {
             "🌍 WHOIS Lookup"
         ],
         "description": "Domain Tools",
-        "color": CATEGORY_COLORS["🌐 Domain & DNS"]
+        "color": CATEGORY_COLORS["Domain & DNS"]
     },
-    "🌍 WEB & SSL TOOLS": {
+    "WEB & SSL TOOLS": {
         "icon": "🌍",
         "tools": [
             "🔧 Web Error Troubleshooting",
@@ -475,9 +465,9 @@ TOOL_CATEGORIES = {
             "🔗 Redirect Checker"
         ],
         "description": "Web and SSL Tools for You",
-        "color": CATEGORY_COLORS["🌍 WEB & SSL TOOLS"]
+        "color": CATEGORY_COLORS["WEB & SSL TOOLS"]
     },
-    "📧 Email": {
+    "Email": {
         "icon": "📧",
         "tools": [
             "📮 MX Record Checker",
@@ -486,18 +476,18 @@ TOOL_CATEGORIES = {
             "📄 Email Header Analyzer"
         ],
         "description": "Essential Email Tools",
-        "color": CATEGORY_COLORS["📧 Email"]
+        "color": CATEGORY_COLORS["Email"]
     },
-    "💾 Server & Database": {
+    "Server & Database": {
         "icon": "💾",
         "tools": [
             "📊 Database Size Calculator",
             "🔐 File Permission Checker"
         ],
         "description": "Server Tools",
-        "color": CATEGORY_COLORS["💾 Server & Database"]
+        "color": CATEGORY_COLORS["Server & Database"]
     },
-    "📡 Network": {
+    "Network": {
         "icon": "📡",
         "tools": [
             "🔍 IP Address Lookup",
@@ -505,9 +495,9 @@ TOOL_CATEGORIES = {
             "🧹 Flush DNS Cache"
         ],
         "description": "Your Essential Network Tools",
-        "color": CATEGORY_COLORS["📡 Network"]
+        "color": CATEGORY_COLORS["Network"]
     },
-    "🛠️ Utilities": {
+    "Utilities": {
         "icon": "🛠️",
         "tools": [
             "📚 Help Center",
@@ -519,7 +509,7 @@ TOOL_CATEGORIES = {
             "🧹 Flush DNS Cache"
         ],
         "description": "Utilities",
-        "color": CATEGORY_COLORS["🛠️ Utilities"]
+        "color": CATEGORY_COLORS["Utilities"]
     }
 }
     
@@ -583,21 +573,21 @@ def render_category_home():
     st.markdown("---")
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.markdown('<div class="info-box"><h4>🎫 Ticket Management</h4><p>Analyze tickets, check symptoms, gather information</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="info-box"><h4>Ticket Management</h4><p>Analyze tickets, check symptoms, gather information</p></div>', unsafe_allow_html=True)
         if st.button("Open Ticket Management", key="home_feat_ticket", use_container_width=True):
-            st.session_state.selected_category = "🎫 Ticket Management"
+            st.session_state.selected_category = "Ticket Management"
             st.session_state.selected_tool = None
             st.rerun()
     with col2:
-        st.markdown('<div class="info-box"><h4>🤖 AI Tools</h4><p>Get instant help with AI-powered analysis</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="info-box"><h4>AI Tools</h4><p>Get instant help with AI-powered analysis</p></div>', unsafe_allow_html=True)
         if st.button("Open AI Tools", key="home_feat_ai", use_container_width=True):
-            st.session_state.selected_category = "🤖 AI Tools"
+            st.session_state.selected_category = "AI Tools"
             st.session_state.selected_tool = None
             st.rerun()
     with col3:
-        st.markdown('<div class="info-box"><h4>🌐 Domain & DNS</h4><p>Check domain status, analyze DNS records</p></div>', unsafe_allow_html=True)
+        st.markdown('<div class="info-box"><h4>Domain & DNS</h4><p>Check domain status, analyze DNS records</p></div>', unsafe_allow_html=True)
         if st.button("Open Domain & DNS", key="home_feat_dns", use_container_width=True):
-            st.session_state.selected_category = "🌐 Domain & DNS"
+            st.session_state.selected_category = "Domain & DNS"
             st.session_state.selected_tool = None
             st.rerun()
 
