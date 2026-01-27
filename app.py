@@ -2560,7 +2560,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
         with col3:
             st.info("**Large DB**\n> 10 GB")
 
-        with tab2:
+       with tab2:
         st.markdown("### SQL Queries for Size Checking")
 
         st.markdown("**All Databases:**")
