@@ -2335,7 +2335,7 @@ elif tool == "🔗 Redirect Checker":
                         st.code(response.url)
 
 # NETWORK TOOLS
-elif tool == "🔍 IP Address Lookup":
+elif tool == "IP Address Lookup":
     st.header("🔍 IP Address Lookup")
     st.markdown("Get detailed geolocation and ISP information for any IP address")
     
