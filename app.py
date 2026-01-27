@@ -3180,3 +3180,4 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
     - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
     """)
+
