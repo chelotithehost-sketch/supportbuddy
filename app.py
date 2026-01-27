@@ -2057,8 +2057,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
             - Enable caching
             - Optimize scripts
             """)
-
-elif tool == "🔒 SSL Certificate Checker":
+    elif tool == "🔒 SSL Certificate Checker":
     st.title("🔒 SSL Certificate Checker")
     st.markdown("Check SSL/TLS certificate status")
     
