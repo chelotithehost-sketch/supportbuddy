@@ -2512,17 +2512,17 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
      st.title("🧹 Flush Google DNS Cache")
      st.markdown("Clear Google's DNS cache to force fresh lookups")
     
-    st.markdown('<div class="info-box">', unsafe_allow_html=True)
-    st.markdown("""
+     st.markdown('<div class="info-box">', unsafe_allow_html=True)
+     st.markdown("""
 **When to flush DNS cache:**
 - After changing nameservers
 - After updating DNS records
 - When experiencing DNS propagation issues
 - To force fresh DNS lookups
 """)
-    st.markdown('</div>', unsafe_allow_html=True)
+     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
+     st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
 
 # SERVER TOOLS
     elif tool == "📊 Database Size Calculator":
