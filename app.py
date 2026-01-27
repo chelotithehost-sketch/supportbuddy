@@ -2560,16 +2560,16 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
         with col3:
             st.info("**Large DB**\n> 10 GB")
 
-    with tab2:
+        with tab2:
         st.markdown("### SQL Queries for Size Checking")
 
         st.markdown("**All Databases:**")
         st.code("""SELECT 
-    table_schema AS 'Database',
-    ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'Size (MB)'
-FROM information_schema.TABLES
-GROUP BY table_schema
-ORDER BY SUM(data_length + index_length) DESC;""", language="sql")
+        table_schema AS 'Database',
+        ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'Size (MB)'
+        FROM information_schema.TABLES
+        GROUP BY table_schema
+        ORDER BY SUM(data_length + index_length) DESC;""", language="sql")
 
         st.markdown("**Specific Database:**")
         db_name = st.text_input("Database name:", placeholder="mydatabase")
