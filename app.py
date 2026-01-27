@@ -2575,11 +2575,11 @@ ORDER BY SUM(data_length + index_length) DESC;""", language="sql")
         db_name = st.text_input("Database name:", placeholder="mydatabase")
         if db_name:
             st.code(f"""SELECT 
-    table_name AS 'Table',
-    ROUND(((data_length + index_length) / 1024 / 1024), 2) AS 'Size (MB)'
-FROM information_schema.TABLES
-WHERE table_schema = '{db_name}'
-ORDER BY (data_length + index_length) DESC;""", language="sql")
+            table_name AS 'Table',
+            ROUND(((data_length + index_length) / 1024 / 1024), 2) AS 'Size (MB)'
+            FROM information_schema.TABLES
+            WHERE table_schema = '{db_name}'
+            ORDER BY (data_length + index_length) DESC;""", language="sql")
 
     elif tool == "🔐 File Permission Checker":
      st.title("🔐 File Permission Checker")
