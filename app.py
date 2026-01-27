@@ -73,7 +73,7 @@ except ImportError:
                     try:
                         import pytz
                         PYTZ_AVAILABLE = True
-                    except ImportError:
+                except ImportError:
                         pass
 
                         # Feature availability dictionary
@@ -104,7 +104,7 @@ except ImportError:
                         import google.generativeai as genai
                         genai.configure(api_key=GEMINI_API_KEY)
                         GEMINI_AVAILABLE = True
-                        except Exception:
+                except Exception:
                         pass
 
                         # Page Configuration
