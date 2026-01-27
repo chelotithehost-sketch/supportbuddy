@@ -2058,11 +2058,11 @@ Be specific about web hosting environments, cPanel, and common server configurat
             - Optimize scripts
             """)
 
-    elif tool == "🔒 SSL Certificate Checker":
-     st.title("🔒 SSL Certificate Checker")
-     st.markdown("Check SSL/TLS certificate status")
+elif tool == "🔒 SSL Certificate Checker":
+    st.title("🔒 SSL Certificate Checker")
+    st.markdown("Check SSL/TLS certificate status")
     
-     domain = st.text_input("Domain:", placeholder="example.com")
+    domain = st.text_input("Domain:", placeholder="example.com")
     
     if st.button("🔍 Check SSL Certificate", type="primary"):
         if not domain:
@@ -2107,11 +2107,11 @@ Be specific about web hosting environments, cPanel, and common server configurat
                     except Exception as e:
                         st.error(f"❌ Error: {str(e)}")
 
-    elif tool == "🔀 HTTPS Redirect Test":
-     st.title("🔀 HTTPS Redirect Test")
-     st.markdown("Test if HTTP redirects to HTTPS")
+elif tool == "🔀 HTTPS Redirect Test":
+    st.title("🔀 HTTPS Redirect Test")
+    st.markdown("Test if HTTP redirects to HTTPS")
     
-     domain = st.text_input("Domain:", placeholder="example.com")
+    domain = st.text_input("Domain:", placeholder="example.com")
     
     if st.button("🔍 Test Redirect", type="primary"):
         if not domain:
@@ -2145,11 +2145,11 @@ Be specific about web hosting environments, cPanel, and common server configurat
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="apache")
 
-    elif tool == "⚠️ Mixed Content Detector":
-     st.title("⚠️ Mixed Content Detector")
-     st.markdown("Scan for HTTP resources on HTTPS pages")
+elif tool == "⚠️ Mixed Content Detector":
+    st.title("⚠️ Mixed Content Detector")
+    st.markdown("Scan for HTTP resources on HTTPS pages")
     
-     url = st.text_input("URL:", placeholder="https://example.com")
+    url = st.text_input("URL:", placeholder="https://example.com")
     
     if st.button("🔍 Scan for Mixed Content", type="primary"):
         if not url:
@@ -2163,11 +2163,8 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                 if not success:
                     st.error(f"❌ {response}")
                 else:
-                    # Parse HTML to find resources
-                    from bs4 import BeautifulSoup
                     soup = BeautifulSoup(response.text, 'html.parser')
                     
-                    # Find all resources with src or href attributes
                     mixed_content = {
                         'images': [],
                         'scripts': [],
@@ -2177,46 +2174,36 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         'other': []
                     }
                     
-                    # Check images
                     for img in soup.find_all('img', src=True):
                         if img['src'].startswith('http://'):
                             mixed_content['images'].append(img['src'])
                     
-                    # Check scripts
                     for script in soup.find_all('script', src=True):
                         if script['src'].startswith('http://'):
                             mixed_content['scripts'].append(script['src'])
                     
-                    # Check stylesheets
                     for link in soup.find_all('link', href=True):
                         if link.get('rel') and 'stylesheet' in link['rel']:
                             if link['href'].startswith('http://'):
                                 mixed_content['stylesheets'].append(link['href'])
                     
-                    # Check iframes
                     for iframe in soup.find_all('iframe', src=True):
                         if iframe['src'].startswith('http://'):
                             mixed_content['iframes'].append(iframe['src'])
                     
-                    # Check other links
                     for link in soup.find_all('a', href=True):
                         if link['href'].startswith('http://'):
                             mixed_content['links'].append(link['href'])
                     
-                    # Check for other HTTP references in attributes
                     for tag in soup.find_all(True):
                         for attr, value in tag.attrs.items():
                             if isinstance(value, str) and value.startswith('http://'):
-                                if attr not in ['src', 'href']:  # Already checked these
+                                if attr not in ['src', 'href']:
                                     mixed_content['other'].append(f"{tag.name}[{attr}]: {value}")
                     
-                    # Count total mixed content
                     total_mixed = sum(len(v) for v in mixed_content.values())
-                    
-                    # Also count HTTPS resources for comparison
                     https_count = response.text.count('https://')
                     
-                    # Display summary
                     col1, col2, col3 = st.columns(3)
                     with col1:
                         st.metric("HTTP Resources (Mixed)", total_mixed)
@@ -2228,12 +2215,10 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         else:
                             st.metric("Security Status", "✅ Secure", delta_color="normal")
                     
-                    # Display results
                     if total_mixed > 0:
                         st.error(f"⚠️ Found {total_mixed} HTTP resource(s) that should be HTTPS")
                         st.info("💡 Mixed content can cause browser warnings and security issues")
                         
-                        # Show details for each type
                         if mixed_content['images']:
                             with st.expander(f"🖼️ Images ({len(mixed_content['images'])})", expanded=True):
                                 for img in mixed_content['images']:
@@ -2258,7 +2243,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         
                         if mixed_content['links']:
                             with st.expander(f"🔗 Links ({len(mixed_content['links'])})", expanded=False):
-                                # Show only first 20 to avoid overwhelming display
                                 for link in mixed_content['links'][:20]:
                                     st.code(link, language=None)
                                 if len(mixed_content['links']) > 20:
@@ -2269,7 +2253,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                                 for item in mixed_content['other']:
                                     st.code(item, language=None)
                         
-                        # Provide fix suggestions
                         st.markdown("---")
                         st.markdown("### 🔧 How to Fix:")
                         st.markdown("""
@@ -2283,11 +2266,11 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         st.success("✅ No mixed content detected - all resources use HTTPS!")
                         st.balloons()
 
-    elif tool == "📊 HTTP Status Code Checker":
-     st.title("📊 HTTP Status Code Checker")
-     st.markdown("Check HTTP response status codes")
+elif tool == "📊 HTTP Status Code Checker":
+    st.title("📊 HTTP Status Code Checker")
+    st.markdown("Check HTTP response status codes")
     
-     url = st.text_input("URL:", placeholder="https://example.com")
+    url = st.text_input("URL:", placeholder="https://example.com")
     
     if st.button("🔍 Check Status", type="primary"):
         if not url:
@@ -2316,11 +2299,11 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                     for key, value in response.headers.items():
                         st.code(f"{key}: {value}")
 
-    elif tool == "🔗 Redirect Checker":
-     st.title("🔗 Redirect Checker")
-     st.markdown("Track redirect chains")
+elif tool == "🔗 Redirect Checker":
+    st.title("🔗 Redirect Checker")
+    st.markdown("Track redirect chains")
     
-     url = st.text_input("URL:", placeholder="https://example.com")
+    url = st.text_input("URL:", placeholder="https://example.com")
     
     if st.button("🔍 Check Redirects", type="primary"):
         if not url:
@@ -2352,22 +2335,20 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         st.code(response.url)
 
 # NETWORK TOOLS
-    elif tool == "🔍 IP Address Lookup":
-     st.header("🔍 IP Address Lookup")
-     st.markdown("Get detailed geolocation and ISP information for any IP address")
+elif tool == "🔍 IP Address Lookup":
+    st.header("🔍 IP Address Lookup")
+    st.markdown("Get detailed geolocation and ISP information for any IP address")
     
-     ip = st.text_input("Enter IP address:", placeholder="8.8.8.8", key="ip_input")
+    ip = st.text_input("Enter IP address:", placeholder="8.8.8.8", key="ip_input")
     
     if st.button("🔍 Lookup IP", use_container_width=True):
         if ip:
-            # Validate IP format
             ip_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
             if not re.match(ip_pattern, ip):
                 st.error("❌ Invalid IP address format")
             else:
                 with st.spinner(f"Looking up {ip}..."):
                     try:
-                        # Try primary API
                         geo_data = None
                         try:
                             response = requests.get(f"https://ipapi.co/{ip}/json/", timeout=5)
@@ -2376,7 +2357,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         except:
                             pass
                         
-                        # Fallback API
                         if not geo_data or geo_data.get('error'):
                             response = requests.get(f"http://ip-api.com/json/{ip}", timeout=5)
                             if response.status_code == 200:
@@ -2417,12 +2397,10 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                                 if geo_data.get('asn'):
                                     st.metric("🔢 ASN", geo_data.get('asn', 'N/A'))
                             
-                            # Map link
                             if geo_data.get('latitude') and geo_data.get('longitude'):
                                 map_url = f"https://www.google.com/maps?q={geo_data['latitude']},{geo_data['longitude']}"
                                 st.markdown(f"🗺️ [View on Google Maps]({map_url})")
                             
-                            # Full details
                             with st.expander("🔍 View Full IP Details"):
                                 st.json(geo_data)
                         else:
@@ -2433,11 +2411,11 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
         else:
             st.warning("⚠️ Please enter an IP address")
 
-    elif tool == "🗂️ DNS Analyzer":
-     st.header("🗂️ DNS Analyzer")
-     st.markdown("Comprehensive DNS analysis with all record types")
+elif tool == "🗂️ DNS Analyzer":
+    st.header("🗂️ DNS Analyzer")
+    st.markdown("Comprehensive DNS analysis with all record types")
     
-     domain_dns = st.text_input("Enter domain:", placeholder="example.com")
+    domain_dns = st.text_input("Enter domain:", placeholder="example.com")
     
     if st.button("🔍 Analyze DNS", use_container_width=True):
         if domain_dns:
@@ -2446,7 +2424,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
             with st.spinner("Analyzing DNS..."):
                 issues, warnings, success_checks = [], [], []
                 
-                # A Records
                 st.subheader("🌐 A Records")
                 try:
                     a_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=A", timeout=5).json()
@@ -2461,7 +2438,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                 except Exception as e:
                     st.error(f"Error: {str(e)}")
 
-                # MX Records
                 st.subheader("📧 MX Records")
                 try:
                     mx_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=MX", timeout=5).json()
@@ -2478,7 +2454,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                 except:
                     pass
 
-                # TXT Records
                 st.subheader("📝 TXT Records (SPF/DKIM/DMARC)")
                 try:
                     txt_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=TXT", timeout=5).json()
@@ -2505,7 +2480,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                 except:
                     pass
 
-                # Nameservers
                 st.subheader("🖥️ Nameservers")
                 try:
                     ns_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=NS", timeout=5).json()
@@ -2522,7 +2496,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                 except:
                     pass
 
-                # Summary
                 st.divider()
                 st.subheader("📊 Summary")
                 if not issues and not warnings:
@@ -2534,27 +2507,27 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         for w in warnings: st.warning(f"• {w}")
                     with col_b:
                         for s in success_checks: st.success(f"• {s}")
-                            
-    elif tool == "🧹 Flush DNS Cache":
-     st.title("🧹 Flush Google DNS Cache")
-     st.markdown("Clear Google's DNS cache to force fresh lookups")
+
+elif tool == "🧹 Flush DNS Cache":
+    st.title("🧹 Flush Google DNS Cache")
+    st.markdown("Clear Google's DNS cache to force fresh lookups")
     
-     st.markdown('<div class="info-box">', unsafe_allow_html=True)
-     st.markdown("""
-    **When to flush DNS cache:**
-    - After changing nameservers
-    - After updating DNS records
-    - When experiencing DNS propagation issues
-    - To force fresh DNS lookups
-    """)
-     st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="info-box">', unsafe_allow_html=True)
+    st.markdown("""
+**When to flush DNS cache:**
+- After changing nameservers
+- After updating DNS records
+- When experiencing DNS propagation issues
+- To force fresh DNS lookups
+""")
+    st.markdown('</div>', unsafe_allow_html=True)
     
-     st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
-    
+    st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
+
 # SERVER TOOLS
-    elif tool == "📊 Database Size Calculator":
-     st.title("📊 Database Size Calculator")
-     st.markdown("Calculate and convert database sizes")
+elif tool == "📊 Database Size Calculator":
+    st.title("📊 Database Size Calculator")
+    st.markdown("Calculate and convert database sizes")
     
     tab1, tab2 = st.tabs(["🔢 Size Converter", "📋 SQL Query"])
     
@@ -2608,11 +2581,11 @@ FROM information_schema.TABLES
 WHERE table_schema = '{db_name}'
 ORDER BY (data_length + index_length) DESC;""", language="sql")
 
-    elif tool == "🔐 File Permission Checker":
-     st.title("🔐 File Permission Checker")
-     st.markdown("Convert and understand Unix file permissions")
+elif tool == "🔐 File Permission Checker":
+    st.title("🔐 File Permission Checker")
+    st.markdown("Convert and understand Unix file permissions")
     
-     tab1, tab2, tab3 = st.tabs(["🔢 Numeric to Symbolic", "🔤 Symbolic to Numeric", "📚 Guide"])
+    tab1, tab2, tab3 = st.tabs(["🔢 Numeric to Symbolic", "🔤 Symbolic to Numeric", "📚 Guide"])
     
     with tab1:
         st.markdown("### Numeric to Symbolic Converter")
@@ -2756,12 +2729,11 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         st.dataframe(df_common, use_container_width=True)
 
 # UTILITIES
-    elif tool == "📚 Help Center":
-     st.title("📚 HostAfrica Knowledge Base")
-     st.markdown("Search our comprehensive knowledge base for guides and documentation")
+elif tool == "📚 Help Center":
+    st.title("📚 HostAfrica Knowledge Base")
+    st.markdown("Search our comprehensive knowledge base for guides and documentation")
     
-     # Search input
-     search_query = st.text_input(
+    search_query = st.text_input(
         "🔍 Search:",
         placeholder="e.g., email setup, dns, cpanel, ssl certificate",
         help="Enter keywords to search the knowledge base"
@@ -2786,7 +2758,6 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         else:
             st.info("💡 No articles found. Try different keywords or browse categories below.")
     
-    # Popular Categories
     st.markdown("---")
     st.markdown("### 📂 Browse by Category")
     
@@ -2816,7 +2787,6 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         if st.button("🔍 Troubleshooting", use_container_width=True):
             st.session_state.kb_category = 'troubleshooting'
     
-    # Show category articles if selected
     if 'kb_category' in st.session_state:
         category = st.session_state.kb_category
         st.markdown(f"### {category.title()} Articles")
@@ -2829,11 +2799,11 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     st.markdown("---")
     st.link_button("🌐 Browse Full Help Center", "https://help.hostafrica.com", use_container_width=True, type="primary")
 
-    elif tool == "🔑 Password Strength Meter":
-     st.title("🔑 Password Strength Meter")
-     st.warning("🔒 Checked locally - password never sent anywhere")
+elif tool == "🔑 Password Strength Meter":
+    st.title("🔑 Password Strength Meter")
+    st.warning("🔒 Checked locally - password never sent anywhere")
     
-     password = st.text_input("Enter password to test:", type="password", key="pwd_test")
+    password = st.text_input("Enter password to test:", type="password", key="pwd_test")
     
     if password:
         strength, score, feedback, color = check_password_strength(password)
@@ -2882,40 +2852,8 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         st.code(generated)
         st.success("✅ Copy this password to a secure location")
 
-    elif tool == "🌍 Timezone Converter":
-        st.title("🌍 Timezone Converter")
-    
-    if not PYTZ_AVAILABLE:
-        st.warning("⚠️ Advanced timezone features require pytz library")
-        st.info("Basic conversion available")
-    
-    from_time = st.time_input("Time:")
-    offset_from = st.number_input("From UTC Offset (hours):", value=0, min_value=-12, max_value=14)
-    offset_to = st.number_input("To UTC Offset (hours):", value=0, min_value=-12, max_value=14)
-    
-    if from_time:
-        from datetime import timedelta
-        
-        utc_dt = datetime.combine(datetime.today(), from_time)
-        from_dt = utc_dt - timedelta(hours=offset_from)
-        to_dt = from_dt + timedelta(hours=offset_to)
-        
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.info(f"**From (UTC{offset_from:+d})**")
-            st.code(from_time.strftime('%H:%M:%S'))
-        
-        with col2:
-            st.success(f"**UTC**")
-            st.code(from_dt.strftime('%H:%M:%S'))
-        
-        with col3:
-            st.info(f"**To (UTC{offset_to:+d})**")
-            st.code(to_dt.strftime('%H:%M:%S'))
-
-    elif tool == "📋 Copy-Paste Utilities":
-     st.title("📋 Copy-Paste Utilities")
+elif tool == "📋 Copy-Paste Utilities":
+    st.title("📋 Copy-Paste Utilities")
     
     tab1, tab2, tab3 = st.tabs(["🔤 Case Converter", "📝 Line Tools", "🔧 Text Tools"])
     
@@ -2977,9 +2915,9 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                 st.metric("Alphanumeric", sum(c.isalnum() for c in text_tool))
                 st.metric("Special Chars", sum(not c.isalnum() and not c.isspace() for c in text_tool))
 
-    elif tool == "📸 Screenshot Annotator":
-     st.title("📸 Screenshot Annotator")
-     st.markdown("Upload screenshots and add notes")
+elif tool == "📸 Screenshot Annotator":
+    st.title("📸 Screenshot Annotator")
+    st.markdown("Upload screenshots and add notes")
     
     uploaded = st.file_uploader("Upload Screenshot:", type=['png', 'jpg', 'jpeg'])
     
@@ -3014,7 +2952,6 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     )
             
             with col2:
-                # Convert image to bytes for download
                 buf = io.BytesIO()
                 image.save(buf, format='PNG')
                 st.download_button(
@@ -3024,11 +2961,11 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     "image/png"
                 )
 
-    elif tool == "📝 Session Notes":
-     st.title("📝 Session Notes")
-     st.markdown("Take notes during support sessions")
+elif tool == "📝 Session Notes":
+    st.title("📝 Session Notes")
+    st.markdown("Take notes during support sessions")
     
-     st.session_state.session_notes = st.text_area(
+    st.session_state.session_notes = st.text_area(
         "Session Notes:",
         value=st.session_state.session_notes,
         height=400,
@@ -3066,30 +3003,14 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         word_count = len(st.session_state.session_notes.split())
         char_count = len(st.session_state.session_notes)
         st.info(f"📊 {word_count} words, {char_count} characters")
-        
-    elif tool == "🧹 Flush DNS Cache":
-     st.title("🧹 Flush Google DNS Cache")
-     st.markdown("Clear Google's DNS cache to force fresh lookups")
+
+elif tool == "🗑️ Clear Cache Instructions":
+    st.title("🗑️ Clear Cache Instructions")
+    st.markdown("Step-by-step guide to clear browser cache")
     
-     st.markdown('<div class="info-box">', unsafe_allow_html=True)
-     st.markdown("""
-    **When to flush DNS cache:**
-    - After changing nameservers
-    - After updating DNS records
-    - When experiencing DNS propagation issues
-    - To force fresh DNS lookups
-    """)
-    st.markdown('</div>', unsafe_allow_html=True)
+    browser = st.selectbox("Select Browser:", ["Chrome", "Firefox", "Safari", "Edge", "Opera"])
     
-    st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
-    
-    elif tool == "🗑️ Clear Cache Instructions":
-     st.title("🗑️ Clear Cache Instructions")
-     st.markdown("Step-by-step guide to clear browser cache")
-    
-     browser = st.selectbox("Select Browser:", ["Chrome", "Firefox", "Safari", "Edge", "Opera"])
-    
-     st.markdown("---")
+    st.markdown("---")
     
     if browser == "Chrome":
         st.markdown("""
@@ -3221,7 +3142,6 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - Mac: `Cmd+Shift+R`
         """)
     
-    # Common tips for all browsers
     st.markdown("---")
     st.markdown("### 💡 Additional Tips")
     
