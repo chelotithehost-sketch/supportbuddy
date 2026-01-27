@@ -961,9 +961,9 @@ else:
         st.session_state.selected_tool = None
         st.rerun()
 
-    # ============================================================================
-    # MAIN CONTENT - TOOL IMPLEMENTATIONS (unchanged, uses 'tool' variable)
-    # ============================================================================
+# ============================================================================
+# MAIN CONTENT - TOOL IMPLEMENTATIONS (unchanged, uses 'tool' variable)
+# ============================================================================
 
     if tool == "🔐 PIN Checker":
         st.title("🔐 PIN Checker")
@@ -1589,9 +1589,6 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                 st.code(str(w), language=None)
                         
                         # ==========================================
-                        # COMMON FOOTER (Neutral DNSSEC & Live NS)
-                        # ==========================================
-                        # ==========================================
                         # COMMON FOOTER (Only for non-.ng domains)
                         # ==========================================
                         if not domain.endswith('.ng'):
@@ -2059,1127 +2056,1124 @@ Be specific about web hosting environments, cPanel, and common server configurat
             """)
 
     elif tool == "🔒 SSL Certificate Checker":
-     st.title("🔒 SSL Certificate Checker")
-     st.markdown("Check SSL/TLS certificate status")
-    
-    domain = st.text_input("Domain:", placeholder="example.com")
-    
-    if st.button("🔍 Check SSL Certificate", type="primary"):
-        if not domain:
-            st.warning("⚠️ Please enter a domain name")
-        else:
-            valid, result = validate_domain(domain)
-            if not valid:
-                st.error(f"❌ {result}")
+        st.title("🔒 SSL Certificate Checker")
+        st.markdown("Check SSL/TLS certificate status")
+        
+        domain = st.text_input("Domain:", placeholder="example.com")
+        
+        if st.button("🔍 Check SSL Certificate", type="primary"):
+            if not domain:
+                st.warning("⚠️ Please enter a domain name")
             else:
-                domain = result
-                
-                with st.spinner(f"Checking SSL for {domain}..."):
-                    try:
-                        context = ssl.create_default_context()
-                        with socket.create_connection((domain, 443), timeout=10) as sock:
-                            with context.wrap_socket(sock, server_hostname=domain) as ssock:
-                                cert = ssock.getpeercert()
-                                
-                                st.success("✅ SSL Certificate found and valid")
-                                
-                                col1, col2 = st.columns(2)
-                                
-                                with col1:
-                                    st.info(f"**Issuer:** {dict(x[0] for x in cert['issuer'])['organizationName']}")
-                                    st.info(f"**Subject:** {dict(x[0] for x in cert['subject'])['commonName']}")
-                                
-                                with col2:
-                                    st.info(f"**Valid From:** {cert['notBefore']}")
-                                    st.info(f"**Valid Until:** {cert['notAfter']}")
-                                
-                                if 'subjectAltName' in cert:
-                                    st.markdown("### 📜 Subject Alternative Names")
-                                    for alt_name in cert['subjectAltName']:
-                                        st.code(alt_name[1])
-                                
-                    except ssl.SSLError as e:
-                        st.error(f"❌ SSL Error: {str(e)}")
-                    except socket.gaierror:
-                        st.error("❌ Could not resolve domain")
-                    except socket.timeout:
-                        st.error("❌ Connection timed out")
-                    except Exception as e:
-                        st.error(f"❌ Error: {str(e)}")
+                valid, result = validate_domain(domain)
+                if not valid:
+                    st.error(f"❌ {result}")
+                else:
+                    domain = result
+                    
+                    with st.spinner(f"Checking SSL for {domain}..."):
+                        try:
+                            context = ssl.create_default_context()
+                            with socket.create_connection((domain, 443), timeout=10) as sock:
+                                with context.wrap_socket(sock, server_hostname=domain) as ssock:
+                                    cert = ssock.getpeercert()
+                                    
+                                    st.success("✅ SSL Certificate found and valid")
+                                    
+                                    col1, col2 = st.columns(2)
+                                    
+                                    with col1:
+                                        st.info(f"**Issuer:** {dict(x[0] for x in cert['issuer'])['organizationName']}")
+                                        st.info(f"**Subject:** {dict(x[0] for x in cert['subject'])['commonName']}")
+                                    
+                                    with col2:
+                                        st.info(f"**Valid From:** {cert['notBefore']}")
+                                        st.info(f"**Valid Until:** {cert['notAfter']}")
+                                    
+                                    if 'subjectAltName' in cert:
+                                        st.markdown("### 📜 Subject Alternative Names")
+                                        for alt_name in cert['subjectAltName']:
+                                            st.code(alt_name[1])
+                                    
+                        except ssl.SSLError as e:
+                            st.error(f"❌ SSL Error: {str(e)}")
+                        except socket.gaierror:
+                            st.error("❌ Could not resolve domain")
+                        except socket.timeout:
+                            st.error("❌ Connection timed out")
+                        except Exception as e:
+                            st.error(f"❌ Error: {str(e)}")
 
     elif tool == "🔀 HTTPS Redirect Test":
-     st.title("🔀 HTTPS Redirect Test")
-     st.markdown("Test if HTTP redirects to HTTPS")
-    
-    domain = st.text_input("Domain:", placeholder="example.com")
-    
-    if st.button("🔍 Test Redirect", type="primary"):
-        if not domain:
-            st.warning("⚠️ Please enter a domain name")
-        else:
-            valid, result = validate_domain(domain)
-            if not valid:
-                st.error(f"❌ {result}")
+        st.title("🔀 HTTPS Redirect Test")
+        st.markdown("Test if HTTP redirects to HTTPS")
+        
+        domain = st.text_input("Domain:", placeholder="example.com")
+        
+        if st.button("🔍 Test Redirect", type="primary"):
+            if not domain:
+                st.warning("⚠️ Please enter a domain name")
             else:
-                domain = result
-                url = f"http://{domain}"
-                
-                with st.spinner(f"Testing redirect for {domain}..."):
+                valid, result = validate_domain(domain)
+                if not valid:
+                    st.error(f"❌ {result}")
+                else:
+                    domain = result
+                    url = f"http://{domain}"
+                    
+                    with st.spinner(f"Testing redirect for {domain}..."):
+                        success, response = safe_request(url)
+                        
+                        if not success:
+                            st.error(f"❌ {response}")
+                        else:
+                            if response.url.startswith('https://'):
+                                st.success("✅ HTTP redirects to HTTPS correctly")
+                                st.info(f"**Final URL:** {response.url}")
+                                
+                                if len(response.history) > 0:
+                                    st.markdown("### Redirect Chain:")
+                                    for i, resp in enumerate(response.history, 1):
+                                        st.code(f"{i}. {resp.url} → {resp.status_code}")
+                            else:
+                                st.error("❌ No HTTPS redirect found")
+                                st.warning("⚠️ Consider adding HTTPS redirect in .htaccess")
+                                st.code("""RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="apache")
+
+    elif tool == "⚠️ Mixed Content Detector":
+        st.title("⚠️ Mixed Content Detector")
+        st.markdown("Scan for HTTP resources on HTTPS pages")
+        
+        url = st.text_input("URL:", placeholder="https://example.com")
+        
+        if st.button("🔍 Scan for Mixed Content", type="primary"):
+            if not url:
+                st.warning("⚠️ Please enter a URL")
+            elif not url.startswith('http'):
+                st.error("❌ URL must include protocol (http:// or https://)")
+            else:
+                with st.spinner(f"Scanning {url}..."):
                     success, response = safe_request(url)
                     
                     if not success:
                         st.error(f"❌ {response}")
                     else:
-                        if response.url.startswith('https://'):
-                            st.success("✅ HTTP redirects to HTTPS correctly")
-                            st.info(f"**Final URL:** {response.url}")
-                            
-                            if len(response.history) > 0:
-                                st.markdown("### Redirect Chain:")
-                                for i, resp in enumerate(response.history, 1):
-                                    st.code(f"{i}. {resp.url} → {resp.status_code}")
-                        else:
-                            st.error("❌ No HTTPS redirect found")
-                            st.warning("⚠️ Consider adding HTTPS redirect in .htaccess")
-                            st.code("""RewriteEngine On
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="apache")
-
-    elif tool == "⚠️ Mixed Content Detector":
-     st.title("⚠️ Mixed Content Detector")
-     st.markdown("Scan for HTTP resources on HTTPS pages")
-    
-    url = st.text_input("URL:", placeholder="https://example.com")
-    
-    if st.button("🔍 Scan for Mixed Content", type="primary"):
-        if not url:
-            st.warning("⚠️ Please enter a URL")
-        elif not url.startswith('http'):
-            st.error("❌ URL must include protocol (http:// or https://)")
-        else:
-            with st.spinner(f"Scanning {url}..."):
-                success, response = safe_request(url)
-                
-                if not success:
-                    st.error(f"❌ {response}")
-                else:
-                    soup = BeautifulSoup(response.text, 'html.parser')
-                    
-                    mixed_content = {
-                        'images': [],
-                        'scripts': [],
-                        'stylesheets': [],
-                        'iframes': [],
-                        'links': [],
-                        'other': []
-                    }
-                    
-                    for img in soup.find_all('img', src=True):
-                        if img['src'].startswith('http://'):
-                            mixed_content['images'].append(img['src'])
-                    
-                    for script in soup.find_all('script', src=True):
-                        if script['src'].startswith('http://'):
-                            mixed_content['scripts'].append(script['src'])
-                    
-                    for link in soup.find_all('link', href=True):
-                        if link.get('rel') and 'stylesheet' in link['rel']:
+                        soup = BeautifulSoup(response.text, 'html.parser')
+                        
+                        mixed_content = {
+                            'images': [],
+                            'scripts': [],
+                            'stylesheets': [],
+                            'iframes': [],
+                            'links': [],
+                            'other': []
+                        }
+                        
+                        for img in soup.find_all('img', src=True):
+                            if img['src'].startswith('http://'):
+                                mixed_content['images'].append(img['src'])
+                        
+                        for script in soup.find_all('script', src=True):
+                            if script['src'].startswith('http://'):
+                                mixed_content['scripts'].append(script['src'])
+                        
+                        for link in soup.find_all('link', href=True):
+                            if link.get('rel') and 'stylesheet' in link['rel']:
+                                if link['href'].startswith('http://'):
+                                    mixed_content['stylesheets'].append(link['href'])
+                        
+                        for iframe in soup.find_all('iframe', src=True):
+                            if iframe['src'].startswith('http://'):
+                                mixed_content['iframes'].append(iframe['src'])
+                        
+                        for link in soup.find_all('a', href=True):
                             if link['href'].startswith('http://'):
-                                mixed_content['stylesheets'].append(link['href'])
-                    
-                    for iframe in soup.find_all('iframe', src=True):
-                        if iframe['src'].startswith('http://'):
-                            mixed_content['iframes'].append(iframe['src'])
-                    
-                    for link in soup.find_all('a', href=True):
-                        if link['href'].startswith('http://'):
-                            mixed_content['links'].append(link['href'])
-                    
-                    for tag in soup.find_all(True):
-                        for attr, value in tag.attrs.items():
-                            if isinstance(value, str) and value.startswith('http://'):
-                                if attr not in ['src', 'href']:
-                                    mixed_content['other'].append(f"{tag.name}[{attr}]: {value}")
-                    
-                    total_mixed = sum(len(v) for v in mixed_content.values())
-                    https_count = response.text.count('https://')
-                    
-                    col1, col2, col3 = st.columns(3)
-                    with col1:
-                        st.metric("HTTP Resources (Mixed)", total_mixed)
-                    with col2:
-                        st.metric("HTTPS Resources", https_count)
-                    with col3:
+                                mixed_content['links'].append(link['href'])
+                        
+                        for tag in soup.find_all(True):
+                            for attr, value in tag.attrs.items():
+                                if isinstance(value, str) and value.startswith('http://'):
+                                    if attr not in ['src', 'href']:
+                                        mixed_content['other'].append(f"{tag.name}[{attr}]: {value}")
+                        
+                        total_mixed = sum(len(v) for v in mixed_content.values())
+                        https_count = response.text.count('https://')
+                        
+                        col1, col2, col3 = st.columns(3)
+                        with col1:
+                            st.metric("HTTP Resources (Mixed)", total_mixed)
+                        with col2:
+                            st.metric("HTTPS Resources", https_count)
+                        with col3:
+                            if total_mixed > 0:
+                                st.metric("Security Status", "⚠️ Issues Found", delta_color="inverse")
+                            else:
+                                st.metric("Security Status", "✅ Secure", delta_color="normal")
+                        
                         if total_mixed > 0:
-                            st.metric("Security Status", "⚠️ Issues Found", delta_color="inverse")
+                            st.error(f"⚠️ Found {total_mixed} HTTP resource(s) that should be HTTPS")
+                            st.info("💡 Mixed content can cause browser warnings and security issues")
+                            
+                            if mixed_content['images']:
+                                with st.expander(f"🖼️ Images ({len(mixed_content['images'])})", expanded=True):
+                                    for img in mixed_content['images']:
+                                        st.code(img, language=None)
+                            
+                            if mixed_content['scripts']:
+                                with st.expander(f"📜 Scripts ({len(mixed_content['scripts'])})", expanded=True):
+                                    st.warning("⚠️ Scripts are critical security issues!")
+                                    for script in mixed_content['scripts']:
+                                        st.code(script, language=None)
+                            
+                            if mixed_content['stylesheets']:
+                                with st.expander(f"🎨 Stylesheets ({len(mixed_content['stylesheets'])})", expanded=True):
+                                    for css in mixed_content['stylesheets']:
+                                        st.code(css, language=None)
+                            
+                            if mixed_content['iframes']:
+                                with st.expander(f"🖼️ iFrames ({len(mixed_content['iframes'])})", expanded=True):
+                                    st.warning("⚠️ iFrames are critical security issues!")
+                                    for iframe in mixed_content['iframes']:
+                                        st.code(iframe, language=None)
+                            
+                            if mixed_content['links']:
+                                with st.expander(f"🔗 Links ({len(mixed_content['links'])})", expanded=False):
+                                    for link in mixed_content['links'][:20]:
+                                        st.code(link, language=None)
+                                    if len(mixed_content['links']) > 20:
+                                        st.info(f"... and {len(mixed_content['links']) - 20} more links")
+                            
+                            if mixed_content['other']:
+                                with st.expander(f"🔧 Other Resources ({len(mixed_content['other'])})", expanded=False):
+                                    for item in mixed_content['other']:
+                                        st.code(item, language=None)
+                            
+                            st.markdown("---")
+                            st.markdown("### 🔧 How to Fix:")
+                            st.markdown("""
+                            1. **Replace** `http://` with `https://` in all resource URLs
+                            2. **Use protocol-relative URLs**: `//example.com/style.css` (inherits page protocol)
+                            3. **Host resources locally** if external HTTPS version is unavailable
+                            4. **Update CMS/theme settings** to force HTTPS for all resources
+                            5. **Check .htaccess or web.config** for mixed content rules
+                            """)
                         else:
-                            st.metric("Security Status", "✅ Secure", delta_color="normal")
-                    
-                    if total_mixed > 0:
-                        st.error(f"⚠️ Found {total_mixed} HTTP resource(s) that should be HTTPS")
-                        st.info("💡 Mixed content can cause browser warnings and security issues")
-                        
-                        if mixed_content['images']:
-                            with st.expander(f"🖼️ Images ({len(mixed_content['images'])})", expanded=True):
-                                for img in mixed_content['images']:
-                                    st.code(img, language=None)
-                        
-                        if mixed_content['scripts']:
-                            with st.expander(f"📜 Scripts ({len(mixed_content['scripts'])})", expanded=True):
-                                st.warning("⚠️ Scripts are critical security issues!")
-                                for script in mixed_content['scripts']:
-                                    st.code(script, language=None)
-                        
-                        if mixed_content['stylesheets']:
-                            with st.expander(f"🎨 Stylesheets ({len(mixed_content['stylesheets'])})", expanded=True):
-                                for css in mixed_content['stylesheets']:
-                                    st.code(css, language=None)
-                        
-                        if mixed_content['iframes']:
-                            with st.expander(f"🖼️ iFrames ({len(mixed_content['iframes'])})", expanded=True):
-                                st.warning("⚠️ iFrames are critical security issues!")
-                                for iframe in mixed_content['iframes']:
-                                    st.code(iframe, language=None)
-                        
-                        if mixed_content['links']:
-                            with st.expander(f"🔗 Links ({len(mixed_content['links'])})", expanded=False):
-                                for link in mixed_content['links'][:20]:
-                                    st.code(link, language=None)
-                                if len(mixed_content['links']) > 20:
-                                    st.info(f"... and {len(mixed_content['links']) - 20} more links")
-                        
-                        if mixed_content['other']:
-                            with st.expander(f"🔧 Other Resources ({len(mixed_content['other'])})", expanded=False):
-                                for item in mixed_content['other']:
-                                    st.code(item, language=None)
-                        
-                        st.markdown("---")
-                        st.markdown("### 🔧 How to Fix:")
-                        st.markdown("""
-                        1. **Replace** `http://` with `https://` in all resource URLs
-                        2. **Use protocol-relative URLs**: `//example.com/style.css` (inherits page protocol)
-                        3. **Host resources locally** if external HTTPS version is unavailable
-                        4. **Update CMS/theme settings** to force HTTPS for all resources
-                        5. **Check .htaccess or web.config** for mixed content rules
-                        """)
-                    else:
-                        st.success("✅ No mixed content detected - all resources use HTTPS!")
-                        st.balloons()
+                            st.success("✅ No mixed content detected - all resources use HTTPS!")
+                            st.balloons()
 
     elif tool == "📊 HTTP Status Code Checker":
-     st.title("📊 HTTP Status Code Checker")
-     st.markdown("Check HTTP response status codes")
-    
-    url = st.text_input("URL:", placeholder="https://example.com")
-    
-    if st.button("🔍 Check Status", type="primary"):
-        if not url:
-            st.warning("⚠️ Please enter a URL")
-        elif not url.startswith('http'):
-            st.error("❌ URL must include protocol (http:// or https://)")
-        else:
-            with st.spinner(f"Checking {url}..."):
-                success, response = safe_request(url, method='head')
-                
-                if not success:
-                    st.error(f"❌ {response}")
-                else:
-                    code = response.status_code
+        st.title("📊 HTTP Status Code Checker")
+        st.markdown("Check HTTP response status codes")
+        
+        url = st.text_input("URL:", placeholder="https://example.com")
+        
+        if st.button("🔍 Check Status", type="primary"):
+            if not url:
+                st.warning("⚠️ Please enter a URL")
+            elif not url.startswith('http'):
+                st.error("❌ URL must include protocol (http:// or https://)")
+            else:
+                with st.spinner(f"Checking {url}..."):
+                    success, response = safe_request(url, method='head')
                     
-                    if 200 <= code < 300:
-                        st.success(f"✅ Status: {code} {response.reason}")
-                    elif 300 <= code < 400:
-                        st.info(f"🔀 Status: {code} {response.reason} (Redirect)")
-                    elif 400 <= code < 500:
-                        st.warning(f"⚠️ Status: {code} {response.reason} (Client Error)")
+                    if not success:
+                        st.error(f"❌ {response}")
                     else:
-                        st.error(f"❌ Status: {code} {response.reason} (Server Error)")
-                    
-                    st.markdown("### Response Headers:")
-                    for key, value in response.headers.items():
-                        st.code(f"{key}: {value}")
+                        code = response.status_code
+                        
+                        if 200 <= code < 300:
+                            st.success(f"✅ Status: {code} {response.reason}")
+                        elif 300 <= code < 400:
+                            st.info(f"🔀 Status: {code} {response.reason} (Redirect)")
+                        elif 400 <= code < 500:
+                            st.warning(f"⚠️ Status: {code} {response.reason} (Client Error)")
+                        else:
+                            st.error(f"❌ Status: {code} {response.reason} (Server Error)")
+                        
+                        st.markdown("### Response Headers:")
+                        for key, value in response.headers.items():
+                            st.code(f"{key}: {value}")
 
     elif tool == "🔗 Redirect Checker":
-     st.title("🔗 Redirect Checker")
-     st.markdown("Track redirect chains")
-    
-    url = st.text_input("URL:", placeholder="https://example.com")
-    
-    if st.button("🔍 Check Redirects", type="primary"):
-        if not url:
-            st.warning("⚠️ Please enter a URL")
-        elif not url.startswith('http'):
-            st.error("❌ URL must include protocol")
-        else:
-            with st.spinner(f"Following redirects for {url}..."):
-                success, response = safe_request(url)
-                
-                if not success:
-                    st.error(f"❌ {response}")
-                else:
-                    if response.history:
-                        st.success(f"✅ {len(response.history)} redirect(s) found")
-                        
-                        st.markdown("### Redirect Chain:")
-                        for i, r in enumerate(response.history, 1):
-                            col1, col2 = st.columns([4, 1])
-                            with col1:
-                                st.code(r.url)
-                            with col2:
-                                st.code(r.status_code)
-                        
-                        st.markdown("### Final Destination:")
-                        st.code(response.url)
-                    else:
-                        st.info("ℹ️ No redirects - page loads directly")
-                        st.code(response.url)
-
-# NETWORK TOOLS
-    elif tool == "IP Address Lookup":
-     st.header("🔍 IP Address Lookup")
-     st.markdown("Get detailed geolocation and ISP information for any IP address")
-    
-    ip = st.text_input("Enter IP address:", placeholder="8.8.8.8", key="ip_input")
-    
-    if st.button("🔍 Lookup IP", use_container_width=True):
-        if ip:
-            ip_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
-            if not re.match(ip_pattern, ip):
-                st.error("❌ Invalid IP address format")
+        st.title("🔗 Redirect Checker")
+        st.markdown("Track redirect chains")
+        
+        url = st.text_input("URL:", placeholder="https://example.com")
+        
+        if st.button("🔍 Check Redirects", type="primary"):
+            if not url:
+                st.warning("⚠️ Please enter a URL")
+            elif not url.startswith('http'):
+                st.error("❌ URL must include protocol")
             else:
-                with st.spinner(f"Looking up {ip}..."):
-                    try:
-                        geo_data = None
-                        try:
-                            response = requests.get(f"https://ipapi.co/{ip}/json/", timeout=5)
-                            if response.status_code == 200:
-                                geo_data = response.json()
-                        except:
-                            pass
-                        
-                        if not geo_data or geo_data.get('error'):
-                            response = requests.get(f"http://ip-api.com/json/{ip}", timeout=5)
-                            if response.status_code == 200:
-                                fallback = response.json()
-                                if fallback.get('status') == 'success':
-                                    geo_data = {
-                                        'ip': ip,
-                                        'city': fallback.get('city'),
-                                        'region': fallback.get('regionName'),
-                                        'country_name': fallback.get('country'),
-                                        'postal': fallback.get('zip'),
-                                        'latitude': fallback.get('lat'),
-                                        'longitude': fallback.get('lon'),
-                                        'org': fallback.get('isp'),
-                                        'timezone': fallback.get('timezone'),
-                                        'asn': fallback.get('as')
-                                    }
-                        
-                        if geo_data and not geo_data.get('error'):
-                            st.success(f"✅ Information found for {ip}")
+                with st.spinner(f"Following redirects for {url}..."):
+                    success, response = safe_request(url)
+                    
+                    if not success:
+                        st.error(f"❌ {response}")
+                    else:
+                        if response.history:
+                            st.success(f"✅ {len(response.history)} redirect(s) found")
                             
-                            col1, col2, col3 = st.columns(3)
+                            st.markdown("### Redirect Chain:")
+                            for i, r in enumerate(response.history, 1):
+                                col1, col2 = st.columns([4, 1])
+                                with col1:
+                                    st.code(r.url)
+                                with col2:
+                                    st.code(r.status_code)
                             
-                            with col1:
-                                st.metric("🌐 IP Address", ip)
-                                st.metric("🏙️ City", geo_data.get('city', 'N/A'))
-                                st.metric("📮 Postal Code", geo_data.get('postal', 'N/A'))
-                            
-                            with col2:
-                                st.metric("🗺️ Region", geo_data.get('region', 'N/A'))
-                                st.metric("🌍 Country", geo_data.get('country_name', 'N/A'))
-                                st.metric("🕐 Timezone", geo_data.get('timezone', 'N/A'))
-                            
-                            with col3:
-                                st.metric("📡 ISP/Organization", geo_data.get('org', 'N/A')[:25])
-                                if geo_data.get('latitude') and geo_data.get('longitude'):
-                                    st.metric("📍 Coordinates", f"{geo_data['latitude']:.4f}, {geo_data['longitude']:.4f}")
-                                if geo_data.get('asn'):
-                                    st.metric("🔢 ASN", geo_data.get('asn', 'N/A'))
-                            
-                            if geo_data.get('latitude') and geo_data.get('longitude'):
-                                map_url = f"https://www.google.com/maps?q={geo_data['latitude']},{geo_data['longitude']}"
-                                st.markdown(f"🗺️ [View on Google Maps]({map_url})")
-                            
-                            with st.expander("🔍 View Full IP Details"):
-                                st.json(geo_data)
+                            st.markdown("### Final Destination:")
+                            st.code(response.url)
                         else:
-                            st.error("❌ Could not retrieve information for this IP address")
-                            st.info("The IP might be private, invalid, or the lookup service is unavailable")
-                    except Exception as e:
-                        st.error(f"❌ Error: {str(e)}")
-        else:
-            st.warning("⚠️ Please enter an IP address")
+                            st.info("ℹ️ No redirects - page loads directly")
+                            st.code(response.url)
+
+    # NETWORK TOOLS
+    elif tool == "🔍 IP Address Lookup":
+        st.header("🔍 IP Address Lookup")
+        st.markdown("Get detailed geolocation and ISP information for any IP address")
+        
+        ip = st.text_input("Enter IP address:", placeholder="8.8.8.8", key="ip_input")
+        
+        if st.button("🔍 Lookup IP", use_container_width=True):
+            if ip:
+                ip_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
+                if not re.match(ip_pattern, ip):
+                    st.error("❌ Invalid IP address format")
+                else:
+                    with st.spinner(f"Looking up {ip}..."):
+                        try:
+                            geo_data = None
+                            try:
+                                response = requests.get(f"https://ipapi.co/{ip}/json/", timeout=5)
+                                if response.status_code == 200:
+                                    geo_data = response.json()
+                            except:
+                                pass
+                            
+                            if not geo_data or geo_data.get('error'):
+                                response = requests.get(f"http://ip-api.com/json/{ip}", timeout=5)
+                                if response.status_code == 200:
+                                    fallback = response.json()
+                                    if fallback.get('status') == 'success':
+                                        geo_data = {
+                                            'ip': ip,
+                                            'city': fallback.get('city'),
+                                            'region': fallback.get('regionName'),
+                                            'country_name': fallback.get('country'),
+                                            'postal': fallback.get('zip'),
+                                            'latitude': fallback.get('lat'),
+                                            'longitude': fallback.get('lon'),
+                                            'org': fallback.get('isp'),
+                                            'timezone': fallback.get('timezone'),
+                                            'asn': fallback.get('as')
+                                        }
+                            
+                            if geo_data and not geo_data.get('error'):
+                                st.success(f"✅ Information found for {ip}")
+                                
+                                col1, col2, col3 = st.columns(3)
+                                
+                                with col1:
+                                    st.metric("🌐 IP Address", ip)
+                                    st.metric("🏙️ City", geo_data.get('city', 'N/A'))
+                                    st.metric("📮 Postal Code", geo_data.get('postal', 'N/A'))
+                                
+                                with col2:
+                                    st.metric("🗺️ Region", geo_data.get('region', 'N/A'))
+                                    st.metric("🌍 Country", geo_data.get('country_name', 'N/A'))
+                                    st.metric("🕐 Timezone", geo_data.get('timezone', 'N/A'))
+                                
+                                with col3:
+                                    st.metric("📡 ISP/Organization", geo_data.get('org', 'N/A')[:25])
+                                    if geo_data.get('latitude') and geo_data.get('longitude'):
+                                        st.metric("📍 Coordinates", f"{geo_data['latitude']:.4f}, {geo_data['longitude']:.4f}")
+                                    if geo_data.get('asn'):
+                                        st.metric("🔢 ASN", geo_data.get('asn', 'N/A'))
+                                
+                                if geo_data.get('latitude') and geo_data.get('longitude'):
+                                    map_url = f"https://www.google.com/maps?q={geo_data['latitude']},{geo_data['longitude']}"
+                                    st.markdown(f"🗺️ [View on Google Maps]({map_url})")
+                                
+                                with st.expander("🔍 View Full IP Details"):
+                                    st.json(geo_data)
+                            else:
+                                st.error("❌ Could not retrieve information for this IP address")
+                                st.info("The IP might be private, invalid, or the lookup service is unavailable")
+                        except Exception as e:
+                            st.error(f"❌ Error: {str(e)}")
+            else:
+                st.warning("⚠️ Please enter an IP address")
 
     elif tool == "🗂️ DNS Analyzer":
-     st.header("🗂️ DNS Analyzer")
-     st.markdown("Comprehensive DNS analysis with all record types")
-    
-    domain_dns = st.text_input("Enter domain:", placeholder="example.com")
-    
-    if st.button("🔍 Analyze DNS", use_container_width=True):
-        if domain_dns:
-            domain_dns = domain_dns.strip().lower()
-            
-            with st.spinner("Analyzing DNS..."):
-                issues, warnings, success_checks = [], [], []
+        st.header("🗂️ DNS Analyzer")
+        st.markdown("Comprehensive DNS analysis with all record types")
+        
+        domain_dns = st.text_input("Enter domain:", placeholder="example.com")
+        
+        if st.button("🔍 Analyze DNS", use_container_width=True):
+            if domain_dns:
+                domain_dns = domain_dns.strip().lower()
                 
-                st.subheader("🌐 A Records")
-                try:
-                    a_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=A", timeout=5).json()
-                    if a_res.get('Answer'):
-                        st.success(f"✅ Found {len(a_res['Answer'])} A record(s)")
-                        for r in a_res['Answer']:
-                            st.code(f"A: {r['data']} (TTL: {r.get('TTL', 'N/A')}s)")
-                        success_checks.append("A record found")
-                    else:
-                        issues.append("Missing A record")
-                        st.error("❌ No A records")
-                except Exception as e:
-                    st.error(f"Error: {str(e)}")
-
-                st.subheader("📧 MX Records")
-                try:
-                    mx_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=MX", timeout=5).json()
-                    if mx_res.get('Answer'):
-                        st.success(f"✅ Found {len(mx_res['Answer'])} mail server(s)")
-                        mx_sorted = sorted(mx_res['Answer'], key=lambda x: int(x['data'].split()[0]))
-                        for r in mx_sorted:
-                            parts = r['data'].split()
-                            st.code(f"MX: Priority {parts[0]} → {parts[1].rstrip('.')}")
-                        success_checks.append("MX configured")
-                    else:
-                        issues.append("No MX records")
-                        st.error("❌ No MX records")
-                except:
-                    pass
-
-                st.subheader("📝 TXT Records (SPF/DKIM/DMARC)")
-                try:
-                    txt_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=TXT", timeout=5).json()
-                    if txt_res.get('Answer'):
-                        found_spf = False
-                        for r in txt_res['Answer']:
-                            val = r['data'].strip('"')
-                            if val.startswith('v=spf1'):
-                                st.success("🛡️ SPF Found")
-                                st.code(f"SPF: {val}")
-                                found_spf = True
-                            elif val.startswith('v=DMARC'):
-                                st.success("🛡️ DMARC Found")
-                                st.code(f"DMARC: {val}")
-                            else:
-                                st.code(f"TXT: {val[:100]}...")
-                        
-                        if found_spf:
-                            success_checks.append("SPF found")
+                with st.spinner("Analyzing DNS..."):
+                    issues, warnings, success_checks = [], [], []
+                    
+                    st.subheader("🌐 A Records")
+                    try:
+                        a_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=A", timeout=5).json()
+                        if a_res.get('Answer'):
+                            st.success(f"✅ Found {len(a_res['Answer'])} A record(s)")
+                            for r in a_res['Answer']:
+                                st.code(f"A: {r['data']} (TTL: {r.get('TTL', 'N/A')}s)")
+                            success_checks.append("A record found")
                         else:
-                            warnings.append("No SPF record")
-                    else:
-                        warnings.append("No TXT records")
-                except:
-                    pass
+                            issues.append("Missing A record")
+                            st.error("❌ No A records")
+                    except Exception as e:
+                        st.error(f"Error: {str(e)}")
 
-                st.subheader("🖥️ Nameservers")
-                try:
-                    ns_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=NS", timeout=5).json()
-                    if ns_res.get('Answer'):
-                        st.success(f"✅ Found {len(ns_res['Answer'])} nameserver(s)")
-                        for r in ns_res['Answer']:
-                            ns = r['data'].rstrip('.')
-                            st.code(f"NS: {ns}")
-                            if 'host-ww.net' in ns:
-                                st.caption("✅ HostAfrica NS")
-                        success_checks.append("NS configured")
-                    else:
-                        issues.append("No nameservers")
-                except:
-                    pass
+                    st.subheader("📧 MX Records")
+                    try:
+                        mx_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=MX", timeout=5).json()
+                        if mx_res.get('Answer'):
+                            st.success(f"✅ Found {len(mx_res['Answer'])} mail server(s)")
+                            mx_sorted = sorted(mx_res['Answer'], key=lambda x: int(x['data'].split()[0]))
+                            for r in mx_sorted:
+                                parts = r['data'].split()
+                                st.code(f"MX: Priority {parts[0]} → {parts[1].rstrip('.')}")
+                            success_checks.append("MX configured")
+                        else:
+                            issues.append("No MX records")
+                            st.error("❌ No MX records")
+                    except:
+                        pass
 
-                st.divider()
-                st.subheader("📊 Summary")
-                if not issues and not warnings:
-                    st.success("🎉 All DNS checks passed!")
-                else:
-                    col_a, col_b = st.columns(2)
-                    with col_a:
-                        for i in issues: st.error(f"• {i}")
-                        for w in warnings: st.warning(f"• {w}")
-                    with col_b:
-                        for s in success_checks: st.success(f"• {s}")
+                    st.subheader("📝 TXT Records (SPF/DKIM/DMARC)")
+                    try:
+                        txt_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=TXT", timeout=5).json()
+                        if txt_res.get('Answer'):
+                            found_spf = False
+                            for r in txt_res['Answer']:
+                                val = r['data'].strip('"')
+                                if val.startswith('v=spf1'):
+                                    st.success("🛡️ SPF Found")
+                                    st.code(f"SPF: {val}")
+                                    found_spf = True
+                                elif val.startswith('v=DMARC'):
+                                    st.success("🛡️ DMARC Found")
+                                    st.code(f"DMARC: {val}")
+                                else:
+                                    st.code(f"TXT: {val[:100]}...")
+                            
+                            if found_spf:
+                                success_checks.append("SPF found")
+                            else:
+                                warnings.append("No SPF record")
+                        else:
+                            warnings.append("No TXT records")
+                    except:
+                        pass
+
+                    st.subheader("🖥️ Nameservers")
+                    try:
+                        ns_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=NS", timeout=5).json()
+                        if ns_res.get('Answer'):
+                            st.success(f"✅ Found {len(ns_res['Answer'])} nameserver(s)")
+                            for r in ns_res['Answer']:
+                                ns = r['data'].rstrip('.')
+                                st.code(f"NS: {ns}")
+                                if 'host-ww.net' in ns:
+                                    st.caption("✅ HostAfrica NS")
+                            success_checks.append("NS configured")
+                        else:
+                            issues.append("No nameservers")
+                    except:
+                        pass
+
+                    st.divider()
+                    st.subheader("📊 Summary")
+                    if not issues and not warnings:
+                        st.success("🎉 All DNS checks passed!")
+                    else:
+                        col_a, col_b = st.columns(2)
+                        with col_a:
+                            for i in issues: st.error(f"• {i}")
+                            for w in warnings: st.warning(f"• {w}")
+                        with col_b:
+                            for s in success_checks: st.success(f"• {s}")
 
     elif tool == "🧹 Flush DNS Cache":
-     st.title("🧹 Flush Google DNS Cache")
-     st.markdown("Clear Google's DNS cache to force fresh lookups")
-    
-     st.markdown('<div class="info-box">', unsafe_allow_html=True)
-     st.markdown("""
+        st.title("🧹 Flush Google DNS Cache")
+        st.markdown("Clear Google's DNS cache to force fresh lookups")
+        
+        st.markdown('<div class="info-box">', unsafe_allow_html=True)
+        st.markdown("""
 **When to flush DNS cache:**
 - After changing nameservers
 - After updating DNS records
 - When experiencing DNS propagation issues
 - To force fresh DNS lookups
 """)
-     st.markdown('</div>', unsafe_allow_html=True)
-    
-     st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
+        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
 
-# SERVER TOOLS
+    # SERVER TOOLS
     elif tool == "📊 Database Size Calculator":
-     st.title("📊 Database Size Calculator")
-     st.markdown("Calculate and convert database sizes")
-    
-    tab1, tab2 = st.tabs(["🔢 Size Converter", "📋 SQL Query"])
-    
-    with tab1:
-        col1, col2 = st.columns(2)
+        st.title("📊 Database Size Calculator")
+        st.markdown("Calculate and convert database sizes")
         
-        with col1:
-            size = st.number_input("Size:", value=1024.0, min_value=0.0)
-            unit = st.selectbox("Unit:", ["Bytes", "KB", "MB", "GB", "TB"])
+        tab1, tab2 = st.tabs(["🔢 Size Converter", "📋 SQL Query"])
         
-        multipliers = {"Bytes": 1, "KB": 1024, "MB": 1024**2, "GB": 1024**3, "TB": 1024**4}
-        size_bytes = size * multipliers[unit]
+        with tab1:
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                size = st.number_input("Size:", value=1024.0, min_value=0.0)
+                unit = st.selectbox("Unit:", ["Bytes", "KB", "MB", "GB", "TB"])
+            
+            multipliers = {"Bytes": 1, "KB": 1024, "MB": 1024**2, "GB": 1024**3, "TB": 1024**4}
+            size_bytes = size * multipliers[unit]
+            
+            with col2:
+                st.markdown("### Conversions")
+                st.metric("Bytes", f"{size_bytes:,.0f}")
+                st.metric("KB", f"{size_bytes/1024:,.2f}")
+                st.metric("MB", f"{size_bytes/(1024**2):,.2f}")
+                st.metric("GB", f"{size_bytes/(1024**3):,.4f}")
+                st.metric("TB", f"{size_bytes/(1024**4):,.6f}")
+            
+            st.markdown("---")
+            st.markdown("### 📏 Size References")
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.info("**Small DB**\n< 100 MB")
+            with col2:
+                st.info("**Medium DB**\n100 MB - 10 GB")
+            with col3:
+                st.info("**Large DB**\n> 10 GB")
         
-        with col2:
-            st.markdown("### Conversions")
-            st.metric("Bytes", f"{size_bytes:,.0f}")
-            st.metric("KB", f"{size_bytes/1024:,.2f}")
-            st.metric("MB", f"{size_bytes/(1024**2):,.2f}")
-            st.metric("GB", f"{size_bytes/(1024**3):,.4f}")
-            st.metric("TB", f"{size_bytes/(1024**4):,.6f}")
-        
-        st.markdown("---")
-        st.markdown("### 📏 Size References")
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.info("**Small DB**\n< 100 MB")
-        with col2:
-            st.info("**Medium DB**\n100 MB - 10 GB")
-        with col3:
-            st.info("**Large DB**\n> 10 GB")
-    
-    with tab2:
-        st.markdown("### SQL Queries for Size Checking")
-        
-        st.markdown("**All Databases:**")
-        st.code("""SELECT 
+        with tab2:
+            st.markdown("### SQL Queries for Size Checking")
+            
+            st.markdown("**All Databases:**")
+            st.code("""SELECT 
     table_schema AS 'Database',
     ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS 'Size (MB)'
 FROM information_schema.TABLES
 GROUP BY table_schema
 ORDER BY SUM(data_length + index_length) DESC;""", language="sql")
-        
-        st.markdown("**Specific Database:**")
-        db_name = st.text_input("Database name:", placeholder="mydatabase")
-        if db_name:
-            st.code(f"""SELECT 
+            
+            st.markdown("**Specific Database:**")
+            db_name = st.text_input("Database name:", placeholder="mydatabase")
+            if db_name:
+                st.code(f"""SELECT 
     table_name AS 'Table',
     ROUND(((data_length + index_length) / 1024 / 1024), 2) AS 'Size (MB)'
 FROM information_schema.TABLES
 WHERE table_schema = '{db_name}'
 ORDER BY (data_length + index_length) DESC;""", language="sql")
 
-elif tool == "🔐 File Permission Checker":
-    st.title("🔐 File Permission Checker")
-    st.markdown("Convert and understand Unix file permissions")
-
-    tab1, tab2, tab3 = st.tabs(["🔢 Numeric to Symbolic", "🔤 Symbolic to Numeric", "📚 Guide"])
-
-    with tab1:
-        st.markdown("### Numeric to Symbolic Converter")
-        numeric = st.text_input("Enter numeric permissions (e.g., 644):", max_chars=3, key="num_input")
-
-        if numeric and len(numeric) == 3:
-            try:
-                def num_to_perm(n):
-                    n = int(n)
-                    r = 'r' if n & 4 else '-'
-                    w = 'w' if n & 2 else '-'
-                    x = 'x' if n & 1 else '-'
-                    return r + w + x
-
-                owner = num_to_perm(numeric[0])
-                group = num_to_perm(numeric[1])
-                other = num_to_perm(numeric[2])
-
-                symbolic = owner + group + other
-
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.markdown("**Symbolic Representation:**")
-                    st.code(symbolic, language="bash")
-
-                with col2:
-                    st.markdown("**Breakdown:**")
-                    st.info(f"Owner: {owner}")
-                    st.info(f"Group: {group}")
-                    st.info(f"Other: {other}")
-
-                st.markdown("### 🔍 Security Assessment")
-
-                if numeric == "777":
-                    st.error("❌ DANGEROUS: Full access for everyone!")
-                    st.warning("Never use 777 in production!")
-                elif numeric == "666":
-                    st.error("❌ INSECURE: Everyone can read/write!")
-                elif numeric in ["644", "755"]:
-                    st.success("✅ RECOMMENDED: Standard web permissions")
-                elif numeric == "600":
-                    st.success("✅ SECURE: Owner-only access")
-                elif numeric == "700":
-                    st.success("✅ SECURE: Owner-only access (with execute)")
-                else:
-                    st.info("ℹ️ Custom permissions - verify appropriateness")
-
-            except (ValueError, IndexError):
-                st.error("❌ Invalid format - use numbers 0-7")
-
-    with tab2:
-        st.markdown("### Symbolic to Numeric Converter")
-        st.markdown("Check permissions for each group:")
-
-        col1, col2, col3 = st.columns(3)
-
-        with col1:
-            st.markdown("**Owner**")
-            owner_r = st.checkbox("Read", key="owner_r")
-            owner_w = st.checkbox("Write", key="owner_w")
-            owner_x = st.checkbox("Execute", key="owner_x")
-
-        with col2:
-            st.markdown("**Group**")
-            group_r = st.checkbox("Read", key="group_r")
-            group_w = st.checkbox("Write", key="group_w")
-            group_x = st.checkbox("Execute", key="group_x")
-
-        with col3:
-            st.markdown("**Other**")
-            other_r = st.checkbox("Read", key="other_r")
-            other_w = st.checkbox("Write", key="other_w")
-            other_x = st.checkbox("Execute", key="other_x")
-
-        owner_num = (4 if owner_r else 0) + (2 if owner_w else 0) + (1 if owner_x else 0)
-        group_num = (4 if group_r else 0) + (2 if group_w else 0) + (1 if group_x else 0)
-        other_num = (4 if other_r else 0) + (2 if other_w else 0) + (1 if other_x else 0)
-
-        result = f"{owner_num}{group_num}{other_num}"
-
-        st.markdown("### Result")
-        st.code(result, language="bash")
-        st.code(f"chmod {result} filename", language="bash")
-
-    with tab3:
-        st.markdown("### 📚 Permission Guide")
-
-        st.markdown("**Recommended Permissions:**")
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.info("**Files:**")
-            st.code("644 - Standard files")
-            st.code("600 - Sensitive files (config)")
-            st.code("640 - Group readable")
-
-        with col2:
-            st.info("**Directories:**")
-            st.code("755 - Standard folders")
-            st.code("750 - Group accessible")
-            st.code("700 - Private folders")
-
-        st.markdown("---")
-        st.markdown("**Permission Values:**")
-
-        perm_data = {
-            'Number': ['4', '2', '1'],
-            'Permission': ['Read (r)', 'Write (w)', 'Execute (x)'],
-            'Files': ['View content', 'Modify content', 'Run as program'],
-            'Directories': ['List files', 'Add/delete files', 'Access directory']
-        }
-
-        df = pd.DataFrame(perm_data)
-        st.dataframe(df, use_container_width=True)
-
-        st.markdown("---")
-        st.markdown("**Common Combinations:**")
-
-        common = {
-            'Permission': ['644', '755', '600', '700', '666', '777'],
-            'Description': [
-                'Standard file (rw-r--r--)',
-                'Standard directory/executable (rwxr-xr-x)',
-                'Private file (rw-------)',
-                'Private directory (rwx------)',
-                '⚠️ World-writable file (rw-rw-rw-)',
-                '❌ Dangerous - full access (rwxrwxrwx)'
-            ],
-            'Use Case': [
-                'HTML, images, regular files',
-                'Directories, scripts',
-                'Config files, passwords',
-                'Private directories',
-                '⚠️ Rarely appropriate',
-                '❌ Never use'
-            ]
-        }
-
-        df_common = pd.DataFrame(common)
-        st.dataframe(df_common, use_container_width=True)
-
-# UTILITIES
-    elif tool == "📚 Help Center":
-     st.title("📚 HostAfrica Knowledge Base")
-     st.markdown("Search our comprehensive knowledge base for guides and documentation")
-    
-    search_query = st.text_input(
-        "🔍 Search:",
-        placeholder="e.g., email setup, dns, cpanel, ssl certificate",
-        help="Enter keywords to search the knowledge base"
-    )
-    
-    if search_query:
-        results = search_kb(search_query)
+    elif tool == "🔐 File Permission Checker":
+        st.title("🔐 File Permission Checker")
+        st.markdown("Convert and understand Unix file permissions")
         
-        if results:
-            st.success(f"✅ Found {len(results)} relevant article(s)")
+        tab1, tab2, tab3 = st.tabs(["🔢 Numeric to Symbolic", "🔤 Symbolic to Numeric", "📚 Guide"])
+        
+        with tab1:
+            st.markdown("### Numeric to Symbolic Converter")
+            numeric = st.text_input("Enter numeric permissions (e.g., 644):", max_chars=3, key="num_input")
             
-            for idx, result in enumerate(results, 1):
-                with st.expander(f"📄 {result['title']}", expanded=(idx <= 3)):
-                    col1, col2 = st.columns([3, 1])
+            if numeric and len(numeric) == 3:
+                try:
+                    def num_to_perm(n):
+                        n = int(n)
+                        r = 'r' if n & 4 else '-'
+                        w = 'w' if n & 2 else '-'
+                        x = 'x' if n & 1 else '-'
+                        return r + w + x
                     
+                    owner = num_to_perm(numeric[0])
+                    group = num_to_perm(numeric[1])
+                    other = num_to_perm(numeric[2])
+                    
+                    symbolic = owner + group + other
+                    
+                    col1, col2 = st.columns(2)
                     with col1:
-                        st.markdown(f"**Category:** {result['category'].replace('_', ' ').title()}")
-                        st.markdown(f"**Related Topics:** {', '.join(result['keywords'][:6])}")
+                        st.markdown("**Symbolic Representation:**")
+                        st.code(symbolic, language="bash")
                     
                     with col2:
-                        st.link_button("📖 Read", result['url'], use_container_width=True)
-        else:
-            st.info("💡 No articles found. Try different keywords or browse categories below.")
-    
-    st.markdown("---")
-    st.markdown("### 📂 Browse by Category")
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button("📧 Email", use_container_width=True):
-            st.session_state.kb_category = 'email'
-        if st.button("🌐 Domain & DNS", use_container_width=True):
-            st.session_state.kb_category = 'domain'
-    
-    with col2:
-        if st.button("🔧 cPanel", use_container_width=True):
-            st.session_state.kb_category = 'cpanel'
-        if st.button("🔒 SSL & HTTPS", use_container_width=True):
-            st.session_state.kb_category = 'ssl'
-    
-    with col3:
-        if st.button("💻 WordPress", use_container_width=True):
-            st.session_state.kb_category = 'wordpress'
-        if st.button("📁 FTP", use_container_width=True):
-            st.session_state.kb_category = 'ftp'
-    
-    with col4:
-        if st.button("💳 Billing", use_container_width=True):
-            st.session_state.kb_category = 'billing'
-        if st.button("🔍 Troubleshooting", use_container_width=True):
-            st.session_state.kb_category = 'troubleshooting'
-    
-    if 'kb_category' in st.session_state:
-        category = st.session_state.kb_category
-        st.markdown(f"### {category.title()} Articles")
+                        st.markdown("**Breakdown:**")
+                        st.info(f"Owner: {owner}")
+                        st.info(f"Group: {group}")
+                        st.info(f"Other: {other}")
+                    
+                    st.markdown("### 🔍 Security Assessment")
+                    
+                    if numeric == "777":
+                        st.error("❌ DANGEROUS: Full access for everyone!")
+                        st.warning("Never use 777 in production!")
+                    elif numeric == "666":
+                        st.error("❌ INSECURE: Everyone can read/write!")
+                    elif numeric in ["644", "755"]:
+                        st.success("✅ RECOMMENDED: Standard web permissions")
+                    elif numeric == "600":
+                        st.success("✅ SECURE: Owner-only access")
+                    elif numeric == "700":
+                        st.success("✅ SECURE: Owner-only access (with execute)")
+                    else:
+                        st.info("ℹ️ Custom permissions - verify appropriateness")
+                    
+                except (ValueError, IndexError):
+                    st.error("❌ Invalid format - use numbers 0-7")
         
-        for article in HOSTAFRICA_KB.get(category, []):
-            with st.expander(f"📄 {article['title']}"):
-                st.markdown(f"**Keywords:** {', '.join(article['keywords'][:8])}")
-                st.link_button("📖 Read Article", article['url'], use_container_width=True)
-    
-    st.markdown("---")
-    st.link_button("🌐 Browse Full Help Center", "https://help.hostafrica.com", use_container_width=True, type="primary")
+        with tab2:
+            st.markdown("### Symbolic to Numeric Converter")
+            st.markdown("Check permissions for each group:")
+            
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.markdown("**Owner**")
+                owner_r = st.checkbox("Read", key="owner_r")
+                owner_w = st.checkbox("Write", key="owner_w")
+                owner_x = st.checkbox("Execute", key="owner_x")
+            
+            with col2:
+                st.markdown("**Group**")
+                group_r = st.checkbox("Read", key="group_r")
+                group_w = st.checkbox("Write", key="group_w")
+                group_x = st.checkbox("Execute", key="group_x")
+            
+            with col3:
+                st.markdown("**Other**")
+                other_r = st.checkbox("Read", key="other_r")
+                other_w = st.checkbox("Write", key="other_w")
+                other_x = st.checkbox("Execute", key="other_x")
+            
+            owner_num = (4 if owner_r else 0) + (2 if owner_w else 0) + (1 if owner_x else 0)
+            group_num = (4 if group_r else 0) + (2 if group_w else 0) + (1 if group_x else 0)
+            other_num = (4 if other_r else 0) + (2 if other_w else 0) + (1 if other_x else 0)
+            
+            result = f"{owner_num}{group_num}{other_num}"
+            
+            st.markdown("### Result")
+            st.code(result, language="bash")
+            st.code(f"chmod {result} filename", language="bash")
+        
+        with tab3:
+            st.markdown("### 📚 Permission Guide")
+            
+            st.markdown("**Recommended Permissions:**")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.info("**Files:**")
+                st.code("644 - Standard files")
+                st.code("600 - Sensitive files (config)")
+                st.code("640 - Group readable")
+            
+            with col2:
+                st.info("**Directories:**")
+                st.code("755 - Standard folders")
+                st.code("750 - Group accessible")
+                st.code("700 - Private folders")
+            
+            st.markdown("---")
+            st.markdown("**Permission Values:**")
+            
+            perm_data = {
+                'Number': ['4', '2', '1'],
+                'Permission': ['Read (r)', 'Write (w)', 'Execute (x)'],
+                'Files': ['View content', 'Modify content', 'Run as program'],
+                'Directories': ['List files', 'Add/delete files', 'Access directory']
+            }
+            
+            df = pd.DataFrame(perm_data)
+            st.dataframe(df, use_container_width=True)
+            
+            st.markdown("---")
+            st.markdown("**Common Combinations:**")
+            
+            common = {
+                'Permission': ['644', '755', '600', '700', '666', '777'],
+                'Description': [
+                    'Standard file (rw-r--r--)',
+                    'Standard directory/executable (rwxr-xr-x)',
+                    'Private file (rw-------)',
+                    'Private directory (rwx------)',
+                    '⚠️ World-writable file (rw-rw-rw-)',
+                    '❌ Dangerous - full access (rwxrwxrwx)'
+                ],
+                'Use Case': [
+                    'HTML, images, regular files',
+                    'Directories, scripts',
+                    'Config files, passwords',
+                    'Private directories',
+                    '⚠️ Rarely appropriate',
+                    '❌ Never use'
+                ]
+            }
+            
+            df_common = pd.DataFrame(common)
+            st.dataframe(df_common, use_container_width=True)
 
-    elif tool == "🔑 Password Strength Meter":
-     st.title("🔑 Password Strength Meter")
-     st.warning("🔒 Checked locally - password never sent anywhere")
-    
-    password = st.text_input("Enter password to test:", type="password", key="pwd_test")
-    
-    if password:
-        strength, score, feedback, color = check_password_strength(password)
+    # UTILITIES
+    elif tool == "📚 Help Center":
+        st.title("📚 HostAfrica Knowledge Base")
+        st.markdown("Search our comprehensive knowledge base for guides and documentation")
         
-        st.markdown(f"### Strength: {strength}")
-        st.progress(score / 6)
+        search_query = st.text_input(
+            "🔍 Search:",
+            placeholder="e.g., email setup, dns, cpanel, ssl certificate",
+            help="Enter keywords to search the knowledge base"
+        )
+        
+        if search_query:
+            results = search_kb(search_query)
+            
+            if results:
+                st.success(f"✅ Found {len(results)} relevant article(s)")
+                
+                for idx, result in enumerate(results, 1):
+                    with st.expander(f"📄 {result['title']}", expanded=(idx <= 3)):
+                        col1, col2 = st.columns([3, 1])
+                        
+                        with col1:
+                            st.markdown(f"**Category:** {result['category'].replace('_', ' ').title()}")
+                            st.markdown(f"**Related Topics:** {', '.join(result['keywords'][:6])}")
+                        
+                        with col2:
+                            st.link_button("📖 Read", result['url'], use_container_width=True)
+            else:
+                st.info("💡 No articles found. Try different keywords or browse categories below.")
+        
+        st.markdown("---")
+        st.markdown("### 📂 Browse by Category")
         
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.metric("Length", len(password))
+            if st.button("📧 Email", use_container_width=True):
+                st.session_state.kb_category = 'email'
+            if st.button("🌐 Domain & DNS", use_container_width=True):
+                st.session_state.kb_category = 'domain'
+        
         with col2:
-            has_lower = "✅" if re.search(r'[a-z]', password) else "❌"
-            st.metric("Lowercase", has_lower)
+            if st.button("🔧 cPanel", use_container_width=True):
+                st.session_state.kb_category = 'cpanel'
+            if st.button("🔒 SSL & HTTPS", use_container_width=True):
+                st.session_state.kb_category = 'ssl'
+        
         with col3:
-            has_upper = "✅" if re.search(r'[A-Z]', password) else "❌"
-            st.metric("Uppercase", has_upper)
+            if st.button("💻 WordPress", use_container_width=True):
+                st.session_state.kb_category = 'wordpress'
+            if st.button("📁 FTP", use_container_width=True):
+                st.session_state.kb_category = 'ftp'
+        
         with col4:
-            has_number = "✅" if re.search(r'\d', password) else "❌"
-            st.metric("Numbers", has_number)
+            if st.button("💳 Billing", use_container_width=True):
+                st.session_state.kb_category = 'billing'
+            if st.button("🔍 Troubleshooting", use_container_width=True):
+                st.session_state.kb_category = 'troubleshooting'
         
-        if feedback:
-            st.markdown("### 💡 Suggestions:")
-            for tip in feedback:
-                st.info(f"• {tip}")
-    
-    st.markdown("---")
-    st.markdown("### 🎲 Password Generator")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        length = st.slider("Password Length:", 8, 32, 16)
-    
-    with col2:
-        include_special = st.checkbox("Include Special Characters", value=True)
-    
-    if st.button("🎲 Generate Secure Password", type="primary"):
-        import string
-        if include_special:
-            chars = string.ascii_letters + string.digits + string.punctuation
-        else:
-            chars = string.ascii_letters + string.digits
+        if 'kb_category' in st.session_state:
+            category = st.session_state.kb_category
+            st.markdown(f"### {category.title()} Articles")
+            
+            for article in HOSTAFRICA_KB.get(category, []):
+                with st.expander(f"📄 {article['title']}"):
+                    st.markdown(f"**Keywords:** {', '.join(article['keywords'][:8])}")
+                    st.link_button("📖 Read Article", article['url'], use_container_width=True)
         
-        generated = ''.join(random.choice(chars) for _ in range(length))
-        st.code(generated)
-        st.success("✅ Copy this password to a secure location")
+        st.markdown("---")
+        st.link_button("🌐 Browse Full Help Center", "https://help.hostafrica.com", use_container_width=True, type="primary")
 
-    elif tool == "📋 Copy-Paste Utilities":
-     st.title("📋 Copy-Paste Utilities")
-    
-    tab1, tab2, tab3 = st.tabs(["🔤 Case Converter", "📝 Line Tools", "🔧 Text Tools"])
-    
-    with tab1:
-        text = st.text_area("Enter text:", height=150, key="case_text")
+    elif tool == "🔑 Password Strength Meter":
+        st.title("🔑 Password Strength Meter")
+        st.warning("🔒 Checked locally - password never sent anywhere")
         
-        if text:
-            col1, col2 = st.columns(2)
+        password = st.text_input("Enter password to test:", type="password", key="pwd_test")
+        
+        if password:
+            strength, score, feedback, color = check_password_strength(password)
+            
+            st.markdown(f"### Strength: {strength}")
+            st.progress(score / 6)
+            
+            col1, col2, col3, col4 = st.columns(4)
             
             with col1:
-                st.markdown("**UPPERCASE**")
-                st.text_area("", value=text.upper(), height=100, key="upper")
-                
-                st.markdown("**Title Case**")
-                st.text_area("", value=text.title(), height=100, key="title")
-            
+                st.metric("Length", len(password))
             with col2:
-                st.markdown("**lowercase**")
-                st.text_area("", value=text.lower(), height=100, key="lower")
-                
-                st.markdown("**Sentence case**")
-                st.text_area("", value=text.capitalize(), height=100, key="sentence")
-    
-    with tab2:
-        lines = st.text_area("Enter lines (one per line):", height=150, key="lines_text")
-        
-        if lines:
-            line_list = [l.strip() for l in lines.split('\n') if l.strip()]
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                if st.button("Remove Duplicates"):
-                    unique = list(dict.fromkeys(line_list))
-                    st.text_area("Result:", value='\n'.join(unique), height=150, key="unique")
-            
-            with col2:
-                if st.button("Sort A-Z"):
-                    sorted_lines = sorted(line_list)
-                    st.text_area("Result:", value='\n'.join(sorted_lines), height=150, key="sorted")
-            
-            st.info(f"📊 Total: {len(line_list)} lines, Unique: {len(set(line_list))} lines")
-    
-    with tab3:
-        text_tool = st.text_area("Enter text:", height=150, key="text_tools")
-        
-        if text_tool:
-            col1, col2, col3 = st.columns(3)
-            
-            with col1:
-                st.metric("Characters", len(text_tool))
-                st.metric("Words", len(text_tool.split()))
-            
-            with col2:
-                st.metric("Lines", len(text_tool.split('\n')))
-                st.metric("Spaces", text_tool.count(' '))
-            
+                has_lower = "✅" if re.search(r'[a-z]', password) else "❌"
+                st.metric("Lowercase", has_lower)
             with col3:
-                st.metric("Alphanumeric", sum(c.isalnum() for c in text_tool))
-                st.metric("Special Chars", sum(not c.isalnum() and not c.isspace() for c in text_tool))
-
-    elif tool == "📸 Screenshot Annotator":
-     st.title("📸 Screenshot Annotator")
-     st.markdown("Upload screenshots and add notes")
-    
-    uploaded = st.file_uploader("Upload Screenshot:", type=['png', 'jpg', 'jpeg'])
-    
-    if uploaded:
-        image = Image.open(uploaded)
+                has_upper = "✅" if re.search(r'[A-Z]', password) else "❌"
+                st.metric("Uppercase", has_upper)
+            with col4:
+                has_number = "✅" if re.search(r'\d', password) else "❌"
+                st.metric("Numbers", has_number)
+            
+            if feedback:
+                st.markdown("### 💡 Suggestions:")
+                for tip in feedback:
+                    st.info(f"• {tip}")
         
-        col1, col2 = st.columns([2, 1])
+        st.markdown("---")
+        st.markdown("### 🎲 Password Generator")
+        
+        col1, col2 = st.columns(2)
         
         with col1:
-            st.image(image, use_container_width=True)
+            length = st.slider("Password Length:", 8, 32, 16)
         
         with col2:
-            st.markdown("### Image Info")
-            st.info(f"**Size:** {image.size[0]} x {image.size[1]}")
-            st.info(f"**Format:** {image.format}")
-            st.info(f"**Mode:** {image.mode}")
+            include_special = st.checkbox("Include Special Characters", value=True)
         
-        notes = st.text_area("Add Notes:", height=200, placeholder="Describe what's shown in the screenshot...")
-        
-        if notes:
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        if st.button("🎲 Generate Secure Password", type="primary"):
+            import string
+            if include_special:
+                chars = string.ascii_letters + string.digits + string.punctuation
+            else:
+                chars = string.ascii_letters + string.digits
             
-            col1, col2 = st.columns(2)
+            generated = ''.join(random.choice(chars) for _ in range(length))
+            st.code(generated)
+            st.success("✅ Copy this password to a secure location")
+
+    elif tool == "📋 Copy-Paste Utilities":
+        st.title("📋 Copy-Paste Utilities")
+        
+        tab1, tab2, tab3 = st.tabs(["🔤 Case Converter", "📝 Line Tools", "🔧 Text Tools"])
+        
+        with tab1:
+            text = st.text_area("Enter text:", height=150, key="case_text")
+            
+            if text:
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("**UPPERCASE**")
+                    st.text_area("", value=text.upper(), height=100, key="upper")
+                    
+                    st.markdown("**Title Case**")
+                    st.text_area("", value=text.title(), height=100, key="title")
+                
+                with col2:
+                    st.markdown("**lowercase**")
+                    st.text_area("", value=text.lower(), height=100, key="lower")
+                    
+                    st.markdown("**Sentence case**")
+                    st.text_area("", value=text.capitalize(), height=100, key="sentence")
+        
+        with tab2:
+            lines = st.text_area("Enter lines (one per line):", height=150, key="lines_text")
+            
+            if lines:
+                line_list = [l.strip() for l in lines.split('\n') if l.strip()]
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    if st.button("Remove Duplicates"):
+                        unique = list(dict.fromkeys(line_list))
+                        st.text_area("Result:", value='\n'.join(unique), height=150, key="unique")
+                
+                with col2:
+                    if st.button("Sort A-Z"):
+                        sorted_lines = sorted(line_list)
+                        st.text_area("Result:", value='\n'.join(sorted_lines), height=150, key="sorted")
+                
+                st.info(f"📊 Total: {len(line_list)} lines, Unique: {len(set(line_list))} lines")
+        
+        with tab3:
+            text_tool = st.text_area("Enter text:", height=150, key="text_tools")
+            
+            if text_tool:
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    st.metric("Characters", len(text_tool))
+                    st.metric("Words", len(text_tool.split()))
+                
+                with col2:
+                    st.metric("Lines", len(text_tool.split('\n')))
+                    st.metric("Spaces", text_tool.count(' '))
+                
+                with col3:
+                    st.metric("Alphanumeric", sum(c.isalnum() for c in text_tool))
+                    st.metric("Special Chars", sum(not c.isalnum() and not c.isspace() for c in text_tool))
+
+    elif tool == "📸 Screenshot Annotator":
+        st.title("📸 Screenshot Annotator")
+        st.markdown("Upload screenshots and add notes")
+        
+        uploaded = st.file_uploader("Upload Screenshot:", type=['png', 'jpg', 'jpeg'])
+        
+        if uploaded:
+            image = Image.open(uploaded)
+            
+            col1, col2 = st.columns([2, 1])
             
             with col1:
-                if st.button("💾 Save Notes"):
-                    st.download_button(
-                        "📥 Download Notes",
-                        notes,
-                        f"screenshot_notes_{timestamp}.txt",
-                        "text/plain"
-                    )
+                st.image(image, use_container_width=True)
             
             with col2:
-                buf = io.BytesIO()
-                image.save(buf, format='PNG')
-                st.download_button(
-                    "📥 Download Image",
-                    buf.getvalue(),
-                    f"screenshot_{timestamp}.png",
-                    "image/png"
-                )
+                st.markdown("### Image Info")
+                st.info(f"**Size:** {image.size[0]} x {image.size[1]}")
+                st.info(f"**Format:** {image.format}")
+                st.info(f"**Mode:** {image.mode}")
+            
+            notes = st.text_area("Add Notes:", height=200, placeholder="Describe what's shown in the screenshot...")
+            
+            if notes:
+                timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+                
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    if st.button("💾 Save Notes"):
+                        st.download_button(
+                            "📥 Download Notes",
+                            notes,
+                            f"screenshot_notes_{timestamp}.txt",
+                            "text/plain"
+                        )
+                
+                with col2:
+                    buf = io.BytesIO()
+                    image.save(buf, format='PNG')
+                    st.download_button(
+                        "📥 Download Image",
+                        buf.getvalue(),
+                        f"screenshot_{timestamp}.png",
+                        "image/png"
+                    )
 
     elif tool == "📝 Session Notes":
-     st.title("📝 Session Notes")
-     st.markdown("Take notes during support sessions")
-    
-    st.session_state.session_notes = st.text_area(
-        "Session Notes:",
-        value=st.session_state.session_notes,
-        height=400,
-        placeholder="Document your troubleshooting steps, findings, and solutions..."
-    )
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button("💾 Save", use_container_width=True):
-            st.success("✅ Notes saved in session")
-    
-    with col2:
-        if st.button("📋 Add Timestamp", use_container_width=True):
-            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            st.session_state.session_notes += f"\n\n--- {timestamp} ---\n"
-            st.rerun()
-    
-    with col3:
+        st.title("📝 Session Notes")
+        st.markdown("Take notes during support sessions")
+        
+        st.session_state.session_notes = st.text_area(
+            "Session Notes:",
+            value=st.session_state.session_notes,
+            height=400,
+            placeholder="Document your troubleshooting steps, findings, and solutions..."
+        )
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            if st.button("💾 Save", use_container_width=True):
+                st.success("✅ Notes saved in session")
+        
+        with col2:
+            if st.button("📋 Add Timestamp", use_container_width=True):
+                timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                st.session_state.session_notes += f"\n\n--- {timestamp} ---\n"
+                st.rerun()
+        
+        with col3:
+            if st.session_state.session_notes:
+                st.download_button(
+                    "📥 Download",
+                    st.session_state.session_notes,
+                    f"support_notes_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
+                    "text/plain",
+                    use_container_width=True
+                )
+        
+        with col4:
+            if st.button("🗑️ Clear All", use_container_width=True):
+                st.session_state.session_notes = ""
+                st.rerun()
+        
         if st.session_state.session_notes:
-            st.download_button(
-                "📥 Download",
-                st.session_state.session_notes,
-                f"support_notes_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt",
-                "text/plain",
-                use_container_width=True
-            )
-    
-    with col4:
-        if st.button("🗑️ Clear All", use_container_width=True):
-            st.session_state.session_notes = ""
-            st.rerun()
-    
-    if st.session_state.session_notes:
-        word_count = len(st.session_state.session_notes.split())
-        char_count = len(st.session_state.session_notes)
-        st.info(f"📊 {word_count} words, {char_count} characters")
+            word_count = len(st.session_state.session_notes.split())
+            char_count = len(st.session_state.session_notes)
+            st.info(f"📊 {word_count} words, {char_count} characters")
 
     elif tool == "🗑️ Clear Cache Instructions":
-     st.title("🗑️ Clear Cache Instructions")
-     st.markdown("Step-by-step guide to clear browser cache")
-    
-    browser = st.selectbox("Select Browser:", ["Chrome", "Firefox", "Safari", "Edge", "Opera"])
-    
-    st.markdown("---")
-    
-    if browser == "Chrome":
+        st.title("🗑️ Clear Cache Instructions")
+        st.markdown("Step-by-step guide to clear browser cache")
+        
+        browser = st.selectbox("Select Browser:", ["Chrome", "Firefox", "Safari", "Edge", "Opera"])
+        
+        st.markdown("---")
+        
+        if browser == "Chrome":
+            st.markdown("""
+            ### Google Chrome
+            
+            **Quick Method:**
+            1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
+            2. Select "All time" from the time range dropdown
+            3. Check "Cached images and files"
+            4. Click "Clear data"
+            
+            **Manual Method:**
+            1. Click the three dots (⋮) in the top-right corner
+            2. Go to **More tools** → **Clear browsing data**
+            3. Select **Advanced** tab
+            4. Choose time range: **All time**
+            5. Check **Cached images and files**
+            6. Click **Clear data**
+            
+            **Hard Refresh (for current page only):**
+            - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
+            - Mac: `Cmd+Shift+R`
+            """)
+        
+        elif browser == "Firefox":
+            st.markdown("""
+            ### Mozilla Firefox
+            
+            **Quick Method:**
+            1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
+            2. Select "Everything" from time range
+            3. Check "Cache"
+            4. Click "Clear Now"
+            
+            **Manual Method:**
+            1. Click the hamburger menu (☰) in the top-right corner
+            2. Go to **Settings**
+            3. Click **Privacy & Security** in the left sidebar
+            4. Scroll to **Cookies and Site Data**
+            5. Click **Clear Data...**
+            6. Check **Cached Web Content**
+            7. Click **Clear**
+            
+            **Hard Refresh (for current page only):**
+            - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
+            - Mac: `Cmd+Shift+R`
+            """)
+        
+        elif browser == "Safari":
+            st.markdown("""
+            ### Safari (macOS)
+            
+            **Quick Method:**
+            1. Press `Cmd+Option+E` to empty cache
+            2. Or go to **Develop** → **Empty Caches**
+            
+            **Enable Develop Menu (if not visible):**
+            1. Go to **Safari** → **Preferences**
+            2. Click **Advanced** tab
+            3. Check "Show Develop menu in menu bar"
+            
+            **Manual Method:**
+            1. Go to **Safari** → **Preferences**
+            2. Click **Advanced** tab
+            3. Enable "Show Develop menu in menu bar"
+            4. Click **Develop** in menu bar
+            5. Select **Empty Caches**
+            
+            **Clear All History & Cache:**
+            1. Go to **Safari** → **Clear History...**
+            2. Select "all history" from dropdown
+            3. Click **Clear History**
+            
+            **Hard Refresh (for current page only):**
+            - Mac: `Cmd+Option+R` or `Cmd+Shift+R`
+            
+            **Safari (iOS - iPhone/iPad):**
+            1. Go to **Settings** → **Safari**
+            2. Scroll down and tap **Clear History and Website Data**
+            3. Confirm by tapping **Clear History and Data**
+            """)
+        
+        elif browser == "Edge":
+            st.markdown("""
+            ### Microsoft Edge
+            
+            **Quick Method:**
+            1. Press `Ctrl+Shift+Delete` (Windows) or `Cmd+Shift+Delete` (Mac)
+            2. Select "All time" from time range
+            3. Check "Cached images and files"
+            4. Click "Clear now"
+            
+            **Manual Method:**
+            1. Click the three dots (...) in the top-right corner
+            2. Go to **Settings**
+            3. Click **Privacy, search, and services** in the left sidebar
+            4. Under "Clear browsing data", click **Choose what to clear**
+            5. Select time range: **All time**
+            6. Check **Cached images and files**
+            7. Click **Clear now**
+            
+            **Hard Refresh (for current page only):**
+            - Windows: `Ctrl+F5` or `Ctrl+Shift+R`
+            - Mac: `Cmd+Shift+R`
+            """)
+        
+        elif browser == "Opera":
+            st.markdown("""
+            ### Opera
+            
+            **Quick Method:**
+            1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
+            2. Select "All time" from time range
+            3. Check "Cached images and files"
+            4. Click "Clear data"
+            
+            **Manual Method:**
+            1. Click the **Opera menu** (O icon) in the top-left corner
+            2. Go to **Settings** (or press `Alt+P`)
+            3. Click **Privacy & security** in the left sidebar
+            4. Under "Privacy", click **Clear browsing data**
+            5. Select **Advanced** tab
+            6. Choose time range: **All time**
+            7. Check **Cached images and files**
+            8. Click **Clear data**
+            
+            **Hard Refresh (for current page only):**
+            - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
+            - Mac: `Cmd+Shift+R`
+            """)
+        
+        st.markdown("---")
+        st.markdown("### 💡 Additional Tips")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.info("""
+            **Why Clear Cache?**
+            - Fix loading issues
+            - See website updates
+            - Resolve display problems
+            - Free up disk space
+            - Troubleshoot errors
+            """)
+        
+        with col2:
+            st.warning("""
+            **What Gets Deleted:**
+            - Cached images
+            - Cached files
+            - Temporary data
+            
+            **What Stays:**
+            - Passwords (unless selected)
+            - Bookmarks
+            - History (unless selected)
+            """)
+        
+        st.markdown("---")
+        st.markdown("### 🔄 Incognito/Private Mode Alternative")
         st.markdown("""
-        ### Google Chrome
-        
-        **Quick Method:**
-        1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
-        2. Select "All time" from the time range dropdown
-        3. Check "Cached images and files"
-        4. Click "Clear data"
-        
-        **Manual Method:**
-        1. Click the three dots (⋮) in the top-right corner
-        2. Go to **More tools** → **Clear browsing data**
-        3. Select **Advanced** tab
-        4. Choose time range: **All time**
-        5. Check **Cached images and files**
-        6. Click **Clear data**
-        
-        **Hard Refresh (for current page only):**
-        - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
-        - Mac: `Cmd+Shift+R`
+        If you just want to test without cache:
+        - **Chrome**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
+        - **Firefox**: `Ctrl+Shift+P` (Windows) or `Cmd+Shift+P` (Mac)
+        - **Safari**: `Cmd+Shift+N` (Mac)
+        - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
+        - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         """)
-    
-    elif browser == "Firefox":
-        st.markdown("""
-        ### Mozilla Firefox
-        
-        **Quick Method:**
-        1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
-        2. Select "Everything" from time range
-        3. Check "Cache"
-        4. Click "Clear Now"
-        
-        **Manual Method:**
-        1. Click the hamburger menu (☰) in the top-right corner
-        2. Go to **Settings**
-        3. Click **Privacy & Security** in the left sidebar
-        4. Scroll to **Cookies and Site Data**
-        5. Click **Clear Data...**
-        6. Check **Cached Web Content**
-        7. Click **Clear**
-        
-        **Hard Refresh (for current page only):**
-        - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
-        - Mac: `Cmd+Shift+R`
-        """)
-    
-    elif browser == "Safari":
-        st.markdown("""
-        ### Safari (macOS)
-        
-        **Quick Method:**
-        1. Press `Cmd+Option+E` to empty cache
-        2. Or go to **Develop** → **Empty Caches**
-        
-        **Enable Develop Menu (if not visible):**
-        1. Go to **Safari** → **Preferences**
-        2. Click **Advanced** tab
-        3. Check "Show Develop menu in menu bar"
-        
-        **Manual Method:**
-        1. Go to **Safari** → **Preferences**
-        2. Click **Advanced** tab
-        3. Enable "Show Develop menu in menu bar"
-        4. Click **Develop** in menu bar
-        5. Select **Empty Caches**
-        
-        **Clear All History & Cache:**
-        1. Go to **Safari** → **Clear History...**
-        2. Select "all history" from dropdown
-        3. Click **Clear History**
-        
-        **Hard Refresh (for current page only):**
-        - Mac: `Cmd+Option+R` or `Cmd+Shift+R`
-        
-        **Safari (iOS - iPhone/iPad):**
-        1. Go to **Settings** → **Safari**
-        2. Scroll down and tap **Clear History and Website Data**
-        3. Confirm by tapping **Clear History and Data**
-        """)
-    
-    elif browser == "Edge":
-        st.markdown("""
-        ### Microsoft Edge
-        
-        **Quick Method:**
-        1. Press `Ctrl+Shift+Delete` (Windows) or `Cmd+Shift+Delete` (Mac)
-        2. Select "All time" from time range
-        3. Check "Cached images and files"
-        4. Click "Clear now"
-        
-        **Manual Method:**
-        1. Click the three dots (...) in the top-right corner
-        2. Go to **Settings**
-        3. Click **Privacy, search, and services** in the left sidebar
-        4. Under "Clear browsing data", click **Choose what to clear**
-        5. Select time range: **All time**
-        6. Check **Cached images and files**
-        7. Click **Clear now**
-        
-        **Hard Refresh (for current page only):**
-        - Windows: `Ctrl+F5` or `Ctrl+Shift+R`
-        - Mac: `Cmd+Shift+R`
-        """)
-    
-    elif browser == "Opera":
-        st.markdown("""
-        ### Opera
-        
-        **Quick Method:**
-        1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
-        2. Select "All time" from time range
-        3. Check "Cached images and files"
-        4. Click "Clear data"
-        
-        **Manual Method:**
-        1. Click the **Opera menu** (O icon) in the top-left corner
-        2. Go to **Settings** (or press `Alt+P`)
-        3. Click **Privacy & security** in the left sidebar
-        4. Under "Privacy", click **Clear browsing data**
-        5. Select **Advanced** tab
-        6. Choose time range: **All time**
-        7. Check **Cached images and files**
-        8. Click **Clear data**
-        
-        **Hard Refresh (for current page only):**
-        - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
-        - Mac: `Cmd+Shift+R`
-        """)
-    
-    st.markdown("---")
-    st.markdown("### 💡 Additional Tips")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.info("""
-        **Why Clear Cache?**
-        - Fix loading issues
-        - See website updates
-        - Resolve display problems
-        - Free up disk space
-        - Troubleshoot errors
-        """)
-    
-    with col2:
-        st.warning("""
-        **What Gets Deleted:**
-        - Cached images
-        - Cached files
-        - Temporary data
-        
-        **What Stays:**
-        - Passwords (unless selected)
-        - Bookmarks
-        - History (unless selected)
-        """)
-    
-    st.markdown("---")
-    st.markdown("### 🔄 Incognito/Private Mode Alternative")
-    st.markdown("""
-    If you just want to test without cache:
-    - **Chrome**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
-    - **Firefox**: `Ctrl+Shift+P` (Windows) or `Cmd+Shift+P` (Mac)
-    - **Safari**: `Cmd+Shift+N` (Mac)
-    - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
-    - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
-    """)
-
-
-
