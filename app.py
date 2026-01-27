@@ -513,7 +513,7 @@ TOOL_CATEGORIES = {
         "color": CATEGORY_COLORS.get("Utilities")
     }
 }
-    
+
 # ============================================================================
 # HELPER FUNCTIONS
 # ============================================================================
@@ -521,7 +521,7 @@ def search_tools(query):
     """Search for tools across all categories"""
     query = query.lower().strip()
     results = []
-    
+
     for category_name, category_info in TOOL_CATEGORIES.items():
         for tool in category_info['tools']:
             # Search in tool name
@@ -540,7 +540,7 @@ def search_tools(query):
                     'description': category_info['description'],
                     'icon': category_info['icon']
                 })
-    
+
     return results
 
 def show_missing_dependency(feature_name, package_name):
@@ -553,34 +553,34 @@ def validate_domain(domain):
     """Validate domain name format"""
     if not domain:
         return False, "Domain name is required"
-    
+
     domain = domain.replace('http://', '').replace('https://', '').split('/')[0]
     pattern = r'^(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$'
     if not re.match(pattern, domain):
         return False, "Invalid domain format"
-    
+
     return True, domain
 
 def validate_ip(ip):
     """Validate IP address format"""
     if not ip:
         return False, "IP address is required"
-    
+
     pattern = r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
     if not re.match(pattern, ip):
         return False, "Invalid IP address format"
-    
+
     return True, ip
 
 def validate_email(email_addr):
     """Validate email address format"""
     if not email_addr:
         return False, "Email address is required"
-    
+
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     if not re.match(pattern, email_addr):
         return False, "Invalid email format"
-    
+
     return True, email_addr
 
 def create_session():
@@ -603,7 +603,7 @@ def safe_request(url, method='get', **kwargs):
         session = create_session()
         kwargs.setdefault('timeout', CONFIG['request_timeout'])
         kwargs.setdefault('allow_redirects', True)
-        
+
         if method.lower() == 'get':
             response = session.get(url, **kwargs)
         elif method.lower() == 'head':
@@ -612,7 +612,7 @@ def safe_request(url, method='get', **kwargs):
             response = session.post(url, **kwargs)
         else:
             raise ValueError(f"Unsupported method: {method}")
-        
+
         return True, response
     except requests.exceptions.Timeout:
         return False, "Request timed out"
@@ -630,12 +630,12 @@ def lookup_dns_record(domain, record_type='A'):
     """Lookup DNS records with caching"""
     if not DNS_AVAILABLE:
         return False, "DNS library not available"
-    
+
     try:
         resolver = dns.resolver.Resolver()
         resolver.timeout = CONFIG['dns_timeout']
         resolver.lifetime = CONFIG['dns_timeout']
-        
+
         answers = resolver.resolve(domain, record_type)
         results = [str(rdata) for rdata in answers]
         return True, results
@@ -653,7 +653,7 @@ def lookup_whois(domain):
     """Lookup WHOIS information"""
     if not WHOIS_AVAILABLE:
         return False, "WHOIS library not available"
-    
+
     try:
         w = whois.whois(domain)
         return True, w
@@ -672,42 +672,42 @@ def check_password_strength(password):
     """Check password strength and provide feedback"""
     score = 0
     feedback = []
-    
+
     if len(password) >= 8:
         score += 1
     else:
         feedback.append("Use at least 8 characters")
-    
+
     if len(password) >= 12:
         score += 1
-    
+
     if re.search(r'[a-z]', password):
         score += 1
     else:
         feedback.append("Add lowercase letters")
-    
+
     if re.search(r'[A-Z]', password):
         score += 1
     else:
         feedback.append("Add uppercase letters")
-    
+
     if re.search(r'\d', password):
         score += 1
     else:
         feedback.append("Add numbers")
-    
+
     if re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         score += 1
     else:
         feedback.append("Add special characters")
-    
+
     if score <= 2:
         strength, color = "Weak", "error"
     elif score <= 4:
         strength, color = "Moderate", "warning"
     else:
         strength, color = "Strong", "success"
-    
+
     return strength, score, feedback, color
 
 # --- Specialized .ng Session & Utilities
@@ -730,30 +730,30 @@ def parse_ng_whois_simplified(html):
     - Registrar Information  
     - DNSSEC status (from Domain Information section)
     - Name Servers
-    
+
     Returns a dictionary with only these 4 sections
     """
     soup = BeautifulSoup(html, 'html.parser')
     essential_sections = {}
-    
+
     # Define which sections we want to capture
     target_sections = ['Domain Information', 'Registrar Information']
-    
+
     # Find all WHOIS data cards
     cards = soup.find_all('div', class_='card mb-4')
-    
+
     for card in cards:
         header = card.find('h5', class_='card-header whois_bg')
         if not header:
             continue
-            
+
         section_name = header.text.strip()
-        
+
         # Only process target sections
         if section_name in target_sections:
             data = {}
             table = card.find('table', class_='table')
-            
+
             if table:
                 for tr in table.find_all('tr'):
                     tds = tr.find_all('td')
@@ -761,35 +761,35 @@ def parse_ng_whois_simplified(html):
                         key = tds[0].text.strip().rstrip(':')
                         value = tds[1].get_text(separator=' ').strip()
                         data[key] = value
-            
+
             essential_sections[section_name] = data
-    
+
     return essential_sections
-    
+
 def display_ng_whois_simplified(domain):
     """Display only essential .ng WHOIS data"""
     html = query_ng_whois(domain)
     sections = parse_ng_whois_simplified(html)
     dnssec_status = get_dnssec_info(domain)
     ns_list = get_live_ns(domain)
-    
+
     st.markdown("### 🇳🇬 Registration Data")
-    
+
     if 'Domain Information' in sections:
         with st.expander("📋 Domain Information", expanded=True):
             cols = st.columns(2)
             for i, (k, v) in enumerate(sections['Domain Information'].items()):
                 cols[i % 2].markdown(f"**{k}:** {v}")
-    
+
     if 'Registrar Information' in sections:
         with st.expander("📋 Registrar Information", expanded=True):
             cols = st.columns(2)
             for i, (k, v) in enumerate(sections['Registrar Information'].items()):
                 cols[i % 2].markdown(f"**{k}:** {v}")
-    
+
     with st.expander("🛡️ DNSSEC Status", expanded=True):
         st.info(f"**Status:** {dnssec_status}")
-    
+
     with st.expander("🌐 Name Servers", expanded=True):
         if ns_list:
             for ns in ns_list:
@@ -821,7 +821,7 @@ def search_kb(query):
     """Search knowledge base for relevant articles"""
     query = query.lower()
     results = []
-   
+
     for category, articles in HOSTAFRICA_KB.items():
         for article in articles:
             # Check if query matches title or keywords
@@ -829,11 +829,11 @@ def search_kb(query):
                 results.append({**article, 'category': category, 'relevance': 2})
             elif any(query in keyword for keyword in article['keywords']):
                 results.append({**article, 'category': category, 'relevance': 1})
-   
+
     # Sort by relevance
     results.sort(key=lambda x: x['relevance'], reverse=True)
     return results[:10]
-    
+
 # Knowledge Base Articles Database
 HOSTAFRICA_KB = {
     'email': [
@@ -968,7 +968,7 @@ else:
     if tool == "🔐 PIN Checker":
         st.title("🔐 PIN Checker")
         st.markdown("Verify customer PINs for secure account access and verification.")
-        
+
         col1, col2 = st.columns([3, 1])
         with col1:
             st.info("Check the provided customer PIN against the WHMCS records.")
@@ -978,7 +978,7 @@ else:
     elif tool == "🔓 IP Unban":
         st.title("🔓 IP Unban")
         st.markdown("Search for and remove IP addresses from server firewalls.")
-        
+
         col1, col2 = st.columns([3, 1])
         with col1:
             st.info("Use this to quickly unblock clients who are locked out.")
@@ -992,7 +992,7 @@ else:
     elif tool == "📝 Bulk NS Updater":
         st.title("📝 Bulk Nameserver Updater")
         st.markdown("Update nameservers for multiple domains simultaneously in WHMCS.")
-        
+
         col1, col2 = st.columns([3, 1])
         with col1:
             st.info("Save time by modifying NS records for domain batches.")
@@ -1006,7 +1006,7 @@ else:
     elif tool == "📋 cPanel Account List":
         st.title("📋 cPanel Account List")
         st.markdown("View a comprehensive list of all hosted cPanel accounts and their details.")
-        
+
         col1, col2 = st.columns([3, 1])
         with col1:
             st.info("Access account status, package types, and owner details.")
@@ -1017,44 +1017,44 @@ else:
     elif tool == "✅ Support Ticket Checklist":
         st.title("✅ Support Ticket Checklist")
         st.markdown("Ensure all necessary steps are completed for ticket resolution")
-        
+
         checks = []
-        
+
         st.markdown("### 📋 Basic Information")
         checks.append(st.checkbox("Customer verified (PIN/account check)"))
         checks.append(st.checkbox("Domain/service identified"))
         checks.append(st.checkbox("Issue clearly understood"))
-        
+
         st.markdown("### 🔧 Technical Details")
         checks.append(st.checkbox("Error messages collected"))
         checks.append(st.checkbox("Screenshots/logs attached"))
         checks.append(st.checkbox("Steps to reproduce documented"))
         checks.append(st.checkbox("Affected services identified"))
-        
+
         st.markdown("### 🔐 Account Access")
         checks.append(st.checkbox("Credentials verified (if needed)"))
         checks.append(st.checkbox("PIN checked and confirmed"))
         checks.append(st.checkbox("Access level appropriate"))
-        
+
         st.markdown("### 🔍 Investigation")
         checks.append(st.checkbox("DNS records checked"))
         checks.append(st.checkbox("Server status verified"))
         checks.append(st.checkbox("Logs reviewed"))
         checks.append(st.checkbox("Recent changes identified"))
-        
+
         st.markdown("### 📝 Response")
         checks.append(st.checkbox("Solution identified and tested"))
         checks.append(st.checkbox("Response drafted and reviewed"))
         checks.append(st.checkbox("Next steps documented"))
         checks.append(st.checkbox("Follow-up scheduled (if needed)"))
-        
+
         completed = sum(checks)
         total = len(checks)
         progress = completed / total if total > 0 else 0
-        
+
         st.markdown("---")
         st.progress(progress)
-        
+
         col1, col2, col3 = st.columns(3)
         with col1:
             st.metric("Completed", f"{completed}/{total}")
@@ -1071,21 +1071,21 @@ else:
     elif tool == "🔍 AI Ticket Analysis":
         st.title("🔍 AI Ticket Analysis")
         st.markdown("Let AI analyze support tickets and provide insights")
-        
+
         if not GEMINI_AVAILABLE:
             st.error("⚠️ AI features require Gemini API key configuration")
             st.info("Contact your administrator to enable AI features")
         else:
             uploaded_file = st.file_uploader("Upload Screenshot:", type=['png', 'jpg', 'jpeg'])
             ticket_text = st.text_area("Or paste ticket text:", height=200, placeholder="Customer is experiencing...")
-            
+
             if st.button("🔍 Analyze Ticket", type="primary"):
                 if uploaded_file or ticket_text:
                     with st.spinner("🤖 Analyzing ticket..."):
                         try:
                             model = genai.GenerativeModel('gemini-2.0-flash-exp')
                             prompt = """Analyze this support ticket and provide:
-                            
+
 1. **Issue Summary**: Brief description of the problem
 2. **Category**: Type of issue (Email, Domain, Website, etc.)
 3. **Severity**: Low/Medium/High/Critical
@@ -1097,37 +1097,37 @@ else:
 9. **Potential Solutions**: Likely fixes
 
 Be specific and actionable."""
-                            
+
                             if uploaded_file:
                                 image = Image.open(uploaded_file)
                                 response = model.generate_content([prompt, image])
                             else:
                                 response = model.generate_content(f"{prompt}\n\nTicket Content:\n{ticket_text}")
-                            
+
                             st.markdown("### 🤖 AI Analysis:")
                             st.markdown(response.text)
-                            
+
                         except Exception as e:
                             st.error(f"❌ Analysis failed: {str(e)}")
                 else:
                     st.warning("⚠️ Please provide either a screenshot or ticket text")
- 
+
     elif tool == "🩺 Smart Symptom Checker":
         st.title("🩺 Smart Symptom Checker")
         st.markdown("Diagnose issues based on symptoms")
-        
+
         if not GEMINI_AVAILABLE:
             st.error("⚠️ AI features require Gemini API key configuration")
             st.info("Contact your administrator to enable AI features")
         else:
             symptom = st.text_area("Describe the issue:", height=150, placeholder="Website showing 500 error...")
-            
+
             col1, col2 = st.columns(2)
             with col1:
                 service = st.selectbox("Service Type:", ["Website", "Email", "Domain", "Database", "FTP", "SSL", "DNS", "Other"])
             with col2:
                 when = st.selectbox("When started:", ["Just now", "Today", "Yesterday", "This week", "Over a week ago", "Unknown"])
-            
+
             if st.button("🩺 Diagnose Issue", type="primary"):
                 if symptom:
                     with st.spinner("🤖 Diagnosing..."):
@@ -1150,12 +1150,12 @@ Provide a comprehensive diagnosis with:
 7. **Expected Resolution Time**
 
 Be specific, technical, and actionable."""
-                            
+
                             response = model.generate_content(prompt)
-                            
+
                             st.markdown("### 🩺 Diagnosis Results:")
                             st.markdown(response.text)
-                            
+
                         except Exception as e:
                             st.error(f"❌ Diagnosis failed: {str(e)}")
                 else:
@@ -1165,7 +1165,7 @@ Be specific, technical, and actionable."""
     elif tool == "💬 AI Support Chat":
         st.title("💬 AI Support Chat")
         st.markdown("Chat with AI assistant for instant support guidance")
-        
+
         if not GEMINI_AVAILABLE:
             st.error("⚠️ AI features require Gemini API key configuration")
             st.info("Contact your administrator to enable AI features")
@@ -1176,20 +1176,20 @@ Be specific, technical, and actionable."""
                     st.markdown(f'<div class="info-box">👤 **You:** {msg["content"]}</div>', unsafe_allow_html=True)
                 else:
                     st.markdown(f'<div class="success-box">🤖 **Assistant:** {msg["content"]}</div>', unsafe_allow_html=True)
-            
+
             # Chat input
             user_input = st.text_area("Ask a question:", placeholder="How do I check if DNS is propagated?", key="chat_input")
-            
+
             col1, col2 = st.columns([1, 4])
             with col1:
                 if st.button("💬 Send", type="primary"):
                     if user_input:
                         st.session_state.chat_history.append({'role': 'user', 'content': user_input})
-                        
+
                         with st.spinner("🤖 Thinking..."):
                             try:
                                 model = genai.GenerativeModel('gemini-2.0-flash-exp')
-                                
+
                                 context = """You are a technical support assistant for a web hosting company. 
                                 Provide clear, helpful, step-by-step answers about:
                                 - cPanel and web hosting
@@ -1200,21 +1200,21 @@ Be specific, technical, and actionable."""
                                 - Website errors (500, 403, 404, etc.)
                                 - Database connections
                                 - FTP access
-                                
+
                                 Always be specific, provide commands when relevant, and explain technical terms."""
-                                
+
                                 conversation = context + "\n\n" + "\n".join([
                                     f"{'User' if m['role'] == 'user' else 'Assistant'}: {m['content']}" 
                                     for m in st.session_state.chat_history[-10:]
                                 ])
-                                
+
                                 response = model.generate_content(conversation)
                                 st.session_state.chat_history.append({'role': 'assistant', 'content': response.text})
                                 st.rerun()
-                                
+
                             except Exception as e:
                                 st.error(f"❌ Error: {str(e)}")
-            
+
             with col2:
                 if st.button("🗑️ Clear Chat"):
                     st.session_state.chat_history = []
@@ -1223,13 +1223,13 @@ Be specific, technical, and actionable."""
     elif tool == "📧 AI Mail Error Assistant":
         st.title("📧 AI Mail Error Assistant")
         st.markdown("Analyze email error messages and get solutions")
-        
+
         if not GEMINI_AVAILABLE:
             st.error("⚠️ AI features require Gemini API key configuration")
             st.info("Contact your administrator to enable AI features")
         else:
             error_msg = st.text_area("Email Error Message:", height=200, placeholder="550 5.1.1 User unknown...")
-            
+
             if st.button("🔍 Analyze Error", type="primary"):
                 if error_msg:
                     with st.spinner("🤖 Analyzing error..."):
@@ -1249,12 +1249,12 @@ Provide:
 6. **Related Tools**: Which Support Buddy tools can help diagnose/fix this
 
 Be specific about server settings, DNS records, and authentication methods."""
-                            
+
                             response = model.generate_content(prompt)
-                            
+
                             st.markdown("### 🤖 Error Analysis:")
                             st.markdown(response.text)
-                            
+
                         except Exception as e:
                             st.error(f"❌ Analysis failed: {str(e)}")
                 else:
@@ -1263,14 +1263,14 @@ Be specific about server settings, DNS records, and authentication methods."""
     elif tool == "❓ Error Code Explainer":
         st.title("❓ Error Code Explainer")
         st.markdown("Get detailed explanations for error codes")
-        
+
         if not GEMINI_AVAILABLE:
             st.error("⚠️ AI features require Gemini API key configuration")
             st.info("Contact your administrator to enable AI features")
         else:
             error_code = st.text_input("Error Code:", placeholder="500 Internal Server Error")
             context = st.text_area("Context (optional):", height=100, placeholder="User was uploading a file...")
-            
+
             if st.button("🔍 Explain Error", type="primary"):
                 if error_code:
                     with st.spinner("🤖 Looking up error..."):
@@ -1289,12 +1289,12 @@ Provide:
 6. **Related Errors**: Similar issues that might be confused with this
 
 Be specific about web hosting environments, cPanel, and common server configurations."""
-                            
+
                             response = model.generate_content(prompt)
-                            
+
                             st.markdown("### 🤖 Error Explanation:")
                             st.markdown(response.text)
-                            
+
                         except Exception as e:
                             st.error(f"❌ Lookup failed: {str(e)}")
                 else:
@@ -1304,9 +1304,9 @@ Be specific about web hosting environments, cPanel, and common server configurat
     elif tool == "🔍 Domain Status Check":
         st.title("🔍 Domain Status Check")
         st.markdown("Check domain registration status and key DNS records")
-        
+
         domain = st.text_input("Domain:", placeholder="example.com")
-        
+
         if st.button("🔍 Check Status", type="primary"):
             if not domain:
                 st.warning("⚠️ Please enter a domain name")
@@ -1316,13 +1316,13 @@ Be specific about web hosting environments, cPanel, and common server configurat
                     st.error(f"❌ {result}")
                 else:
                     domain = result
-                    
+
                     with st.spinner(f"Checking {domain}..."):
                         if not DNS_AVAILABLE:
                             show_missing_dependency("DNS Check", "dnspython")
                         else:
                             col1, col2 = st.columns(2)
-                            
+
                             with col1:
                                 st.markdown("### 🌐 A Records")
                                 success, a_records = lookup_dns_record(domain, 'A')
@@ -1331,7 +1331,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                         st.success(f"✅ {record}")
                                 else:
                                     st.error(f"❌ {a_records}")
-                            
+
                             with col2:
                                 st.markdown("### 📡 Name Servers")
                                 success, ns_records = lookup_dns_record(domain, 'NS')
@@ -1340,7 +1340,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                         st.success(f"✅ {record}")
                                 else:
                                     st.error(f"❌ {ns_records}")
-                            
+
                             st.markdown("### 📮 MX Records")
                             success, mx_records = lookup_dns_record(domain, 'MX')
                             if success:
@@ -1348,32 +1348,32 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                     st.info(f"📧 {record}")
                             else:
                                 st.warning(f"⚠️ {mx_records}")
-                            
+
                             # WHOIS Information - handles both .ng and other TLDs
                             st.markdown("### 📋 WHOIS Information")
-                            
+
                             # Check if it's a .ng domain
                             if domain.endswith('.ng'):
                                 # Use the .ng specific WHOIS
                                 html = query_ng_whois(domain)
                                 sections = parse_ng_whois_simplified(html)
-                                
+
                                 if sections:
                                     info_col1, info_col2 = st.columns(2)
-                                    
+
                                     with info_col1:
                                         # Get registrar from Registrar Information
                                         if 'Registrar Information' in sections:
                                             reg_info = sections['Registrar Information']
                                             if 'Registrar' in reg_info:
                                                 st.info(f"**Registrar:** {reg_info['Registrar']}")
-                                        
+
                                         # Get created date from Domain Information
                                         if 'Domain Information' in sections:
                                             dom_info = sections['Domain Information']
                                             if 'Registered On' in dom_info:
                                                 st.info(f"**Created:** {dom_info['Registered On']}")
-                                    
+
                                     with info_col2:
                                         # Get expiration from Domain Information
                                         if 'Domain Information' in sections:
@@ -1384,7 +1384,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                                 st.info(f"**Status:** {dom_info['Status']}")
                                 else:
                                     st.warning("⚠️ Could not retrieve .ng WHOIS data")
-                            
+
                             else:
                                 # Use standard WHOIS for other TLDs
                                 if WHOIS_AVAILABLE:
@@ -1412,15 +1412,15 @@ Be specific about web hosting environments, cPanel, and common server configurat
     elif tool == "🔎 DNS Analyzer":
         st.title("🔎 DNS Analyzer")
         st.markdown("Comprehensive DNS record analysis")
-        
+
         domain = st.text_input("Domain:", placeholder="example.com")
-        
+
         record_types = st.multiselect(
             "Record Types:",
             ['A', 'AAAA', 'MX', 'NS', 'TXT', 'CNAME', 'SOA'],
             default=['A', 'MX', 'NS']
         )
-        
+
         if st.button("🔍 Analyze DNS", type="primary"):
             if not domain:
                 st.warning("⚠️ Please enter a domain name")
@@ -1430,17 +1430,17 @@ Be specific about web hosting environments, cPanel, and common server configurat
                     st.error(f"❌ {result}")
                 else:
                     domain = result
-                    
+
                     if not DNS_AVAILABLE:
                         show_missing_dependency("DNS Analysis", "dnspython")
                     else:
                         with st.spinner(f"Analyzing DNS for {domain}..."):
                             results = {}
-                            
+
                             for record_type in record_types:
                                 success, records = lookup_dns_record(domain, record_type)
                                 results[record_type] = {'success': success, 'data': records}
-                            
+
                             for record_type, result in results.items():
                                 st.markdown(f"### 📊 {record_type} Records")
                                 if result['success']:
@@ -1454,13 +1454,13 @@ Be specific about web hosting environments, cPanel, and common server configurat
         st.title("📋 NS Authority Checker")
         st.markdown("Verify nameserver authority for domains")
         st.info("💡 Format: domain, ns1, ns2 (one per line)")
-        
+
         input_text = st.text_area(
             "Domain and Nameservers:",
             placeholder="example.com, ns1.example.com, ns2.example.com",
             height=150
         )
-        
+
         if st.button("🔍 Check Authority", type="primary"):
             if not input_text:
                 st.warning("⚠️ Please enter domain and nameservers")
@@ -1469,81 +1469,81 @@ Be specific about web hosting environments, cPanel, and common server configurat
                     show_missing_dependency("NS Authority Check", "dnspython")
                 else:
                     lines = [l.strip() for l in input_text.split('\n') if l.strip()]
-                    
+
                     for line in lines:
                         parts = [p.strip() for p in line.split(',')]
                         if len(parts) < 2:
                             st.warning(f"⚠️ Invalid format: {line}")
                             continue
-                        
+
                         domain = parts[0]
                         expected_ns = parts[1:]
-                        
+
                         st.markdown(f"### Checking: {domain}")
-                        
+
                         success, actual_ns = lookup_dns_record(domain, 'NS')
-                        
+
                         if not success:
                             st.error(f"❌ Could not retrieve NS records: {actual_ns}")
                             continue
-                        
+
                         actual_ns_normalized = [ns.rstrip('.').lower() for ns in actual_ns]
                         expected_ns_normalized = [ns.rstrip('.').lower() for ns in expected_ns]
-                        
+
                         col1, col2 = st.columns(2)
-                        
+
                         with col1:
                             st.markdown("**Expected:**")
                             for ns in expected_ns:
                                 st.code(ns)
-                        
+
                         with col2:
                             st.markdown("**Actual:**")
                             for ns in actual_ns:
                                 st.code(ns)
-                        
+
                         all_match = all(ns in actual_ns_normalized for ns in expected_ns_normalized)
-                        
+
                         if all_match:
                             st.success("✅ All nameservers match!")
                         else:
                             missing = [ns for ns in expected_ns_normalized if ns not in actual_ns_normalized]
                             st.error(f"❌ Mismatch detected. Missing: {', '.join(missing)}")
-                        
+
                         st.markdown("---")
 
     elif tool == "🌍 WHOIS Lookup":
         st.title("🌍 WHOIS & Health Check")
         st.markdown("Detailed registration analysis with status-aware reporting.")
-        
+
         domain_input = st.text_input("Enter domain name:", placeholder="hostafrica.co.za or .ng", key="whois_main_input")
-        
+
         if st.button("🔍 Run Analysis", type="primary"):
             if domain_input:
                 domain = domain_input.strip().lower().replace('https://', '').replace('http://', '').split('/')[0]
-                
+
                 with st.spinner(f"Analyzing {domain}..."):
                     dnssec_status = get_dnssec_info(domain)
                     ns_list = get_live_ns(domain)
                     now = datetime.now().replace(tzinfo=None)  # Timezone-neutral for comparison
-                    
+
                     try:
                         # ==========================================
                         # UNIQUE .ng TREATMENT
                         # ==========================================
                         if domain.endswith('.ng'):
                             display_ng_whois_simplified(domain)
-                        
+
                         # ==========================================
                         # STANDARD TLD TREATMENT (.com, .net, .org, etc)
                         # ==========================================
                         else:
                             w = whois.whois(domain)
-                            
+
                             # Consolidate status to string for logic check
                             status_list = w.status if isinstance(w.status, list) else [w.status]
                             status_joined = " ".join([str(s) for s in status_list]).lower()
-                            
+
                             # Fix: Handle naive/aware datetime comparison
                             is_expired = False
                             if w.expiration_date:
@@ -1551,7 +1551,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                 # Remove timezone info from registry date to match local now()
                                 if exp.replace(tzinfo=None) < now:
                                     is_expired = True
-                            
+
                             # Status-Aware Alerting Logic
                             error_keywords = ["hold", "suspended", "expired", "redemption", "pendingdelete", "raa"]
                             if any(x in status_joined for x in error_keywords) or is_expired:
@@ -1560,7 +1560,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                 st.success("✅ Domain Status: OK / ACTIVE")
                             else:
                                 st.info(f"ℹ️ Current Status: {status_joined.upper()}")
-                            
+
                             # Display registration details
                             st.markdown("### 📋 WHOIS Information")
                             col1, col2 = st.columns(2)
@@ -1568,13 +1568,13 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                 st.markdown("**Registration Details:**")
                                 st.write(f"**Domain:** {w.domain_name if hasattr(w, 'domain_name') else 'N/A'}")
                                 st.write(f"**Registrar:** {w.registrar if hasattr(w, 'registrar') else 'N/A'}")
-                            
+
                             with col2:
                                 st.markdown("**Important Dates:**")
                                 if w.expiration_date:
                                     exp = w.expiration_date[0] if isinstance(w.expiration_date, list) else w.expiration_date
                                     st.write(f"**Expires:** {str(exp).split()[0]}")
-                                    
+
                                     # Quick Health Check
                                     try:
                                         days_left = (exp.replace(tzinfo=None) - datetime.now()).days
@@ -1584,10 +1584,10 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                             st.success(f"✅ {days_left} days remaining")
                                     except:
                                         pass
-                            
+
                             with st.expander("📄 View Full WHOIS Output", expanded=False):
                                 st.code(str(w), language=None)
-                        
+
                         # ==========================================
                         # COMMON FOOTER (Neutral DNSSEC & Live NS)
                         # ==========================================
@@ -1606,20 +1606,20 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                         st.write(f"- `{ns}`")
                                 else:
                                     st.warning("No nameservers found.")
-                            
+
                     except Exception as e:
                         st.error(f"❌ Analysis failed: {str(e)}")
                         st.info(f"**Try manual lookup:**\n- https://who.is/whois/{domain}\n- https://lookup.icann.org/en/lookup?name={domain}")
             else:
                 st.warning("⚠️ Please enter a domain name.")
-                
+
     # EMAIL TOOLS
     elif tool == "📮 MX Record Checker":
         st.title("📮 MX Record Checker")
         st.markdown("Check mail exchanger records for a domain")
-        
+
         domain = st.text_input("Domain:", placeholder="example.com")
-        
+
         if st.button("🔍 Check MX Records", type="primary"):
             if not domain:
                 st.warning("⚠️ Please enter a domain name")
@@ -1629,18 +1629,18 @@ Be specific about web hosting environments, cPanel, and common server configurat
                     st.error(f"❌ {result}")
                 else:
                     domain = result
-                    
+
                     if not DNS_AVAILABLE:
                         show_missing_dependency("MX Record Check", "dnspython")
                     else:
                         with st.spinner(f"Checking MX records for {domain}..."):
                             success, mx_records = lookup_dns_record(domain, 'MX')
-                            
+
                             if not success:
                                 st.error(f"❌ {mx_records}")
                             else:
                                 st.success(f"✅ Found {len(mx_records)} MX record(s)")
-                                
+
                                 mx_data = []
                                 for record in mx_records:
                                     parts = str(record).split()
@@ -1648,11 +1648,11 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                         priority = parts[0]
                                         hostname = ' '.join(parts[1:])
                                         mx_data.append({'Priority': priority, 'Mail Server': hostname})
-                                
+
                                 if mx_data:
                                     df = pd.DataFrame(mx_data)
                                     st.dataframe(df, use_container_width=True)
-                                    
+
                                     st.markdown("### 🔌 Connectivity Test")
                                     for mx in mx_data:
                                         hostname = mx['Mail Server'].rstrip('.')
@@ -1676,23 +1676,23 @@ Be specific about web hosting environments, cPanel, and common server configurat
         st.title("✉️ Email Account Tester")
         st.warning("🔒 Security: Credentials are processed locally and never stored")
         st.markdown("Test IMAP and SMTP connections")
-        
+
         col1, col2 = st.columns(2)
-        
+
         with col1:
             email_addr = st.text_input("Email Address:", placeholder="user@example.com")
             imap_server = st.text_input("IMAP Server:", placeholder="mail.example.com")
             imap_port = st.number_input("IMAP Port:", value=993, min_value=1, max_value=65535)
             use_ssl_imap = st.checkbox("Use SSL (IMAP)", value=True)
-        
+
         with col2:
             password = st.text_input("Password:", type="password")
             smtp_server = st.text_input("SMTP Server:", placeholder="mail.example.com")
             smtp_port = st.number_input("SMTP Port:", value=465, min_value=1, max_value=65535)
             use_ssl_smtp = st.checkbox("Use SSL (SMTP)", value=True)
-        
+
         col_test1, col_test2 = st.columns(2)
-        
+
         with col_test1:
             if st.button("🧪 Test IMAP", type="primary"):
                 if not all([email_addr, password, imap_server]):
@@ -1706,17 +1706,17 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                 imap = imaplib.IMAP4_SSL(imap_server, imap_port)
                             else:
                                 imap = imaplib.IMAP4(imap_server, imap_port)
-                            
+
                             imap.login(email_addr, password)
                             st.success("✅ IMAP connection successful!")
-                            
+
                             status, folders = imap.list()
                             if status == 'OK':
                                 st.info(f"📁 Found {len(folders)} folder(s)")
                                 with st.expander("View Folders"):
                                     for folder in folders[:10]:
                                         st.code(folder.decode())
-                            
+
                             imap.logout()
                         except imaplib.IMAP4.error as e:
                             st.error(f"❌ IMAP Error: {str(e)}")
@@ -1726,9 +1726,9 @@ Be specific about web hosting environments, cPanel, and common server configurat
     elif tool == "🔒 SPF/DKIM Check":
         st.title("🔒 SPF/DKIM/DMARC Check")
         st.markdown("Verify email authentication records")
-        
+
         domain = st.text_input("Domain:", placeholder="example.com")
-        
+
         if st.button("🔍 Check Email Authentication", type="primary"):
             if not domain:
                 st.warning("⚠️ Please enter a domain name")
@@ -1738,14 +1738,14 @@ Be specific about web hosting environments, cPanel, and common server configurat
                     st.error(f"❌ {result}")
                 else:
                     domain = result
-                    
+
                     if not DNS_AVAILABLE:
                         show_missing_dependency("Email Auth Check", "dnspython")
                     else:
                         with st.spinner(f"Checking email authentication for {domain}..."):
                             st.markdown("### 🛡️ SPF (Sender Policy Framework)")
                             success, txt_records = lookup_dns_record(domain, 'TXT')
-                            
+
                             spf_found = False
                             if success:
                                 for record in txt_records:
@@ -1753,7 +1753,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                         spf_found = True
                                         st.success("✅ SPF record found")
                                         st.code(record)
-                                        
+
                                         if 'all' in record:
                                             if '-all' in record:
                                                 st.success("✅ Hard fail (-all) - strict policy")
@@ -1763,17 +1763,17 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                                 st.warning("⚠️ Neutral (?all) - no policy")
                                             elif '+all' in record:
                                                 st.error("❌ Pass all (+all) - insecure!")
-                            
+
                             if not spf_found:
                                 st.error("❌ No SPF record found")
                                 st.info("💡 SPF records help prevent email spoofing")
-                            
+
                             st.markdown("---")
-                            
+
                             st.markdown("### 🔑 DKIM (DomainKeys Identified Mail)")
                             common_selectors = ['default', 'google', 'k1', 'selector1', 'selector2', 'dkim', 'mail']
                             dkim_found = False
-                            
+
                             for selector in common_selectors:
                                 dkim_domain = f"{selector}._domainkey.{domain}"
                                 success, dkim_records = lookup_dns_record(dkim_domain, 'TXT')
@@ -1783,17 +1783,17 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                             dkim_found = True
                                             st.success(f"✅ DKIM record found (selector: {selector})")
                                             st.code(record[:100] + "..." if len(record) > 100 else record)
-                            
+
                             if not dkim_found:
                                 st.warning("⚠️ No DKIM records found with common selectors")
                                 st.info("💡 Try checking your email provider's documentation for the correct selector")
-                            
+
                             st.markdown("---")
-                            
+
                             st.markdown("### 📧 DMARC (Domain-based Message Authentication)")
                             dmarc_domain = f"_dmarc.{domain}"
                             success, dmarc_records = lookup_dns_record(dmarc_domain, 'TXT')
-                            
+
                             dmarc_found = False
                             if success:
                                 for record in dmarc_records:
@@ -1801,25 +1801,25 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                         dmarc_found = True
                                         st.success("✅ DMARC record found")
                                         st.code(record)
-                                        
+
                                         if 'p=reject' in record.lower():
                                             st.success("✅ Reject policy - maximum protection")
                                         elif 'p=quarantine' in record.lower():
                                             st.info("ℹ️ Quarantine policy - moderate protection")
                                         elif 'p=none' in record.lower():
                                             st.warning("⚠️ Monitor only policy - minimal protection")
-                            
+
                             if not dmarc_found:
                                 st.error("❌ No DMARC record found")
                                 st.info("💡 DMARC helps protect against email spoofing and phishing")
-                            
+
                             st.markdown("---")
                             st.markdown("### 📊 Overall Assessment")
-                            
+
                             scores = {'SPF': spf_found, 'DKIM': dkim_found, 'DMARC': dmarc_found}
                             enabled = sum(scores.values())
                             total = len(scores)
-                            
+
                             col1, col2, col3 = st.columns(3)
                             with col1:
                                 st.metric("SPF", "✅" if scores['SPF'] else "❌")
@@ -1827,7 +1827,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                 st.metric("DKIM", "✅" if scores['DKIM'] else "❌")
                             with col3:
                                 st.metric("DMARC", "✅" if scores['DMARC'] else "❌")
-                            
+
                             if enabled == total:
                                 st.success("🎉 Excellent! All email authentication methods are configured")
                             elif enabled >= 2:
@@ -1838,20 +1838,20 @@ Be specific about web hosting environments, cPanel, and common server configurat
     elif tool == "📄 Email Header Analyzer":
         st.title("📄 Email Header Analyzer")
         st.markdown("Analyze email headers to troubleshoot delivery issues")
-        
+
         headers = st.text_area("Paste Email Headers:", height=300, placeholder="Received: from...\nFrom:...\nTo:...")
-        
+
         if st.button("🔍 Analyze Headers", type="primary"):
             if not headers:
                 st.warning("⚠️ Please paste email headers")
             else:
                 with st.spinner("Analyzing headers..."):
                     lines = headers.split('\n')
-                    
+
                     parsed_headers = {}
                     current_key = None
                     current_value = []
-                    
+
                     for line in lines:
                         if ':' in line and not line.startswith((' ', '\t')):
                             if current_key:
@@ -1861,21 +1861,21 @@ Be specific about web hosting environments, cPanel, and common server configurat
                             current_value = [parts[1].strip()] if len(parts) > 1 else []
                         elif current_key and line.strip():
                             current_value.append(line.strip())
-                    
+
                     if current_key:
                         parsed_headers[current_key] = '\n'.join(current_value)
-                    
+
                     st.success(f"✅ Parsed {len(parsed_headers)} header fields")
-                    
+
                     tab1, tab2, tab3 = st.tabs(["📬 Basic Info", "🔀 Routing", "🔍 All Headers"])
-                    
+
                     with tab1:
                         st.markdown("### Basic Information")
                         key_headers = ['From', 'To', 'Subject', 'Date', 'Message-ID']
                         for header in key_headers:
                             if header in parsed_headers:
                                 st.info(f"**{header}:** {parsed_headers[header]}")
-                    
+
                     with tab2:
                         st.markdown("### Email Route")
                         received_headers = [v for k, v in parsed_headers.items() if k.lower() == 'received']
@@ -1886,13 +1886,13 @@ Be specific about web hosting environments, cPanel, and common server configurat
                                     st.code(received)
                         else:
                             st.warning("No Received headers found")
-                        
+
                         auth_headers = ['Authentication-Results', 'Received-SPF', 'DKIM-Signature']
                         st.markdown("### Authentication Results")
                         for header in auth_headers:
                             if header in parsed_headers:
                                 st.code(f"{header}: {parsed_headers[header]}")
-                    
+
                     with tab3:
                         st.markdown("### All Headers")
                         for key, value in parsed_headers.items():
@@ -1903,7 +1903,7 @@ Be specific about web hosting environments, cPanel, and common server configurat
     elif tool == "🔧 Web Error Troubleshooting":
         st.title("🔧 Web Error Troubleshooting")
         st.markdown("Quick guides for common web errors")
-        
+
         error = st.selectbox("Select Error:", [
             "500 Internal Server Error",
             "503 Service Unavailable",
@@ -1912,25 +1912,25 @@ Be specific about web hosting environments, cPanel, and common server configurat
             "502 Bad Gateway",
             "504 Gateway Timeout"
         ])
-        
+
         if error == "500 Internal Server Error":
             st.markdown("""
             ### 500 Internal Server Error
-            
+
             **Common Causes:**
             - PHP syntax errors or fatal errors
             - Incorrect .htaccess directives
             - Incorrect file permissions (should be 644 for files, 755 for directories)
             - PHP memory limit exceeded
             - Missing PHP modules
-            
+
             **Troubleshooting Steps:**
             1. **Check error logs** - Look in cPanel → Errors or /home/user/public_html/error_log
             2. **Test .htaccess** - Rename to .htaccess.bak to disable
             3. **Check permissions** - Files: 644, Folders: 755
             4. **Review recent changes** - What was changed before error started?
             5. **Test PHP** - Create info.php with <?php phpinfo(); ?>
-            
+
             **Quick Fixes:**
             - Increase PHP memory limit in php.ini or .htaccess
             - Fix syntax errors shown in error logs
@@ -1940,20 +1940,20 @@ Be specific about web hosting environments, cPanel, and common server configurat
         elif error == "503 Service Unavailable":
             st.markdown("""
             ### 503 Service Unavailable
-            
+
             **Common Causes:**
             - Server overload or resource limits hit
             - Maintenance mode enabled
             - PHP-FPM not running
             - Too many concurrent connections
-            
+
             **Troubleshooting Steps:**
             1. Check if maintenance mode is on
             2. Review server load and resource usage
             3. Check if PHP-FPM is running
             4. Look for DDoS or traffic spikes
             5. Check error logs for details
-            
+
             **Quick Fixes:**
             - Restart PHP-FPM
             - Disable maintenance mode
@@ -1964,20 +1964,20 @@ Be specific about web hosting environments, cPanel, and common server configurat
         elif error == "404 Not Found":
             st.markdown("""
             ### 404 Not Found
-            
+
             **Common Causes:**
             - File or page doesn't exist
             - Incorrect URL or broken link
             - Permalink/rewrite rules issue
             - Case sensitivity (Linux servers)
-            
+
             **Troubleshooting Steps:**
             1. Verify file exists in correct location
             2. Check URL spelling and case
             3. Test permalink structure
             4. Review .htaccess rewrite rules
             5. Check document root setting
-            
+
             **Quick Fixes:**
             - Upload missing files
             - Fix broken links
@@ -1988,21 +1988,21 @@ Be specific about web hosting environments, cPanel, and common server configurat
         elif error == "403 Forbidden":
             st.markdown("""
             ### 403 Forbidden
-            
+
             **Common Causes:**
             - Incorrect file/folder permissions
             - Missing index file
             - .htaccess blocking access
             - IP blocked by firewall
             - Directory browsing disabled
-            
+
             **Troubleshooting Steps:**
             1. **Check permissions** - Files: 644, Folders: 755
             2. **Verify index file** - index.html, index.php must exist
             3. **Review .htaccess** - Look for deny/allow rules
             4. **Check firewall** - Verify IP not blocked
             5. **Test file ownership** - Should match cPanel user
-            
+
             **Quick Fixes:**
             - Fix permissions: chmod 644 files, chmod 755 folders
             - Create index file
@@ -2013,20 +2013,20 @@ Be specific about web hosting environments, cPanel, and common server configurat
         elif error == "502 Bad Gateway":
             st.markdown("""
             ### 502 Bad Gateway
-            
+
             **Common Causes:**
             - PHP-FPM crashed or not responding
             - Backend server timeout
             - Firewall blocking connections
             - Server overload
-            
+
             **Troubleshooting Steps:**
             1. Check PHP-FPM status
             2. Review error logs
             3. Check server resources
             4. Test backend connectivity
             5. Review recent changes
-            
+
             **Quick Fixes:**
             - Restart PHP-FPM
             - Increase timeout limits
@@ -2037,20 +2037,20 @@ Be specific about web hosting environments, cPanel, and common server configurat
         elif error == "504 Gateway Timeout":
             st.markdown("""
             ### 504 Gateway Timeout
-            
+
             **Common Causes:**
             - Slow database queries
             - PHP script timeout
             - Server overload
             - External API delays
-            
+
             **Troubleshooting Steps:**
             1. Check database performance
             2. Review slow query logs
             3. Test PHP execution time
             4. Check external service status
             5. Monitor server resources
-            
+
             **Quick Fixes:**
             - Optimize database queries
             - Increase PHP max_execution_time
@@ -2061,9 +2061,9 @@ Be specific about web hosting environments, cPanel, and common server configurat
     elif tool == "🔒 SSL Certificate Checker":
      st.title("🔒 SSL Certificate Checker")
      st.markdown("Check SSL/TLS certificate status")
-    
+
     domain = st.text_input("Domain:", placeholder="example.com")
-    
+
     if st.button("🔍 Check SSL Certificate", type="primary"):
         if not domain:
             st.warning("⚠️ Please enter a domain name")
@@ -2073,31 +2073,31 @@ Be specific about web hosting environments, cPanel, and common server configurat
                 st.error(f"❌ {result}")
             else:
                 domain = result
-                
+
                 with st.spinner(f"Checking SSL for {domain}..."):
                     try:
                         context = ssl.create_default_context()
                         with socket.create_connection((domain, 443), timeout=10) as sock:
                             with context.wrap_socket(sock, server_hostname=domain) as ssock:
                                 cert = ssock.getpeercert()
-                                
+
                                 st.success("✅ SSL Certificate found and valid")
-                                
+
                                 col1, col2 = st.columns(2)
-                                
+
                                 with col1:
                                     st.info(f"**Issuer:** {dict(x[0] for x in cert['issuer'])['organizationName']}")
                                     st.info(f"**Subject:** {dict(x[0] for x in cert['subject'])['commonName']}")
-                                
+
                                 with col2:
                                     st.info(f"**Valid From:** {cert['notBefore']}")
                                     st.info(f"**Valid Until:** {cert['notAfter']}")
-                                
+
                                 if 'subjectAltName' in cert:
                                     st.markdown("### 📜 Subject Alternative Names")
                                     for alt_name in cert['subjectAltName']:
                                         st.code(alt_name[1])
-                                
+
                     except ssl.SSLError as e:
                         st.error(f"❌ SSL Error: {str(e)}")
                     except socket.gaierror:
@@ -2110,9 +2110,9 @@ Be specific about web hosting environments, cPanel, and common server configurat
     elif tool == "🔀 HTTPS Redirect Test":
      st.title("🔀 HTTPS Redirect Test")
      st.markdown("Test if HTTP redirects to HTTPS")
-    
+
     domain = st.text_input("Domain:", placeholder="example.com")
-    
+
     if st.button("🔍 Test Redirect", type="primary"):
         if not domain:
             st.warning("⚠️ Please enter a domain name")
@@ -2123,17 +2123,17 @@ Be specific about web hosting environments, cPanel, and common server configurat
             else:
                 domain = result
                 url = f"http://{domain}"
-                
+
                 with st.spinner(f"Testing redirect for {domain}..."):
                     success, response = safe_request(url)
-                    
+
                     if not success:
                         st.error(f"❌ {response}")
                     else:
                         if response.url.startswith('https://'):
                             st.success("✅ HTTP redirects to HTTPS correctly")
                             st.info(f"**Final URL:** {response.url}")
-                            
+
                             if len(response.history) > 0:
                                 st.markdown("### Redirect Chain:")
                                 for i, resp in enumerate(response.history, 1):
@@ -2148,9 +2148,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
     elif tool == "⚠️ Mixed Content Detector":
      st.title("⚠️ Mixed Content Detector")
      st.markdown("Scan for HTTP resources on HTTPS pages")
-    
+
     url = st.text_input("URL:", placeholder="https://example.com")
-    
+
     if st.button("🔍 Scan for Mixed Content", type="primary"):
         if not url:
             st.warning("⚠️ Please enter a URL")
@@ -2159,12 +2159,12 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
         else:
             with st.spinner(f"Scanning {url}..."):
                 success, response = safe_request(url)
-                
+
                 if not success:
                     st.error(f"❌ {response}")
                 else:
                     soup = BeautifulSoup(response.text, 'html.parser')
-                    
+
                     mixed_content = {
                         'images': [],
                         'scripts': [],
@@ -2173,37 +2173,37 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         'links': [],
                         'other': []
                     }
-                    
+
                     for img in soup.find_all('img', src=True):
                         if img['src'].startswith('http://'):
                             mixed_content['images'].append(img['src'])
-                    
+
                     for script in soup.find_all('script', src=True):
                         if script['src'].startswith('http://'):
                             mixed_content['scripts'].append(script['src'])
-                    
+
                     for link in soup.find_all('link', href=True):
                         if link.get('rel') and 'stylesheet' in link['rel']:
                             if link['href'].startswith('http://'):
                                 mixed_content['stylesheets'].append(link['href'])
-                    
+
                     for iframe in soup.find_all('iframe', src=True):
                         if iframe['src'].startswith('http://'):
                             mixed_content['iframes'].append(iframe['src'])
-                    
+
                     for link in soup.find_all('a', href=True):
                         if link['href'].startswith('http://'):
                             mixed_content['links'].append(link['href'])
-                    
+
                     for tag in soup.find_all(True):
                         for attr, value in tag.attrs.items():
                             if isinstance(value, str) and value.startswith('http://'):
                                 if attr not in ['src', 'href']:
                                     mixed_content['other'].append(f"{tag.name}[{attr}]: {value}")
-                    
+
                     total_mixed = sum(len(v) for v in mixed_content.values())
                     https_count = response.text.count('https://')
-                    
+
                     col1, col2, col3 = st.columns(3)
                     with col1:
                         st.metric("HTTP Resources (Mixed)", total_mixed)
@@ -2214,45 +2214,45 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                             st.metric("Security Status", "⚠️ Issues Found", delta_color="inverse")
                         else:
                             st.metric("Security Status", "✅ Secure", delta_color="normal")
-                    
+
                     if total_mixed > 0:
                         st.error(f"⚠️ Found {total_mixed} HTTP resource(s) that should be HTTPS")
                         st.info("💡 Mixed content can cause browser warnings and security issues")
-                        
+
                         if mixed_content['images']:
                             with st.expander(f"🖼️ Images ({len(mixed_content['images'])})", expanded=True):
                                 for img in mixed_content['images']:
                                     st.code(img, language=None)
-                        
+
                         if mixed_content['scripts']:
                             with st.expander(f"📜 Scripts ({len(mixed_content['scripts'])})", expanded=True):
                                 st.warning("⚠️ Scripts are critical security issues!")
                                 for script in mixed_content['scripts']:
                                     st.code(script, language=None)
-                        
+
                         if mixed_content['stylesheets']:
                             with st.expander(f"🎨 Stylesheets ({len(mixed_content['stylesheets'])})", expanded=True):
                                 for css in mixed_content['stylesheets']:
                                     st.code(css, language=None)
-                        
+
                         if mixed_content['iframes']:
                             with st.expander(f"🖼️ iFrames ({len(mixed_content['iframes'])})", expanded=True):
                                 st.warning("⚠️ iFrames are critical security issues!")
                                 for iframe in mixed_content['iframes']:
                                     st.code(iframe, language=None)
-                        
+
                         if mixed_content['links']:
                             with st.expander(f"🔗 Links ({len(mixed_content['links'])})", expanded=False):
                                 for link in mixed_content['links'][:20]:
                                     st.code(link, language=None)
                                 if len(mixed_content['links']) > 20:
                                     st.info(f"... and {len(mixed_content['links']) - 20} more links")
-                        
+
                         if mixed_content['other']:
                             with st.expander(f"🔧 Other Resources ({len(mixed_content['other'])})", expanded=False):
                                 for item in mixed_content['other']:
                                     st.code(item, language=None)
-                        
+
                         st.markdown("---")
                         st.markdown("### 🔧 How to Fix:")
                         st.markdown("""
@@ -2269,9 +2269,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
     elif tool == "📊 HTTP Status Code Checker":
      st.title("📊 HTTP Status Code Checker")
      st.markdown("Check HTTP response status codes")
-    
+
     url = st.text_input("URL:", placeholder="https://example.com")
-    
+
     if st.button("🔍 Check Status", type="primary"):
         if not url:
             st.warning("⚠️ Please enter a URL")
@@ -2280,12 +2280,12 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
         else:
             with st.spinner(f"Checking {url}..."):
                 success, response = safe_request(url, method='head')
-                
+
                 if not success:
                     st.error(f"❌ {response}")
                 else:
                     code = response.status_code
-                    
+
                     if 200 <= code < 300:
                         st.success(f"✅ Status: {code} {response.reason}")
                     elif 300 <= code < 400:
@@ -2294,7 +2294,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                         st.warning(f"⚠️ Status: {code} {response.reason} (Client Error)")
                     else:
                         st.error(f"❌ Status: {code} {response.reason} (Server Error)")
-                    
+
                     st.markdown("### Response Headers:")
                     for key, value in response.headers.items():
                         st.code(f"{key}: {value}")
@@ -2302,9 +2302,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
     elif tool == "🔗 Redirect Checker":
      st.title("🔗 Redirect Checker")
      st.markdown("Track redirect chains")
-    
+
     url = st.text_input("URL:", placeholder="https://example.com")
-    
+
     if st.button("🔍 Check Redirects", type="primary"):
         if not url:
             st.warning("⚠️ Please enter a URL")
@@ -2313,13 +2313,13 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
         else:
             with st.spinner(f"Following redirects for {url}..."):
                 success, response = safe_request(url)
-                
+
                 if not success:
                     st.error(f"❌ {response}")
                 else:
                     if response.history:
                         st.success(f"✅ {len(response.history)} redirect(s) found")
-                        
+
                         st.markdown("### Redirect Chain:")
                         for i, r in enumerate(response.history, 1):
                             col1, col2 = st.columns([4, 1])
@@ -2327,7 +2327,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                                 st.code(r.url)
                             with col2:
                                 st.code(r.status_code)
-                        
+
                         st.markdown("### Final Destination:")
                         st.code(response.url)
                     else:
@@ -2338,9 +2338,9 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
     elif tool == "IP Address Lookup":
      st.header("🔍 IP Address Lookup")
      st.markdown("Get detailed geolocation and ISP information for any IP address")
-    
+
     ip = st.text_input("Enter IP address:", placeholder="8.8.8.8", key="ip_input")
-    
+
     if st.button("🔍 Lookup IP", use_container_width=True):
         if ip:
             ip_pattern = r'^(\d{1,3}\.){3}\d{1,3}$'
@@ -2356,7 +2356,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                                 geo_data = response.json()
                         except:
                             pass
-                        
+
                         if not geo_data or geo_data.get('error'):
                             response = requests.get(f"http://ip-api.com/json/{ip}", timeout=5)
                             if response.status_code == 200:
@@ -2374,33 +2374,33 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                                         'timezone': fallback.get('timezone'),
                                         'asn': fallback.get('as')
                                     }
-                        
+
                         if geo_data and not geo_data.get('error'):
                             st.success(f"✅ Information found for {ip}")
-                            
+
                             col1, col2, col3 = st.columns(3)
-                            
+
                             with col1:
                                 st.metric("🌐 IP Address", ip)
                                 st.metric("🏙️ City", geo_data.get('city', 'N/A'))
                                 st.metric("📮 Postal Code", geo_data.get('postal', 'N/A'))
-                            
+
                             with col2:
                                 st.metric("🗺️ Region", geo_data.get('region', 'N/A'))
                                 st.metric("🌍 Country", geo_data.get('country_name', 'N/A'))
                                 st.metric("🕐 Timezone", geo_data.get('timezone', 'N/A'))
-                            
+
                             with col3:
                                 st.metric("📡 ISP/Organization", geo_data.get('org', 'N/A')[:25])
                                 if geo_data.get('latitude') and geo_data.get('longitude'):
                                     st.metric("📍 Coordinates", f"{geo_data['latitude']:.4f}, {geo_data['longitude']:.4f}")
                                 if geo_data.get('asn'):
                                     st.metric("🔢 ASN", geo_data.get('asn', 'N/A'))
-                            
+
                             if geo_data.get('latitude') and geo_data.get('longitude'):
                                 map_url = f"https://www.google.com/maps?q={geo_data['latitude']},{geo_data['longitude']}"
                                 st.markdown(f"🗺️ [View on Google Maps]({map_url})")
-                            
+
                             with st.expander("🔍 View Full IP Details"):
                                 st.json(geo_data)
                         else:
@@ -2414,16 +2414,16 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
     elif tool == "🗂️ DNS Analyzer":
      st.header("🗂️ DNS Analyzer")
      st.markdown("Comprehensive DNS analysis with all record types")
-    
+
     domain_dns = st.text_input("Enter domain:", placeholder="example.com")
-    
+
     if st.button("🔍 Analyze DNS", use_container_width=True):
         if domain_dns:
             domain_dns = domain_dns.strip().lower()
-            
+
             with st.spinner("Analyzing DNS..."):
                 issues, warnings, success_checks = [], [], []
-                
+
                 st.subheader("🌐 A Records")
                 try:
                     a_res = requests.get(f"https://dns.google/resolve?name={domain_dns}&type=A", timeout=5).json()
@@ -2470,7 +2470,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
                                 st.code(f"DMARC: {val}")
                             else:
                                 st.code(f"TXT: {val[:100]}...")
-                        
+
                         if found_spf:
                             success_checks.append("SPF found")
                         else:
@@ -2511,7 +2511,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
     elif tool == "🧹 Flush DNS Cache":
      st.title("🧹 Flush Google DNS Cache")
      st.markdown("Clear Google's DNS cache to force fresh lookups")
-    
+
      st.markdown('<div class="info-box">', unsafe_allow_html=True)
      st.markdown("""
 **When to flush DNS cache:**
@@ -2521,26 +2521,26 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
 - To force fresh DNS lookups
 """)
      st.markdown('</div>', unsafe_allow_html=True)
-    
+
      st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
 
 # SERVER TOOLS
     elif tool == "📊 Database Size Calculator":
      st.title("📊 Database Size Calculator")
      st.markdown("Calculate and convert database sizes")
-    
+
     tab1, tab2 = st.tabs(["🔢 Size Converter", "📋 SQL Query"])
-    
+
     with tab1:
         col1, col2 = st.columns(2)
-        
+
         with col1:
             size = st.number_input("Size:", value=1024.0, min_value=0.0)
             unit = st.selectbox("Unit:", ["Bytes", "KB", "MB", "GB", "TB"])
-        
+
         multipliers = {"Bytes": 1, "KB": 1024, "MB": 1024**2, "GB": 1024**3, "TB": 1024**4}
         size_bytes = size * multipliers[unit]
-        
+
         with col2:
             st.markdown("### Conversions")
             st.metric("Bytes", f"{size_bytes:,.0f}")
@@ -2548,21 +2548,21 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
             st.metric("MB", f"{size_bytes/(1024**2):,.2f}")
             st.metric("GB", f"{size_bytes/(1024**3):,.4f}")
             st.metric("TB", f"{size_bytes/(1024**4):,.6f}")
-        
+
         st.markdown("---")
         st.markdown("### 📏 Size References")
         col1, col2, col3 = st.columns(3)
-        
+
         with col1:
             st.info("**Small DB**\n< 100 MB")
         with col2:
             st.info("**Medium DB**\n100 MB - 10 GB")
         with col3:
             st.info("**Large DB**\n> 10 GB")
-    
+
     with tab2:
         st.markdown("### SQL Queries for Size Checking")
-        
+
         st.markdown("**All Databases:**")
         st.code("""SELECT 
     table_schema AS 'Database',
@@ -2570,7 +2570,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="ap
 FROM information_schema.TABLES
 GROUP BY table_schema
 ORDER BY SUM(data_length + index_length) DESC;""", language="sql")
-        
+
         st.markdown("**Specific Database:**")
         db_name = st.text_input("Database name:", placeholder="mydatabase")
         if db_name:
@@ -2584,13 +2584,13 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     elif tool == "🔐 File Permission Checker":
      st.title("🔐 File Permission Checker")
      st.markdown("Convert and understand Unix file permissions")
-    
+
     tab1, tab2, tab3 = st.tabs(["🔢 Numeric to Symbolic", "🔤 Symbolic to Numeric", "📚 Guide"])
-    
+
     with tab1:
         st.markdown("### Numeric to Symbolic Converter")
         numeric = st.text_input("Enter numeric permissions (e.g., 644):", max_chars=3, key="num_input")
-        
+
         if numeric and len(numeric) == 3:
             try:
                 def num_to_perm(n):
@@ -2599,26 +2599,26 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     w = 'w' if n & 2 else '-'
                     x = 'x' if n & 1 else '-'
                     return r + w + x
-                
+
                 owner = num_to_perm(numeric[0])
                 group = num_to_perm(numeric[1])
                 other = num_to_perm(numeric[2])
-                
+
                 symbolic = owner + group + other
-                
+
                 col1, col2 = st.columns(2)
                 with col1:
                     st.markdown("**Symbolic Representation:**")
                     st.code(symbolic, language="bash")
-                
+
                 with col2:
                     st.markdown("**Breakdown:**")
                     st.info(f"Owner: {owner}")
                     st.info(f"Group: {group}")
                     st.info(f"Other: {other}")
-                
+
                 st.markdown("### 🔍 Security Assessment")
-                
+
                 if numeric == "777":
                     st.error("❌ DANGEROUS: Full access for everyone!")
                     st.warning("Never use 777 in production!")
@@ -2632,79 +2632,79 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     st.success("✅ SECURE: Owner-only access (with execute)")
                 else:
                     st.info("ℹ️ Custom permissions - verify appropriateness")
-                
+
             except (ValueError, IndexError):
                 st.error("❌ Invalid format - use numbers 0-7")
-    
+
     with tab2:
         st.markdown("### Symbolic to Numeric Converter")
         st.markdown("Check permissions for each group:")
-        
+
         col1, col2, col3 = st.columns(3)
-        
+
         with col1:
             st.markdown("**Owner**")
             owner_r = st.checkbox("Read", key="owner_r")
             owner_w = st.checkbox("Write", key="owner_w")
             owner_x = st.checkbox("Execute", key="owner_x")
-        
+
         with col2:
             st.markdown("**Group**")
             group_r = st.checkbox("Read", key="group_r")
             group_w = st.checkbox("Write", key="group_w")
             group_x = st.checkbox("Execute", key="group_x")
-        
+
         with col3:
             st.markdown("**Other**")
             other_r = st.checkbox("Read", key="other_r")
             other_w = st.checkbox("Write", key="other_w")
             other_x = st.checkbox("Execute", key="other_x")
-        
+
         owner_num = (4 if owner_r else 0) + (2 if owner_w else 0) + (1 if owner_x else 0)
         group_num = (4 if group_r else 0) + (2 if group_w else 0) + (1 if group_x else 0)
         other_num = (4 if other_r else 0) + (2 if other_w else 0) + (1 if other_x else 0)
-        
+
         result = f"{owner_num}{group_num}{other_num}"
-        
+
         st.markdown("### Result")
         st.code(result, language="bash")
         st.code(f"chmod {result} filename", language="bash")
-    
+
     with tab3:
         st.markdown("### 📚 Permission Guide")
-        
+
         st.markdown("**Recommended Permissions:**")
-        
+
         col1, col2 = st.columns(2)
-        
+
         with col1:
             st.info("**Files:**")
             st.code("644 - Standard files")
             st.code("600 - Sensitive files (config)")
             st.code("640 - Group readable")
-        
+
         with col2:
             st.info("**Directories:**")
             st.code("755 - Standard folders")
             st.code("750 - Group accessible")
             st.code("700 - Private folders")
-        
+
         st.markdown("---")
         st.markdown("**Permission Values:**")
-        
+
         perm_data = {
             'Number': ['4', '2', '1'],
             'Permission': ['Read (r)', 'Write (w)', 'Execute (x)'],
             'Files': ['View content', 'Modify content', 'Run as program'],
             'Directories': ['List files', 'Add/delete files', 'Access directory']
         }
-        
+
         df = pd.DataFrame(perm_data)
         st.dataframe(df, use_container_width=True)
-        
+
         st.markdown("---")
         st.markdown("**Common Combinations:**")
-        
+
         common = {
             'Permission': ['644', '755', '600', '700', '666', '777'],
             'Description': [
@@ -2724,7 +2724,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                 '❌ Never use'
             ]
         }
-        
+
         df_common = pd.DataFrame(common)
         st.dataframe(df_common, use_container_width=True)
 
@@ -2732,87 +2732,87 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     elif tool == "📚 Help Center":
      st.title("📚 HostAfrica Knowledge Base")
      st.markdown("Search our comprehensive knowledge base for guides and documentation")
-    
+
     search_query = st.text_input(
         "🔍 Search:",
         placeholder="e.g., email setup, dns, cpanel, ssl certificate",
         help="Enter keywords to search the knowledge base"
     )
-    
+
     if search_query:
         results = search_kb(search_query)
-        
+
         if results:
             st.success(f"✅ Found {len(results)} relevant article(s)")
-            
+
             for idx, result in enumerate(results, 1):
                 with st.expander(f"📄 {result['title']}", expanded=(idx <= 3)):
                     col1, col2 = st.columns([3, 1])
-                    
+
                     with col1:
                         st.markdown(f"**Category:** {result['category'].replace('_', ' ').title()}")
                         st.markdown(f"**Related Topics:** {', '.join(result['keywords'][:6])}")
-                    
+
                     with col2:
                         st.link_button("📖 Read", result['url'], use_container_width=True)
         else:
             st.info("💡 No articles found. Try different keywords or browse categories below.")
-    
+
     st.markdown("---")
     st.markdown("### 📂 Browse by Category")
-    
+
     col1, col2, col3, col4 = st.columns(4)
-    
+
     with col1:
         if st.button("📧 Email", use_container_width=True):
             st.session_state.kb_category = 'email'
         if st.button("🌐 Domain & DNS", use_container_width=True):
             st.session_state.kb_category = 'domain'
-    
+
     with col2:
         if st.button("🔧 cPanel", use_container_width=True):
             st.session_state.kb_category = 'cpanel'
         if st.button("🔒 SSL & HTTPS", use_container_width=True):
             st.session_state.kb_category = 'ssl'
-    
+
     with col3:
         if st.button("💻 WordPress", use_container_width=True):
             st.session_state.kb_category = 'wordpress'
         if st.button("📁 FTP", use_container_width=True):
             st.session_state.kb_category = 'ftp'
-    
+
     with col4:
         if st.button("💳 Billing", use_container_width=True):
             st.session_state.kb_category = 'billing'
         if st.button("🔍 Troubleshooting", use_container_width=True):
             st.session_state.kb_category = 'troubleshooting'
-    
+
     if 'kb_category' in st.session_state:
         category = st.session_state.kb_category
         st.markdown(f"### {category.title()} Articles")
-        
+
         for article in HOSTAFRICA_KB.get(category, []):
             with st.expander(f"📄 {article['title']}"):
                 st.markdown(f"**Keywords:** {', '.join(article['keywords'][:8])}")
                 st.link_button("📖 Read Article", article['url'], use_container_width=True)
-    
+
     st.markdown("---")
     st.link_button("🌐 Browse Full Help Center", "https://help.hostafrica.com", use_container_width=True, type="primary")
 
     elif tool == "🔑 Password Strength Meter":
      st.title("🔑 Password Strength Meter")
      st.warning("🔒 Checked locally - password never sent anywhere")
-    
+
     password = st.text_input("Enter password to test:", type="password", key="pwd_test")
-    
+
     if password:
         strength, score, feedback, color = check_password_strength(password)
-        
+
         st.markdown(f"### Strength: {strength}")
         st.progress(score / 6)
-        
+
         col1, col2, col3, col4 = st.columns(4)
-        
+
         with col1:
             st.metric("Length", len(password))
         with col2:
@@ -2824,93 +2824,93 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         with col4:
             has_number = "✅" if re.search(r'\d', password) else "❌"
             st.metric("Numbers", has_number)
-        
+
         if feedback:
             st.markdown("### 💡 Suggestions:")
             for tip in feedback:
                 st.info(f"• {tip}")
-    
+
     st.markdown("---")
     st.markdown("### 🎲 Password Generator")
-    
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         length = st.slider("Password Length:", 8, 32, 16)
-    
+
     with col2:
         include_special = st.checkbox("Include Special Characters", value=True)
-    
+
     if st.button("🎲 Generate Secure Password", type="primary"):
         import string
         if include_special:
             chars = string.ascii_letters + string.digits + string.punctuation
         else:
             chars = string.ascii_letters + string.digits
-        
+
         generated = ''.join(random.choice(chars) for _ in range(length))
         st.code(generated)
         st.success("✅ Copy this password to a secure location")
 
     elif tool == "📋 Copy-Paste Utilities":
      st.title("📋 Copy-Paste Utilities")
-    
+
     tab1, tab2, tab3 = st.tabs(["🔤 Case Converter", "📝 Line Tools", "🔧 Text Tools"])
-    
+
     with tab1:
         text = st.text_area("Enter text:", height=150, key="case_text")
-        
+
         if text:
             col1, col2 = st.columns(2)
-            
+
             with col1:
                 st.markdown("**UPPERCASE**")
                 st.text_area("", value=text.upper(), height=100, key="upper")
-                
+
                 st.markdown("**Title Case**")
                 st.text_area("", value=text.title(), height=100, key="title")
-            
+
             with col2:
                 st.markdown("**lowercase**")
                 st.text_area("", value=text.lower(), height=100, key="lower")
-                
+
                 st.markdown("**Sentence case**")
                 st.text_area("", value=text.capitalize(), height=100, key="sentence")
-    
+
     with tab2:
         lines = st.text_area("Enter lines (one per line):", height=150, key="lines_text")
-        
+
         if lines:
             line_list = [l.strip() for l in lines.split('\n') if l.strip()]
-            
+
             col1, col2 = st.columns(2)
-            
+
             with col1:
                 if st.button("Remove Duplicates"):
                     unique = list(dict.fromkeys(line_list))
                     st.text_area("Result:", value='\n'.join(unique), height=150, key="unique")
-            
+
             with col2:
                 if st.button("Sort A-Z"):
                     sorted_lines = sorted(line_list)
                     st.text_area("Result:", value='\n'.join(sorted_lines), height=150, key="sorted")
-            
+
             st.info(f"📊 Total: {len(line_list)} lines, Unique: {len(set(line_list))} lines")
-    
+
     with tab3:
         text_tool = st.text_area("Enter text:", height=150, key="text_tools")
-        
+
         if text_tool:
             col1, col2, col3 = st.columns(3)
-            
+
             with col1:
                 st.metric("Characters", len(text_tool))
                 st.metric("Words", len(text_tool.split()))
-            
+
             with col2:
                 st.metric("Lines", len(text_tool.split('\n')))
                 st.metric("Spaces", text_tool.count(' '))
-            
+
             with col3:
                 st.metric("Alphanumeric", sum(c.isalnum() for c in text_tool))
                 st.metric("Special Chars", sum(not c.isalnum() and not c.isspace() for c in text_tool))
@@ -2918,30 +2918,30 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     elif tool == "📸 Screenshot Annotator":
      st.title("📸 Screenshot Annotator")
      st.markdown("Upload screenshots and add notes")
-    
+
     uploaded = st.file_uploader("Upload Screenshot:", type=['png', 'jpg', 'jpeg'])
-    
+
     if uploaded:
         image = Image.open(uploaded)
-        
+
         col1, col2 = st.columns([2, 1])
-        
+
         with col1:
             st.image(image, use_container_width=True)
-        
+
         with col2:
             st.markdown("### Image Info")
             st.info(f"**Size:** {image.size[0]} x {image.size[1]}")
             st.info(f"**Format:** {image.format}")
             st.info(f"**Mode:** {image.mode}")
-        
+
         notes = st.text_area("Add Notes:", height=200, placeholder="Describe what's shown in the screenshot...")
-        
+
         if notes:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            
+
             col1, col2 = st.columns(2)
-            
+
             with col1:
                 if st.button("💾 Save Notes"):
                     st.download_button(
@@ -2950,7 +2950,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                         f"screenshot_notes_{timestamp}.txt",
                         "text/plain"
                     )
-            
+
             with col2:
                 buf = io.BytesIO()
                 image.save(buf, format='PNG')
@@ -2964,26 +2964,26 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     elif tool == "📝 Session Notes":
      st.title("📝 Session Notes")
      st.markdown("Take notes during support sessions")
-    
+
     st.session_state.session_notes = st.text_area(
         "Session Notes:",
         value=st.session_state.session_notes,
         height=400,
         placeholder="Document your troubleshooting steps, findings, and solutions..."
     )
-    
+
     col1, col2, col3, col4 = st.columns(4)
-    
+
     with col1:
         if st.button("💾 Save", use_container_width=True):
             st.success("✅ Notes saved in session")
-    
+
     with col2:
         if st.button("📋 Add Timestamp", use_container_width=True):
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             st.session_state.session_notes += f"\n\n--- {timestamp} ---\n"
             st.rerun()
-    
+
     with col3:
         if st.session_state.session_notes:
             st.download_button(
@@ -2993,12 +2993,12 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                 "text/plain",
                 use_container_width=True
             )
-    
+
     with col4:
         if st.button("🗑️ Clear All", use_container_width=True):
             st.session_state.session_notes = ""
             st.rerun()
-    
+
     if st.session_state.session_notes:
         word_count = len(st.session_state.session_notes.split())
         char_count = len(st.session_state.session_notes)
@@ -3007,21 +3007,21 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     elif tool == "🗑️ Clear Cache Instructions":
      st.title("🗑️ Clear Cache Instructions")
      st.markdown("Step-by-step guide to clear browser cache")
-    
+
     browser = st.selectbox("Select Browser:", ["Chrome", "Firefox", "Safari", "Edge", "Opera"])
-    
+
     st.markdown("---")
-    
+
     if browser == "Chrome":
         st.markdown("""
         ### Google Chrome
-        
+
         **Quick Method:**
         1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
         2. Select "All time" from the time range dropdown
         3. Check "Cached images and files"
         4. Click "Clear data"
-        
+
         **Manual Method:**
         1. Click the three dots (⋮) in the top-right corner
         2. Go to **More tools** → **Clear browsing data**
@@ -3029,22 +3029,22 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         4. Choose time range: **All time**
         5. Check **Cached images and files**
         6. Click **Clear data**
-        
+
         **Hard Refresh (for current page only):**
         - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
         - Mac: `Cmd+Shift+R`
         """)
-    
+
     elif browser == "Firefox":
         st.markdown("""
         ### Mozilla Firefox
-        
+
         **Quick Method:**
         1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
         2. Select "Everything" from time range
         3. Check "Cache"
         4. Click "Clear Now"
-        
+
         **Manual Method:**
         1. Click the hamburger menu (☰) in the top-right corner
         2. Go to **Settings**
@@ -3053,56 +3053,56 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         5. Click **Clear Data...**
         6. Check **Cached Web Content**
         7. Click **Clear**
-        
+
         **Hard Refresh (for current page only):**
         - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
         - Mac: `Cmd+Shift+R`
         """)
-    
+
     elif browser == "Safari":
         st.markdown("""
         ### Safari (macOS)
-        
+
         **Quick Method:**
         1. Press `Cmd+Option+E` to empty cache
         2. Or go to **Develop** → **Empty Caches**
-        
+
         **Enable Develop Menu (if not visible):**
         1. Go to **Safari** → **Preferences**
         2. Click **Advanced** tab
         3. Check "Show Develop menu in menu bar"
-        
+
         **Manual Method:**
         1. Go to **Safari** → **Preferences**
         2. Click **Advanced** tab
         3. Enable "Show Develop menu in menu bar"
         4. Click **Develop** in menu bar
         5. Select **Empty Caches**
-        
+
         **Clear All History & Cache:**
         1. Go to **Safari** → **Clear History...**
         2. Select "all history" from dropdown
         3. Click **Clear History**
-        
+
         **Hard Refresh (for current page only):**
         - Mac: `Cmd+Option+R` or `Cmd+Shift+R`
-        
+
         **Safari (iOS - iPhone/iPad):**
         1. Go to **Settings** → **Safari**
         2. Scroll down and tap **Clear History and Website Data**
         3. Confirm by tapping **Clear History and Data**
         """)
-    
+
     elif browser == "Edge":
         st.markdown("""
         ### Microsoft Edge
-        
+
         **Quick Method:**
         1. Press `Ctrl+Shift+Delete` (Windows) or `Cmd+Shift+Delete` (Mac)
         2. Select "All time" from time range
         3. Check "Cached images and files"
         4. Click "Clear now"
-        
+
         **Manual Method:**
         1. Click the three dots (...) in the top-right corner
         2. Go to **Settings**
@@ -3111,22 +3111,22 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         5. Select time range: **All time**
         6. Check **Cached images and files**
         7. Click **Clear now**
-        
+
         **Hard Refresh (for current page only):**
         - Windows: `Ctrl+F5` or `Ctrl+Shift+R`
         - Mac: `Cmd+Shift+R`
         """)
-    
+
     elif browser == "Opera":
         st.markdown("""
         ### Opera
-        
+
         **Quick Method:**
         1. Press `Ctrl+Shift+Delete` (Windows/Linux) or `Cmd+Shift+Delete` (Mac)
         2. Select "All time" from time range
         3. Check "Cached images and files"
         4. Click "Clear data"
-        
+
         **Manual Method:**
         1. Click the **Opera menu** (O icon) in the top-left corner
         2. Go to **Settings** (or press `Alt+P`)
@@ -3136,17 +3136,17 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         6. Choose time range: **All time**
         7. Check **Cached images and files**
         8. Click **Clear data**
-        
+
         **Hard Refresh (for current page only):**
         - Windows/Linux: `Ctrl+F5` or `Ctrl+Shift+R`
         - Mac: `Cmd+Shift+R`
         """)
-    
+
     st.markdown("---")
     st.markdown("### 💡 Additional Tips")
-    
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         st.info("""
         **Why Clear Cache?**
@@ -3156,20 +3156,20 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - Free up disk space
         - Troubleshoot errors
         """)
-    
+
     with col2:
         st.warning("""
         **What Gets Deleted:**
         - Cached images
         - Cached files
         - Temporary data
-        
+
         **What Stays:**
         - Passwords (unless selected)
         - Bookmarks
         - History (unless selected)
         """)
-    
+
     st.markdown("---")
     st.markdown("### 🔄 Incognito/Private Mode Alternative")
     st.markdown("""
