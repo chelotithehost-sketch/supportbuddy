@@ -2058,9 +2058,9 @@ Be specific about web hosting environments, cPanel, and common server configurat
             - Optimize scripts
             """)
 
-elif tool == "🔒 SSL Certificate Checker":
-    st.title("🔒 SSL Certificate Checker")
-    st.markdown("Check SSL/TLS certificate status")
+    elif tool == "🔒 SSL Certificate Checker":
+     st.title("🔒 SSL Certificate Checker")
+     st.markdown("Check SSL/TLS certificate status")
     
     domain = st.text_input("Domain:", placeholder="example.com")
     
