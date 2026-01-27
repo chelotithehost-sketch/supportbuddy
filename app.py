@@ -2608,11 +2608,11 @@ FROM information_schema.TABLES
 WHERE table_schema = '{db_name}'
 ORDER BY (data_length + index_length) DESC;""", language="sql")
 
-elif tool == "🔐 File Permission Checker":
-    st.title("🔐 File Permission Checker")
-    st.markdown("Convert and understand Unix file permissions")
+    elif tool == "🔐 File Permission Checker":
+     st.title("🔐 File Permission Checker")
+     st.markdown("Convert and understand Unix file permissions")
     
-    tab1, tab2, tab3 = st.tabs(["🔢 Numeric to Symbolic", "🔤 Symbolic to Numeric", "📚 Guide"])
+     tab1, tab2, tab3 = st.tabs(["🔢 Numeric to Symbolic", "🔤 Symbolic to Numeric", "📚 Guide"])
     
     with tab1:
         st.markdown("### Numeric to Symbolic Converter")
