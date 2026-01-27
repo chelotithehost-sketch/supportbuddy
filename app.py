@@ -2058,11 +2058,11 @@ Be specific about web hosting environments, cPanel, and common server configurat
             - Optimize scripts
             """)
 
-   elif tool == "🔒 SSL Certificate Checker":
-    st.title("🔒 SSL Certificate Checker")
-    st.markdown("Check SSL/TLS certificate status")
+    elif tool == "🔒 SSL Certificate Checker":
+     st.title("🔒 SSL Certificate Checker")
+     st.markdown("Check SSL/TLS certificate status")
     
-    domain = st.text_input("Domain:", placeholder="example.com")
+     domain = st.text_input("Domain:", placeholder="example.com")
     
     if st.button("🔍 Check SSL Certificate", type="primary"):
         if not domain:
@@ -2107,11 +2107,11 @@ Be specific about web hosting environments, cPanel, and common server configurat
                     except Exception as e:
                         st.error(f"❌ Error: {str(e)}")
 
-elif tool == "🔀 HTTPS Redirect Test":
-    st.title("🔀 HTTPS Redirect Test")
-    st.markdown("Test if HTTP redirects to HTTPS")
+    elif tool == "🔀 HTTPS Redirect Test":
+     st.title("🔀 HTTPS Redirect Test")
+     st.markdown("Test if HTTP redirects to HTTPS")
     
-    domain = st.text_input("Domain:", placeholder="example.com")
+     domain = st.text_input("Domain:", placeholder="example.com")
     
     if st.button("🔍 Test Redirect", type="primary"):
         if not domain:
@@ -2145,11 +2145,11 @@ elif tool == "🔀 HTTPS Redirect Test":
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]""", language="apache")
 
-elif tool == "⚠️ Mixed Content Detector":
-    st.title("⚠️ Mixed Content Detector")
-    st.markdown("Scan for HTTP resources on HTTPS pages")
+    elif tool == "⚠️ Mixed Content Detector":
+     st.title("⚠️ Mixed Content Detector")
+     st.markdown("Scan for HTTP resources on HTTPS pages")
     
-    url = st.text_input("URL:", placeholder="https://example.com")
+     url = st.text_input("URL:", placeholder="https://example.com")
     
     if st.button("🔍 Scan for Mixed Content", type="primary"):
         if not url:
@@ -2283,11 +2283,11 @@ elif tool == "⚠️ Mixed Content Detector":
                         st.success("✅ No mixed content detected - all resources use HTTPS!")
                         st.balloons()
 
-elif tool == "📊 HTTP Status Code Checker":
-    st.title("📊 HTTP Status Code Checker")
-    st.markdown("Check HTTP response status codes")
+    elif tool == "📊 HTTP Status Code Checker":
+     st.title("📊 HTTP Status Code Checker")
+     st.markdown("Check HTTP response status codes")
     
-    url = st.text_input("URL:", placeholder="https://example.com")
+     url = st.text_input("URL:", placeholder="https://example.com")
     
     if st.button("🔍 Check Status", type="primary"):
         if not url:
@@ -2316,11 +2316,11 @@ elif tool == "📊 HTTP Status Code Checker":
                     for key, value in response.headers.items():
                         st.code(f"{key}: {value}")
 
-elif tool == "🔗 Redirect Checker":
-    st.title("🔗 Redirect Checker")
-    st.markdown("Track redirect chains")
+    elif tool == "🔗 Redirect Checker":
+     st.title("🔗 Redirect Checker")
+     st.markdown("Track redirect chains")
     
-    url = st.text_input("URL:", placeholder="https://example.com")
+     url = st.text_input("URL:", placeholder="https://example.com")
     
     if st.button("🔍 Check Redirects", type="primary"):
         if not url:
@@ -2352,11 +2352,11 @@ elif tool == "🔗 Redirect Checker":
                         st.code(response.url)
 
 # NETWORK TOOLS
-elif tool == "🔍 IP Address Lookup":
-    st.header("🔍 IP Address Lookup")
-    st.markdown("Get detailed geolocation and ISP information for any IP address")
+    elif tool == "🔍 IP Address Lookup":
+     st.header("🔍 IP Address Lookup")
+     st.markdown("Get detailed geolocation and ISP information for any IP address")
     
-    ip = st.text_input("Enter IP address:", placeholder="8.8.8.8", key="ip_input")
+     ip = st.text_input("Enter IP address:", placeholder="8.8.8.8", key="ip_input")
     
     if st.button("🔍 Lookup IP", use_container_width=True):
         if ip:
@@ -2433,11 +2433,11 @@ elif tool == "🔍 IP Address Lookup":
         else:
             st.warning("⚠️ Please enter an IP address")
 
-elif tool == "🗂️ DNS Analyzer":
-    st.header("🗂️ DNS Analyzer")
-    st.markdown("Comprehensive DNS analysis with all record types")
+    elif tool == "🗂️ DNS Analyzer":
+     st.header("🗂️ DNS Analyzer")
+     st.markdown("Comprehensive DNS analysis with all record types")
     
-    domain_dns = st.text_input("Enter domain:", placeholder="example.com")
+     domain_dns = st.text_input("Enter domain:", placeholder="example.com")
     
     if st.button("🔍 Analyze DNS", use_container_width=True):
         if domain_dns:
@@ -2535,26 +2535,26 @@ elif tool == "🗂️ DNS Analyzer":
                     with col_b:
                         for s in success_checks: st.success(f"• {s}")
                             
-elif tool == "🧹 Flush DNS Cache":
-    st.title("🧹 Flush Google DNS Cache")
-    st.markdown("Clear Google's DNS cache to force fresh lookups")
+    elif tool == "🧹 Flush DNS Cache":
+     st.title("🧹 Flush Google DNS Cache")
+     st.markdown("Clear Google's DNS cache to force fresh lookups")
     
-    st.markdown('<div class="info-box">', unsafe_allow_html=True)
-    st.markdown("""
+     st.markdown('<div class="info-box">', unsafe_allow_html=True)
+     st.markdown("""
     **When to flush DNS cache:**
     - After changing nameservers
     - After updating DNS records
     - When experiencing DNS propagation issues
     - To force fresh DNS lookups
     """)
-    st.markdown('</div>', unsafe_allow_html=True)
+     st.markdown('</div>', unsafe_allow_html=True)
     
-    st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
+     st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
     
 # SERVER TOOLS
-elif tool == "📊 Database Size Calculator":
-    st.title("📊 Database Size Calculator")
-    st.markdown("Calculate and convert database sizes")
+    elif tool == "📊 Database Size Calculator":
+     st.title("📊 Database Size Calculator")
+     st.markdown("Calculate and convert database sizes")
     
     tab1, tab2 = st.tabs(["🔢 Size Converter", "📋 SQL Query"])
     
@@ -2756,12 +2756,12 @@ elif tool == "🔐 File Permission Checker":
         st.dataframe(df_common, use_container_width=True)
 
 # UTILITIES
-elif tool == "📚 Help Center":
-    st.title("📚 HostAfrica Knowledge Base")
-    st.markdown("Search our comprehensive knowledge base for guides and documentation")
+    elif tool == "📚 Help Center":
+     st.title("📚 HostAfrica Knowledge Base")
+     st.markdown("Search our comprehensive knowledge base for guides and documentation")
     
-    # Search input
-    search_query = st.text_input(
+     # Search input
+     search_query = st.text_input(
         "🔍 Search:",
         placeholder="e.g., email setup, dns, cpanel, ssl certificate",
         help="Enter keywords to search the knowledge base"
@@ -2829,11 +2829,11 @@ elif tool == "📚 Help Center":
     st.markdown("---")
     st.link_button("🌐 Browse Full Help Center", "https://help.hostafrica.com", use_container_width=True, type="primary")
 
-elif tool == "🔑 Password Strength Meter":
-    st.title("🔑 Password Strength Meter")
-    st.warning("🔒 Checked locally - password never sent anywhere")
+    elif tool == "🔑 Password Strength Meter":
+     st.title("🔑 Password Strength Meter")
+     st.warning("🔒 Checked locally - password never sent anywhere")
     
-    password = st.text_input("Enter password to test:", type="password", key="pwd_test")
+     password = st.text_input("Enter password to test:", type="password", key="pwd_test")
     
     if password:
         strength, score, feedback, color = check_password_strength(password)
@@ -2882,8 +2882,8 @@ elif tool == "🔑 Password Strength Meter":
         st.code(generated)
         st.success("✅ Copy this password to a secure location")
 
-elif tool == "🌍 Timezone Converter":
-    st.title("🌍 Timezone Converter")
+    elif tool == "🌍 Timezone Converter":
+        st.title("🌍 Timezone Converter")
     
     if not PYTZ_AVAILABLE:
         st.warning("⚠️ Advanced timezone features require pytz library")
@@ -2914,8 +2914,8 @@ elif tool == "🌍 Timezone Converter":
             st.info(f"**To (UTC{offset_to:+d})**")
             st.code(to_dt.strftime('%H:%M:%S'))
 
-elif tool == "📋 Copy-Paste Utilities":
-    st.title("📋 Copy-Paste Utilities")
+    elif tool == "📋 Copy-Paste Utilities":
+     st.title("📋 Copy-Paste Utilities")
     
     tab1, tab2, tab3 = st.tabs(["🔤 Case Converter", "📝 Line Tools", "🔧 Text Tools"])
     
@@ -2977,9 +2977,9 @@ elif tool == "📋 Copy-Paste Utilities":
                 st.metric("Alphanumeric", sum(c.isalnum() for c in text_tool))
                 st.metric("Special Chars", sum(not c.isalnum() and not c.isspace() for c in text_tool))
 
-elif tool == "📸 Screenshot Annotator":
-    st.title("📸 Screenshot Annotator")
-    st.markdown("Upload screenshots and add notes")
+    elif tool == "📸 Screenshot Annotator":
+     st.title("📸 Screenshot Annotator")
+     st.markdown("Upload screenshots and add notes")
     
     uploaded = st.file_uploader("Upload Screenshot:", type=['png', 'jpg', 'jpeg'])
     
@@ -3024,11 +3024,11 @@ elif tool == "📸 Screenshot Annotator":
                     "image/png"
                 )
 
-elif tool == "📝 Session Notes":
-    st.title("📝 Session Notes")
-    st.markdown("Take notes during support sessions")
+    elif tool == "📝 Session Notes":
+     st.title("📝 Session Notes")
+     st.markdown("Take notes during support sessions")
     
-    st.session_state.session_notes = st.text_area(
+     st.session_state.session_notes = st.text_area(
         "Session Notes:",
         value=st.session_state.session_notes,
         height=400,
@@ -3067,12 +3067,12 @@ elif tool == "📝 Session Notes":
         char_count = len(st.session_state.session_notes)
         st.info(f"📊 {word_count} words, {char_count} characters")
         
-elif tool == "🧹 Flush DNS Cache":
-    st.title("🧹 Flush Google DNS Cache")
-    st.markdown("Clear Google's DNS cache to force fresh lookups")
+    elif tool == "🧹 Flush DNS Cache":
+     st.title("🧹 Flush Google DNS Cache")
+     st.markdown("Clear Google's DNS cache to force fresh lookups")
     
-    st.markdown('<div class="info-box">', unsafe_allow_html=True)
-    st.markdown("""
+     st.markdown('<div class="info-box">', unsafe_allow_html=True)
+     st.markdown("""
     **When to flush DNS cache:**
     - After changing nameservers
     - After updating DNS records
@@ -3083,13 +3083,13 @@ elif tool == "🧹 Flush DNS Cache":
     
     st.link_button("🧹 Open Google DNS Cache Flush", "https://dns.google/cache", use_container_width=True, type="primary")
     
-elif tool == "🗑️ Clear Cache Instructions":
-    st.title("🗑️ Clear Cache Instructions")
-    st.markdown("Step-by-step guide to clear browser cache")
+    elif tool == "🗑️ Clear Cache Instructions":
+     st.title("🗑️ Clear Cache Instructions")
+     st.markdown("Step-by-step guide to clear browser cache")
     
-    browser = st.selectbox("Select Browser:", ["Chrome", "Firefox", "Safari", "Edge", "Opera"])
+     browser = st.selectbox("Select Browser:", ["Chrome", "Firefox", "Safari", "Edge", "Opera"])
     
-    st.markdown("---")
+     st.markdown("---")
     
     if browser == "Chrome":
         st.markdown("""
