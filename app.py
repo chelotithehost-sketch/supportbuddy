@@ -1,3 +1,4 @@
+# (Full file content follows)
 import streamlit as st
 import requests
 from datetime import datetime
@@ -388,11 +389,10 @@ if 'chat_history' not in st.session_state:
     st.session_state.chat_history = []
 if 'session_notes' not in st.session_state:
     st.session_state.session_notes = ""
-# New session state for category navigation
-if 'selected_category' not in st.session_state:
-    st.session_state.selected_category = None
+# Simplified navigation: only selected_tool is required
 if 'selected_tool' not in st.session_state:
     st.session_state.selected_tool = None
+
 # Define tool categories
 # ============================================================================
 # TOOL CATEGORIES WITH VISUAL IMPROVEMENTS
@@ -422,7 +422,7 @@ TOOL_CATEGORIES = {
             "📋 cPanel Account List"
         ],
         "description": "Your essential admin tools",
-        "color": CATEGORY_COLORS["Admin Links"]
+        "color": CATEGORY_COLORS.get("Admin Links")
     },
     "Ticket Management": {
         "icon": "🎫",
@@ -432,7 +432,7 @@ TOOL_CATEGORIES = {
             "🩺 Smart Symptom Checker"
         ],
         "description": "Let's analyse the tickets",
-        "color": CATEGORY_COLORS["Ticket Management"]
+        "color": CATEGORY_COLORS.get("Ticket Management")
     },
     "AI Tools": {
         "icon": "🤖",
@@ -442,7 +442,7 @@ TOOL_CATEGORIES = {
             "❓ Error Code Explainer"
         ],
         "description": "AI tools for you",
-        "color": CATEGORY_COLORS["AI Tools"]
+        "color": CATEGORY_COLORS.get("AI Tools")
     },
     "Domain & DNS": {
         "icon": "🌐",
@@ -453,7 +453,7 @@ TOOL_CATEGORIES = {
             "🌍 WHOIS Lookup"
         ],
         "description": "Domain Tools",
-        "color": CATEGORY_COLORS["Domain & DNS"]
+        "color": CATEGORY_COLORS.get("Domain & DNS")
     },
     "WEB & SSL TOOLS": {
         "icon": "🌍",
@@ -466,7 +466,7 @@ TOOL_CATEGORIES = {
             "🔗 Redirect Checker"
         ],
         "description": "Web and SSL Tools for You",
-        "color": CATEGORY_COLORS["WEB & SSL TOOLS"]
+        "color": CATEGORY_COLORS.get("WEB & SSL TOOLS")
     },
     "Email": {
         "icon": "📧",
@@ -477,7 +477,7 @@ TOOL_CATEGORIES = {
             "📄 Email Header Analyzer"
         ],
         "description": "Essential Email Tools",
-        "color": CATEGORY_COLORS["Email"]
+        "color": CATEGORY_COLORS.get("Email")
     },
     "Server & Database": {
         "icon": "💾",
@@ -486,7 +486,7 @@ TOOL_CATEGORIES = {
             "🔐 File Permission Checker"
         ],
         "description": "Server Tools",
-        "color": CATEGORY_COLORS["Server & Database"]
+        "color": CATEGORY_COLORS.get("Server & Database")
     },
     "Network": {
         "icon": "📡",
@@ -496,7 +496,7 @@ TOOL_CATEGORIES = {
             "🧹 Flush DNS Cache"
         ],
         "description": "Your Essential Network Tools",
-        "color": CATEGORY_COLORS["Network"]
+        "color": CATEGORY_COLORS.get("Network")
     },
     "Utilities": {
         "icon": "🛠️",
@@ -510,7 +510,7 @@ TOOL_CATEGORIES = {
             "🧹 Flush DNS Cache"
         ],
         "description": "Utilities",
-        "color": CATEGORY_COLORS["Utilities"]
+        "color": CATEGORY_COLORS.get("Utilities")
     }
 }
     
@@ -899,102 +899,72 @@ HOSTAFRICA_KB = {
 } 
 
 # ============================================================================
-# MAIN NAVIGATION SYSTEM
+# SINGLE-PAGE NAVIGATION RENDERER
 # ============================================================================
-def render_category_home():
-    """Render the category selection home page"""
+def _sanitize_key(s: str) -> str:
+    """Return a safe key fragment for Streamlit widget keys"""
+    return re.sub(r'\W+', '_', s).strip('_')
+
+def render_all_categories_and_tools():
+    """Render a single page with all categories and their tools (grid of buttons)"""
     st.title("🔧 Support Buddy - Complete Toolkit")
-    st.markdown("### Choose a category to get started")
+    st.markdown("### All categories and tools — click a tool to open it")
     st.markdown("---")
-    
-    # Create 3 columns for category cards
-    cols = st.columns(3)
-    categories = list(TOOL_CATEGORIES.keys())
-    
-    for idx, category in enumerate(categories):
-        with cols[idx % 3]:
-            category_info = TOOL_CATEGORIES[category]
-            tool_count = len(category_info['tools'])
-            
-            # Create clickable card using button
-            if st.button(
-                f"{category_info['icon']}\n\n**{category}**\n\n{tool_count} tools available",
-                key=f"cat_{category}",
-                use_container_width=True,
-                help=category_info['description']
-            ):
-                st.session_state.selected_category = category
-                st.session_state.selected_tool = None
-                st.rerun()
-            
-            # Show description below button
-            st.caption(category_info['description'])
-    
-    # Quick stats
-    st.markdown("---")
+
     total_tools = sum(len(cat['tools']) for cat in TOOL_CATEGORIES.values())
-    st.info(f"📊 **{total_tools} tools** available across **{len(TOOL_CATEGORIES)} categories**")
+    st.markdown(f"<div class='stats-badge'>📊 {total_tools} tools available</div>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
-def render_tool_selection():
-    """Render tool selection within a category"""
-    category = st.session_state.selected_category
-    category_info = TOOL_CATEGORIES[category]
-    
-    # Back button
-    if st.button("← Back to Categories", key="back_btn"):
-        st.session_state.selected_category = None
-        st.session_state.selected_tool = None
-        st.rerun()
-    
-    st.title(f"{category_info['icon']} {category}")
-    st.markdown(f"*{category_info['description']}*")
-    st.markdown("---")
-    
-    # Tool selection as horizontal buttons
-    st.markdown("### Select a tool:")
-    tools = category_info['tools']
-    
-    # Create columns for tool buttons (4 per row)
-    num_cols = 4
-    num_rows = (len(tools) + num_cols - 1) // num_cols
-    
-    for row in range(num_rows):
-        cols = st.columns(num_cols)
-        for col_idx in range(num_cols):
-            tool_idx = row * num_cols + col_idx
-            if tool_idx < len(tools):
-                tool = tools[tool_idx]
-                with cols[col_idx]:
-                    if st.button(tool, key=f"tool_{tool}", use_container_width=True):
-                        st.session_state.selected_tool = tool
-                        st.rerun()
+    for category_name, category_info in TOOL_CATEGORIES.items():
+        icon = category_info.get('icon', '')
+        description = category_info.get('description', '')
+        color = category_info.get('color', None)
+
+        # Category header
+        st.markdown(f"## {icon} {category_name}")
+        if description:
+            st.caption(description)
+
+        tools = category_info.get('tools', [])
+        num_cols = 4
+
+        # Render tools in rows of num_cols
+        for row_start in range(0, len(tools), num_cols):
+            cols = st.columns(num_cols)
+            for i in range(num_cols):
+                tool_idx = row_start + i
+                if tool_idx < len(tools):
+                    tool = tools[tool_idx]
+                    safe_cat = _sanitize_key(category_name)
+                    # Unique key per category + index
+                    btn_key = f"btn_{safe_cat}_{tool_idx}"
+                    with cols[i]:
+                        if st.button(tool, key=btn_key, use_container_width=True):
+                            st.session_state.selected_tool = tool
+                            st.rerun()
+
+        st.markdown("---")
 
 # ============================================================================
-# MAIN APP ROUTING
+# MAIN APP ROUTING (SINGLE-STATE: selected_tool only)
 # ============================================================================
-# Navigation logic
-if st.session_state.selected_category is None:
-    # Show category home page
-    render_category_home()
-
-elif st.session_state.selected_tool is None:
-    # Show tool selection for category
-    render_tool_selection()
+if st.session_state.selected_tool is None:
+    # Show all categories with their tools on a single page
+    render_all_categories_and_tools()
 
 else:
-    # Show selected tool
+    # Show the selected tool (existing implementations reused)
     tool = st.session_state.selected_tool
-    
+
     # Back button
-    col1, col2 = st.columns([1, 4])
-    with col1:
-        if st.button("← Back", key="back_to_tools"):
-            st.session_state.selected_tool = None
-            st.rerun()
-    
+    if st.button("← Back to All Tools", key="back_to_all_tools"):
+        st.session_state.selected_tool = None
+        st.rerun()
+
     # ============================================================================
-    # MAIN CONTENT - TOOL IMPLEMENTATIONS
+    # MAIN CONTENT - TOOL IMPLEMENTATIONS (unchanged, uses 'tool' variable)
     # ============================================================================
+
     if tool == "🔐 PIN Checker":
         st.title("🔐 PIN Checker")
         st.markdown("Verify customer PINs for secure account access and verification.")
