@@ -2380,7 +2380,7 @@ def handle_email_header_analyzer():
                     for key, value in parsed_headers.items():
                         with st.expander(f"📋 {key}"):
                             st.code(value)
-  """
+"""
 Support Buddy - Tool Handlers Part 4
 Network Tools, Server/Database Tools, and Utilities
 """
@@ -3032,3 +3032,4 @@ def handle_clear_cache_instructions():
         3. Check "Cached images and files"
         4. Click "Clear data"
         """)                          
+
