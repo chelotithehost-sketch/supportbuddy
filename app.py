@@ -109,8 +109,8 @@ except:
 
 # Page Configuration
 st.set_page_config(
-    page_title="Support Buddy - Complete Toolkit",
-    page_icon="🔧",
+    page_title="Support Buddy",
+    page_icon="🏠",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -907,8 +907,9 @@ def _sanitize_key(s: str) -> str:
 
 def render_all_categories_and_tools():
     """Render a single page with all categories and their tools (grid of buttons)"""
-    st.title("🔧 Support Buddy - Complete Toolkit")
-    st.markdown("### All categories and tools — click a tool to open it")
+    st.title("🏠 Welcome to Support Buddy")
+    st.markdown("### Your Complete Technical Support Toolkit.")
+    st.markdown("### Navigate using the sidebar to access over 40 support tools organized by category.")
     st.markdown("---")
 
     total_tools = sum(len(cat['tools']) for cat in TOOL_CATEGORIES.values())
@@ -3177,4 +3178,5 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         """)
+
 
