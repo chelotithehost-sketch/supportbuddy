@@ -1,4 +1,3 @@
-# (Full file content follows)
 import streamlit as st
 import requests
 from datetime import datetime
@@ -115,272 +114,645 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS (Typography & Windows 11-like styling)
+# ============================================================================
+# IMPROVED PROFESSIONAL CSS FOR SUPPORT BUDDY APP
+# ============================================================================
+# This CSS combines the best elements from both approaches with refinements:
+# - Fluent Design / Windows 11 aesthetic
+# - Better hierarchy and spacing
+# - Improved accessibility
+# - Performance optimizations
+# - Responsive design patterns
+# ============================================================================
+
 st.markdown("""
     <style>
+    /* ========================================================================
+       1. CSS VARIABLES & DESIGN TOKENS
+       ======================================================================== */
     :root {
-      /* Fluent / Windows 11 inspired palette */
-      --win-accent-1: #0078D4;    /* primary blue */
-      --win-accent-2: #2b88d8;    /* secondary blue */
-      --win-muted: #64748b;       /* muted text */
-      --win-bg-1: #f6f8fb;        /* subtle page background */
-      --glass: rgba(255,255,255,0.60);
-      --card-radius: 12px;
-      --card-radius-large: 16px;
-      --soft-shadow: 0 8px 24px rgba(16,24,40,0.06);
-      --soft-shadow-strong: 0 14px 40px rgba(16,24,40,0.10);
+        /* Color System */
+        --win-accent-primary: #0078D4;
+        --win-accent-secondary: #2B88D8;
+        --win-accent-hover: #005A9E;
+        --win-bg-base: #F3F6F9;
+        --win-bg-elevated: #FFFFFF;
+        --win-bg-acrylic: rgba(255, 255, 255, 0.70);
+        
+        /* Text Colors */
+        --text-primary: #0F1724;
+        --text-secondary: #5E6E82;
+        --text-tertiary: #8B98A9;
+        --text-on-accent: #FFFFFF;
+        
+        /* Spacing Scale (8px base) */
+        --space-xs: 0.5rem;   /* 8px */
+        --space-sm: 0.75rem;  /* 12px */
+        --space-md: 1rem;     /* 16px */
+        --space-lg: 1.5rem;   /* 24px */
+        --space-xl: 2rem;     /* 32px */
+        --space-2xl: 3rem;    /* 48px */
+        
+        /* Border Radius */
+        --radius-sm: 6px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --radius-xl: 16px;
+        --radius-full: 9999px;
+        
+        /* Shadows */
+        --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+        --shadow-xl: 0 14px 40px rgba(0, 0, 0, 0.10);
+        
+        /* Transitions */
+        --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-spring: 400ms cubic-bezier(0.2, 0.9, 0.3, 1);
     }
 
-    /* Use Segoe UI Variable on Windows, fallback to Roboto/Inter/system UI */
-    html, body, [class*="css"] {
-      font-family: "Segoe UI Variable", "Segoe UI", Roboto, "Helvetica Neue", Inter, Arial, system-ui;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      color: #0f1724;
-      background: var(--win-bg-1);
+    /* ========================================================================
+       2. GLOBAL RESET & BASE STYLES
+       ======================================================================== */
+    * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
-
-    /* Fluid/responsive typography */
-    html { font-size: 16px; }
-    @media (max-width:1200px){ html { font-size:15px; } }
-    @media (max-width:992px){  html { font-size:14px; } }
-    @media (max-width:720px){  html { font-size:13px; } }
-
-    .main { padding: 1rem 2rem; }
-
-    /* Category Cards with Dynamic Colors */
-    .category-card {
-      padding: 1.5rem;
-      border-radius: var(--card-radius-large);
-      color: white;
-      text-align: left;
-      cursor: pointer;
-      transition: transform 0.22s cubic-bezier(.2,.9,.3,1), box-shadow 0.22s ease, background 0.22s ease;
-      margin: 1rem 0;
-      min-height: 160px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--soft-shadow);
-      border: 1px solid rgba(15,23,42,0.04);
-      background-blend-mode: overlay;
-      backdrop-filter: blur(6px) saturate(120%);
+    
+    html {
+        font-size: 16px;
+        scroll-behavior: smooth;
     }
-
-    /* Subtle acrylic overlay on hover */
-    .category-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-      opacity: 0;
-      transition: opacity 0.22s ease;
-      pointer-events: none;
+    
+    /* Responsive Typography */
+    @media (max-width: 1400px) { html { font-size: 15px; } }
+    @media (max-width: 1024px) { html { font-size: 14px; } }
+    @media (max-width: 768px) { html { font-size: 13px; } }
+    
+    /* App-wide Background & Font */
+    .stApp {
+        background-color: var(--win-bg-base) !important;
+        font-family: "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Arial, sans-serif !important;
     }
-
-    .category-card:hover {
-      transform: translateY(-6px);
-      box-shadow: var(--soft-shadow-strong);
+    
+    /* Main Content Area */
+    .main {
+        padding: var(--space-md) var(--space-xl);
+        max-width: 1600px;
+        margin: 0 auto;
     }
-
-    .category-card:hover::before { opacity: 1; }
-
-    .category-icon {
-      font-size: 2.8rem;
-      margin-bottom: 0.6rem;
-      text-shadow: 0 6px 18px rgba(2,6,23,0.12);
-      animation: float 4s ease-in-out infinite;
-      line-height: 1;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
-    }
-
-    .category-title {
-      font-size: 1.125rem; /* ~18px */
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-      color: #ffffff;
-      letter-spacing: -0.2px;
-    }
-
-    .category-count {
-      font-size: 0.85rem;
-      opacity: 0.95;
-      background: rgba(255,255,255,0.12);
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-      display: inline-block;
-      margin-top: 0.45rem;
-      font-weight: 600;
-      color: rgba(255,255,255,0.95);
-    }
-
-    .category-description {
-      font-size: 0.9rem;
-      opacity: 0.95;
-      margin-top: 0.35rem;
-      font-style: normal;
-      color: rgba(255,255,255,0.92);
-    }
-
-    /* Search Box Styling with acrylic / blur */
-    .search-container {
-      background: linear-gradient(90deg, rgba(255,255,255,0.70), rgba(255,255,255,0.62));
-      padding: 1.25rem;
-      border-radius: var(--card-radius);
-      margin-bottom: 1.25rem;
-      box-shadow: var(--soft-shadow);
-      border: 1px solid rgba(15,23,42,0.04);
-      backdrop-filter: blur(8px) saturate(120%);
-      color: #0f1724;
-    }
-
-    .search-icon { font-size: 1.75rem; margin-bottom: 0.5rem; }
-
-    .search-result-card {
-      background: #ffffff;
-      border-left: 4px solid var(--win-accent-1);
-      padding: 0.9rem;
-      border-radius: 10px;
-      margin-bottom: 0.5rem;
-      transition: all 0.18s ease;
-      box-shadow: 0 6px 18px rgba(2,6,23,0.04);
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-    }
-
-    .search-result-card:hover {
-      transform: translateX(6px);
-      box-shadow: 0 12px 30px rgba(2,6,23,0.06);
-      border-left-width: 6px;
-    }
-
-    .search-tool-name {
-      font-weight: 700;
-      color: #0f1724;
-      font-size: 1rem;
-      margin-bottom: 0;
-      line-height: 1.1;
-    }
-
-    .search-category-badge {
-      display: inline-block;
-      padding: 0.18rem 0.6rem;
-      border-radius: 10px;
-      background: #f1f5f9;
-      color: var(--win-muted);
-      font-size: 0.78rem;
-      margin-top: 0.2rem;
-      font-weight: 600;
-    }
-
-    .no-results {
-      text-align: center;
-      padding: 1.5rem;
-      color: var(--win-muted);
-      font-size: 1rem;
-    }
-
-    /* Tool Button Styling – Windows 11 rounded pill with accent */
-    .tool-button {
-      margin: 0.45rem 0;
-      padding: 0.65rem 1.2rem;
-      border-radius: 10px;
-      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
-      border: 1px solid rgba(15,23,42,0.04);
-      cursor: pointer;
-      transition: all 0.15s cubic-bezier(.2,.8,.2,1);
-      font-weight: 600;
-      color: #0f1724;
-      box-shadow: 0 4px 10px rgba(2,6,23,0.03);
-    }
-
-    .tool-button:hover {
-      background: linear-gradient(180deg, var(--win-accent-1), var(--win-accent-2));
-      color: #ffffff;
-      border-color: rgba(255,255,255,0.06);
-      transform: translateY(-3px);
-      box-shadow: 0 14px 40px rgba(15,76,212,0.12);
-    }
-
-    .tool-button:focus {
-      outline: 3px solid rgba(0,120,212,0.12);
-      outline-offset: 2px;
-      border-radius: 10px;
-    }
-
-    /* Status Boxes: subtle rounded cards */
-    .success-box, .warning-box, .error-box, .info-box {
-      padding: 1.25rem;
-      border-radius: 10px;
-      margin: 1rem 0;
-      box-shadow: 0 8px 28px rgba(2,6,23,0.03);
-      border-left: 6px solid transparent;
-    }
-
-    .success-box {
-      background: linear-gradient(180deg, #f0fdf4 0%, #ecfdf3 100%);
-      border-left-color: #10b981;
-    }
-
-    .warning-box {
-      background: linear-gradient(180deg, #fffbeb 0%, #fffbf0 100%);
-      border-left-color: #f59e0b;
-    }
-
-    .error-box {
-      background: linear-gradient(180deg, #fff1f2 0%, #fff4f6 100%);
-      border-left-color: #ef4444;
-    }
-
-    .info-box {
-      background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
-      border-left-color: var(--win-accent-1);
-    }
-
-    /* Stats Badge */
-    .stats-badge {
-      background: linear-gradient(90deg, var(--win-accent-1) 0%, var(--win-accent-2) 100%);
-      color: white;
-      padding: 0.8rem 1.6rem;
-      border-radius: 12px;
-      text-align: center;
-      font-size: 1rem;
-      box-shadow: 0 10px 36px rgba(15,76,212,0.10);
-      margin: 1.6rem 0;
-      font-weight: 700;
-    }
-
-    /* Breadcrumb */
-    .breadcrumb {
-      background: transparent;
-      padding: 0.5rem 0.6rem;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      font-size: 0.95rem;
-      color: var(--win-muted);
-    }
-
-    /* Responsive adjustments */
+    
     @media (max-width: 1024px) {
-      .category-card { min-height: 150px; }
+        .main { padding: var(--space-sm) var(--space-md); }
     }
+
+    /* ========================================================================
+       3. TYPOGRAPHY SYSTEM
+       ======================================================================== */
+    h1, h2, h3, h4, h5, h6 {
+        color: var(--text-primary) !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.02em !important;
+        line-height: 1.2 !important;
+    }
+    
+    h1 {
+        font-size: 2.25rem !important;
+        margin-top: var(--space-xl) !important;
+        margin-bottom: var(--space-lg) !important;
+    }
+    
+    h2 {
+        font-size: 1.875rem !important;
+        margin-top: var(--space-xl) !important;
+        margin-bottom: var(--space-md) !important;
+    }
+    
+    h3 {
+        font-size: 1.5rem !important;
+        margin-top: var(--space-lg) !important;
+        margin-bottom: var(--space-md) !important;
+    }
+    
+    p, li, span {
+        color: var(--text-primary);
+        line-height: 1.6;
+    }
+
+    /* ========================================================================
+       4. SIDEBAR STYLING (MICA EFFECT)
+       ======================================================================== */
+    [data-testid="stSidebar"] {
+        background: var(--win-bg-acrylic) !important;
+        backdrop-filter: blur(40px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
+        border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    [data-testid="stSidebar"] > div:first-child {
+        padding: var(--space-lg) var(--space-md);
+    }
+    
+    /* Sidebar Headers */
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 {
+        padding-top: var(--space-lg) !important;
+        margin-top: var(--space-md) !important;
+    }
+
+    /* ========================================================================
+       5. BUTTON SYSTEM
+       ======================================================================== */
+    /* Primary Buttons (st.button) */
+    div.stButton > button {
+        width: 100%;
+        min-height: 44px;
+        padding: var(--space-sm) var(--space-md) !important;
+        border-radius: var(--radius-md) !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%) !important;
+        color: var(--text-primary) !important;
+        font-weight: 600 !important;
+        font-size: 0.9375rem !important;
+        transition: all var(--transition-base) !important;
+        box-shadow: var(--shadow-sm) !important;
+        cursor: pointer !important;
+    }
+    
+    div.stButton > button:hover {
+        background: linear-gradient(180deg, var(--win-accent-primary) 0%, var(--win-accent-secondary) 100%) !important;
+        color: var(--text-on-accent) !important;
+        border-color: transparent !important;
+        transform: translateY(-2px) !important;
+        box-shadow: var(--shadow-md) !important;
+    }
+    
+    div.stButton > button:active {
+        transform: translateY(0px) scale(0.98) !important;
+        box-shadow: var(--shadow-xs) !important;
+    }
+    
+    div.stButton > button:focus-visible {
+        outline: 3px solid rgba(0, 120, 212, 0.15) !important;
+        outline-offset: 2px !important;
+    }
+    
+    /* Download Buttons */
+    div.stDownloadButton > button {
+        background: var(--win-accent-primary) !important;
+        color: var(--text-on-accent) !important;
+        border: none !important;
+    }
+    
+    div.stDownloadButton > button:hover {
+        background: var(--win-accent-hover) !important;
+        transform: translateY(-2px) !important;
+    }
+
+    /* ========================================================================
+       6. CUSTOM CARD COMPONENTS
+       ======================================================================== */
+    /* Category Cards */
+    .category-card {
+        position: relative;
+        padding: var(--space-lg);
+        border-radius: var(--radius-xl);
+        min-height: 160px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        cursor: pointer;
+        overflow: hidden;
+        transition: all var(--transition-spring);
+        margin: var(--space-md) 0;
+        box-shadow: var(--shadow-md);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+    
+    .category-card::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
+        opacity: 0;
+        transition: opacity var(--transition-base);
+        pointer-events: none;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .category-card:hover::before {
+        opacity: 1;
+    }
+    
+    .category-icon {
+        font-size: 2.75rem;
+        line-height: 1;
+        margin-bottom: var(--space-sm);
+        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: float 4s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-8px); }
+    }
+    
+    .category-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        margin-bottom: var(--space-xs);
+        color: #FFFFFF;
+        letter-spacing: -0.01em;
+    }
+    
+    .category-description {
+        font-size: 0.9rem;
+        opacity: 0.92;
+        margin-top: var(--space-xs);
+        color: rgba(255, 255, 255, 0.95);
+    }
+    
+    .category-count {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-full);
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-top: var(--space-sm);
+        color: rgba(255, 255, 255, 0.95);
+    }
+
+    /* ========================================================================
+       7. SEARCH COMPONENTS
+       ======================================================================== */
+    .search-container {
+        background: var(--win-bg-acrylic);
+        backdrop-filter: blur(20px) saturate(150%);
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--space-lg);
+        box-shadow: var(--shadow-md);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+    
+    .search-icon {
+        font-size: 1.75rem;
+        margin-bottom: var(--space-sm);
+        color: var(--win-accent-primary);
+    }
+    
+    /* Search Input Styling */
+    div[data-testid="stTextInput"] input {
+        border-radius: var(--radius-md) !important;
+        border: 1px solid rgba(0, 0, 0, 0.10) !important;
+        padding: var(--space-sm) var(--space-md) !important;
+        font-size: 1rem !important;
+        transition: all var(--transition-base) !important;
+        background: var(--win-bg-elevated) !important;
+    }
+    
+    div[data-testid="stTextInput"] input:focus {
+        border-color: var(--win-accent-primary) !important;
+        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
+        outline: none !important;
+    }
+    
+    div[data-testid="stTextInput"] input::placeholder {
+        color: var(--text-tertiary) !important;
+    }
+    
+    /* Search Result Cards */
+    .search-result-card {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        padding: var(--space-md);
+        background: var(--win-bg-elevated);
+        border-left: 4px solid var(--win-accent-primary);
+        border-radius: var(--radius-md);
+        margin-bottom: var(--space-sm);
+        transition: all var(--transition-base);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .search-result-card:hover {
+        transform: translateX(8px);
+        box-shadow: var(--shadow-md);
+        border-left-width: 6px;
+    }
+    
+    .search-tool-name {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 1rem;
+        margin: 0;
+        line-height: 1.2;
+    }
+    
+    .search-category-badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: var(--radius-sm);
+        background: #F1F5F9;
+        color: var(--text-secondary);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        margin-top: 0.25rem;
+    }
+    
+    .no-results {
+        text-align: center;
+        padding: var(--space-xl);
+        color: var(--text-secondary);
+        font-size: 1rem;
+    }
+
+    /* ========================================================================
+       8. STATUS & NOTIFICATION BOXES
+       ======================================================================== */
+    .success-box, .warning-box, .error-box, .info-box {
+        padding: var(--space-md) var(--space-lg);
+        border-radius: var(--radius-md);
+        margin: var(--space-md) 0;
+        box-shadow: var(--shadow-sm);
+        border-left: 4px solid;
+    }
+    
+    .success-box {
+        background: linear-gradient(180deg, #F0FDF4 0%, #ECFDF5 100%);
+        border-left-color: #10B981;
+        color: #065F46;
+    }
+    
+    .warning-box {
+        background: linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%);
+        border-left-color: #F59E0B;
+        color: #92400E;
+    }
+    
+    .error-box {
+        background: linear-gradient(180deg, #FEF2F2 0%, #FEE2E2 100%);
+        border-left-color: #EF4444;
+        color: #991B1B;
+    }
+    
+    .info-box {
+        background: linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 100%);
+        border-left-color: var(--win-accent-primary);
+        color: #1E40AF;
+    }
+    
+    /* Streamlit Native Alert Styling */
+    .stAlert {
+        border-radius: var(--radius-md) !important;
+        border-left-width: 4px !important;
+    }
+
+    /* ========================================================================
+       9. FORM ELEMENTS
+       ======================================================================== */
+    /* Text Area */
+    textarea {
+        border-radius: var(--radius-md) !important;
+        border: 1px solid rgba(0, 0, 0, 0.10) !important;
+        font-family: inherit !important;
+        transition: all var(--transition-base) !important;
+    }
+    
+    textarea:focus {
+        border-color: var(--win-accent-primary) !important;
+        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
+        outline: none !important;
+    }
+    
+    /* Select Box */
+    div[data-baseweb="select"] {
+        border-radius: var(--radius-md) !important;
+    }
+    
+    div[data-baseweb="select"] > div {
+        border-radius: var(--radius-md) !important;
+        border-color: rgba(0, 0, 0, 0.10) !important;
+        transition: all var(--transition-base) !important;
+    }
+    
+    div[data-baseweb="select"] > div:focus-within {
+        border-color: var(--win-accent-primary) !important;
+        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
+    }
+    
+    /* File Uploader */
+    [data-testid="stFileUploader"] {
+        border-radius: var(--radius-md) !important;
+    }
+    
+    [data-testid="stFileUploader"] section {
+        border-radius: var(--radius-md) !important;
+        border-color: rgba(0, 0, 0, 0.10) !important;
+    }
+
+    /* ========================================================================
+       10. DATA DISPLAY COMPONENTS
+       ======================================================================== */
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: var(--win-bg-elevated) !important;
+        border-radius: var(--radius-md) !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        transition: all var(--transition-base) !important;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        background: var(--win-bg-acrylic) !important;
+        border-color: var(--win-accent-primary) !important;
+    }
+    
+    /* Dataframe */
+    [data-testid="stDataFrame"] {
+        border-radius: var(--radius-md) !important;
+        overflow: hidden !important;
+    }
+    
+    /* Metric */
+    [data-testid="stMetric"] {
+        background: var(--win-bg-elevated);
+        padding: var(--space-md);
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        box-shadow: var(--shadow-sm);
+    }
+
+    /* ========================================================================
+       11. UTILITY CLASSES
+       ======================================================================== */
+    .stats-badge {
+        display: inline-block;
+        background: linear-gradient(90deg, var(--win-accent-primary) 0%, var(--win-accent-secondary) 100%);
+        color: white;
+        padding: var(--space-sm) var(--space-lg);
+        border-radius: var(--radius-lg);
+        font-size: 1rem;
+        font-weight: 700;
+        box-shadow: var(--shadow-md);
+        margin: var(--space-lg) 0;
+    }
+    
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-md);
+    }
+    
+    /* Tool Button (custom HTML buttons) */
+    .tool-button {
+        display: inline-block;
+        width: 100%;
+        padding: var(--space-sm) var(--space-md);
+        margin: var(--space-xs) 0;
+        border-radius: var(--radius-md);
+        background: linear-gradient(180deg, #FFFFFF 0%, #F7F9FC 100%);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        color: var(--text-primary);
+        font-weight: 600;
+        text-align: center;
+        cursor: pointer;
+        transition: all var(--transition-base);
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .tool-button:hover {
+        background: linear-gradient(180deg, var(--win-accent-primary) 0%, var(--win-accent-secondary) 100%);
+        color: white;
+        border-color: transparent;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* ========================================================================
+       12. STREAMLIT CHROME CUSTOMIZATION
+       ======================================================================== */
+    /* Hide Streamlit branding for cleaner app appearance */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Adjust default Streamlit padding */
+    .block-container {
+        padding-top: var(--space-lg) !important;
+        padding-bottom: var(--space-xl) !important;
+    }
+    
+    /* Remove default hr styling */
+    hr {
+        margin: var(--space-lg) 0;
+        border: none;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    /* ========================================================================
+       13. RESPONSIVE DESIGN
+       ======================================================================== */
+    @media (max-width: 1024px) {
+        .category-card {
+            min-height: 140px;
+            padding: var(--space-md);
+        }
+        
+        .category-icon {
+            font-size: 2.25rem;
+        }
+        
+        .category-title {
+            font-size: 1rem;
+        }
+    }
+    
     @media (max-width: 768px) {
-      .category-icon { font-size: 2.2rem; }
-      .category-title { font-size: 1rem; }
-      .search-container { padding: 1rem; }
-      .category-card { min-height: 140px; padding: 1rem; }
-      .main { padding: 0.8rem 1rem; }
+        .category-card {
+            min-height: 120px;
+            padding: var(--space-sm) var(--space-md);
+        }
+        
+        .category-icon {
+            font-size: 2rem;
+        }
+        
+        .search-container {
+            padding: var(--space-md);
+        }
+        
+        h1 { font-size: 1.75rem !important; }
+        h2 { font-size: 1.5rem !important; }
+        h3 { font-size: 1.25rem !important; }
     }
+
+    /* ========================================================================
+       14. ACCESSIBILITY ENHANCEMENTS
+       ======================================================================== */
+    /* Focus visible states for keyboard navigation */
+    *:focus-visible {
+        outline: 3px solid rgba(0, 120, 212, 0.15) !important;
+        outline-offset: 2px !important;
+    }
+    
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+        
+        .category-icon {
+            animation: none !important;
+        }
+    }
+    
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+        .category-card,
+        .search-container,
+        div.stButton > button {
+            border-width: 2px !important;
+        }
+    }
+
+    /* ========================================================================
+       15. PERFORMANCE OPTIMIZATIONS
+       ======================================================================== */
+    /* GPU acceleration for animations */
+    .category-card,
+    div.stButton > button,
+    .search-result-card {
+        will-change: transform;
+        transform: translateZ(0);
+        backface-visibility: hidden;
+    }
+    
+    /* Optimize blur rendering */
+    .search-container,
+    [data-testid="stSidebar"] {
+        transform: translateZ(0);
+    }
+    
     </style>
 """, unsafe_allow_html=True)
 
@@ -3177,6 +3549,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         """)
+
 
 
 
