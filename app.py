@@ -909,7 +909,6 @@ def render_all_categories_and_tools():
     """Render a single page with all categories and their tools (grid of buttons)"""
     st.title("🏠 Welcome to Support Buddy")
     st.markdown("### Your Complete Technical Support Toolkit.")
-    st.markdown("### With many support tools organized by category.")
     st.markdown("---")
 
     total_tools = sum(len(cat['tools']) for cat in TOOL_CATEGORIES.values())
@@ -3178,6 +3177,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         """)
+
 
 
 
