@@ -134,6 +134,8 @@ st.markdown("""
         --win-accent-primary: #0078D4;
         --win-accent-secondary: #2B88D8;
         --win-accent-hover: #005A9E;
+        --deep-navy: #003366;
+        --deep-navy-dark: #002244;
         --win-bg-base: #F3F6F9;
         --win-bg-elevated: #FFFFFF;
         --win-bg-acrylic: rgba(255, 255, 255, 0.75);
@@ -293,22 +295,23 @@ st.markdown("""
         color: var(--text-primary) !important;
         font-weight: 600 !important;
         font-size: 0.9rem !important;
-        transition: all var(--transition-base) !important;
+        transition: all var(--transition-base), color var(--transition-base) !important;
         box-shadow: var(--shadow-sm) !important;
         cursor: pointer !important;
         margin: var(--space-xs) 0 !important;  /* Reduced margin */
     }
     
     div.stButton > button:hover {
-        background: linear-gradient(180deg, var(--win-accent-primary) 0%, var(--win-accent-secondary) 100%) !important;
-        color: var(--text-on-accent) !important;
-        border-color: transparent !important;
+        background: var(--deep-navy) !important;
+        color: #FFFFFF !important;
+        border-color: var(--deep-navy) !important;
         transform: translateY(-1px) !important;
-        box-shadow: var(--shadow-md) !important;
+        box-shadow: 0 4px 12px rgba(0, 51, 102, 0.25) !important;
     }
     
     div.stButton > button:active {
         transform: translateY(0px) scale(0.98) !important;
+        background: var(--deep-navy-dark) !important;
         box-shadow: var(--shadow-xs) !important;
     }
     
@@ -574,16 +577,16 @@ st.markdown("""
         font-size: 0.9rem;
         text-align: center;
         cursor: pointer;
-        transition: all var(--transition-base);
+        transition: all var(--transition-base), color var(--transition-base);
         box-shadow: var(--shadow-xs);
     }
     
     .tool-button:hover {
-        background: linear-gradient(180deg, var(--win-accent-primary) 0%, var(--win-accent-secondary) 100%);
-        color: white;
-        border-color: transparent;
+        background: var(--deep-navy) !important;
+        color: #FFFFFF !important;
+        border-color: var(--deep-navy) !important;
         transform: translateY(-1px);
-        box-shadow: var(--shadow-sm);
+        box-shadow: 0 4px 12px rgba(0, 51, 102, 0.25);
     }
 
     /* ========================================================================
@@ -3492,6 +3495,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         """)
+
 
 
 
