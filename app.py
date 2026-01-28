@@ -127,7 +127,7 @@ st.set_page_config(
 st.markdown("""
     <style>
     /* ========================================================================
-       1. CSS VARIABLES & DESIGN TOKENS - COMPACT VERSION
+       1. CSS VARIABLES & DESIGN TOKENS
        ======================================================================== */
     :root {
         /* Color System */
@@ -146,148 +146,62 @@ st.markdown("""
         --text-tertiary: #8B98A9;
         --text-on-accent: #FFFFFF;
         
-        /* COMPACT Spacing Scale - Reduced by 30-40% */
-        --space-xs: 0.25rem;   /* 4px */
-        --space-sm: 0.5rem;    /* 8px */
-        --space-md: 0.75rem;   /* 12px */
-        --space-lg: 1rem;      /* 16px */
-        --space-xl: 1.25rem;   /* 20px */
-        --space-2xl: 1.5rem;   /* 24px */
+        /* Spacing Scale */
+        --space-xs: 0.25rem;
+        --space-sm: 0.5rem;
+        --space-md: 0.75rem;
+        --space-lg: 1rem;
+        --space-xl: 1.25rem;
+        --space-2xl: 1.5rem;
         
-        /* Border Radius */
+        /* Design Tokens */
         --radius-sm: 4px;
         --radius-md: 6px;
         --radius-lg: 8px;
-        --radius-xl: 10px;
         --radius-full: 9999px;
         
-        /* Shadows */
-        --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
         --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
         --shadow-md: 0 3px 8px rgba(0, 0, 0, 0.06);
         --shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.08);
-        --shadow-xl: 0 10px 30px rgba(0, 0, 0, 0.10);
         
-        /* Transitions */
-        --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
         --transition-base: 180ms cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-slow: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* ========================================================================
-       2. GLOBAL RESET & BASE STYLES - COMPACT
+       2. GLOBAL RESET & BASE STYLES
        ======================================================================== */
-    * {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-    
-    html {
-        font-size: 15px;  /* Slightly smaller base */
-        scroll-behavior: smooth;
-    }
-    
-    /* Desktop only - no responsive shrinking */
-    @media (max-width: 1600px) { html { font-size: 14px; } }
-    @media (max-width: 1024px) { html { font-size: 13px; } }
-    
     .stApp {
         background-color: var(--win-bg-base) !important;
-        font-family: "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", Arial, sans-serif !important;
+        font-family: "Segoe UI Variable", "Segoe UI", -apple-system, sans-serif !important;
     }
     
-    /* COMPACT Main Content Area */
-    .main {
-        padding: var(--space-lg) var(--space-2xl) !important;
-        max-width: 1800px;
-        margin: 0 auto;
-    }
-    
-    /* Reduce default Streamlit padding */
     .block-container {
         padding-top: var(--space-md) !important;
         padding-bottom: var(--space-lg) !important;
-        padding-left: var(--space-md) !important;
-        padding-right: var(--space-md) !important;
+        max-width: 1800px;
     }
 
-    /* ========================================================================
-       3. COMPACT TYPOGRAPHY SYSTEM
-       ======================================================================== */
-    h1, h2, h3, h4, h5, h6 {
+    h1, h2, h3 {
         color: var(--text-primary) !important;
         font-weight: 700 !important;
-        letter-spacing: -0.02em !important;
-        line-height: 1.2 !important;
-        margin: 0 !important;
-    }
-    
-    /* COMPACT heading margins */
-    h1 {
-        font-size: 1.75rem !important;  /* Reduced from 2.25rem */
-        margin-bottom: var(--space-md) !important;
-        padding-top: var(--space-sm) !important;
-    }
-    
-    h2 {
-        font-size: 1.35rem !important;  /* Reduced from 1.875rem */
-        margin-top: var(--space-lg) !important;
         margin-bottom: var(--space-sm) !important;
-    }
-    
-    h3 {
-        font-size: 1.125rem !important;  /* Reduced from 1.5rem */
-        margin-top: var(--space-md) !important;
-        margin-bottom: var(--space-sm) !important;
-    }
-    
-    p, li, span {
-        color: var(--text-primary);
-        line-height: 1.5;
-        margin: var(--space-xs) 0;
-    }
-    
-    /* Reduce hr spacing */
-    hr {
-        margin: var(--space-md) 0 !important;
-        border: none;
-        border-top: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     /* ========================================================================
-       4. COMPACT SIDEBAR STYLING
+       3. SIDEBAR STYLING
        ======================================================================== */
     [data-testid="stSidebar"] {
         background: var(--win-bg-acrylic) !important;
         backdrop-filter: blur(40px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
         border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
-    }
-    
-    [data-testid="stSidebar"] > div:first-child {
-        padding: var(--space-md) var(--space-sm);
-    }
-    
-    /* COMPACT sidebar headers */
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] h3 {
-        padding-top: var(--space-md) !important;
-        margin-top: var(--space-xs) !important;
-        margin-bottom: var(--space-xs) !important;
-    }
-    
-    /* Reduce sidebar button spacing */
-    [data-testid="stSidebar"] .stButton {
-        margin: var(--space-xs) 0 !important;
     }
 
     /* ========================================================================
-       5. PROFESSIONAL BUTTON SYSTEM - COMPACT
+       4. PROFESSIONAL BUTTON SYSTEM (WITH HOVER TEXT FIX)
        ======================================================================== */
     div.stButton > button {
         width: 100%;
-        min-height: 38px;  /* Reduced from 44px */
+        min-height: 38px;
         padding: var(--space-sm) var(--space-md) !important;
         border-radius: var(--radius-md) !important;
         border: 1px solid rgba(0, 0, 0, 0.08) !important;
@@ -295,516 +209,122 @@ st.markdown("""
         color: var(--text-primary) !important;
         font-weight: 600 !important;
         font-size: 0.9rem !important;
-        transition: all var(--transition-base), color var(--transition-base) !important;
+        transition: all var(--transition-base) !important;
         box-shadow: var(--shadow-sm) !important;
         cursor: pointer !important;
-        margin: var(--space-xs) 0 !important;  /* Reduced margin */
     }
     
+    /* Button Hover: Dark Background */
     div.stButton > button:hover {
         background: var(--deep-navy) !important;
-        color: #FFFFFF !important;
         border-color: var(--deep-navy) !important;
         transform: translateY(-1px) !important;
         box-shadow: 0 4px 12px rgba(0, 51, 102, 0.25) !important;
+    }
+
+    /* THE FIX: Force all text inside button to be white on hover */
+    div.stButton > button:hover * {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
     }
     
     div.stButton > button:active {
         transform: translateY(0px) scale(0.98) !important;
         background: var(--deep-navy-dark) !important;
-        box-shadow: var(--shadow-xs) !important;
-    }
-    
-    div.stButton > button:focus-visible {
-        outline: 2px solid rgba(0, 120, 212, 0.15) !important;
-        outline-offset: 2px !important;
     }
 
     /* ========================================================================
-       6. COMPACT CATEGORY CARDS
+       5. CATEGORY CARDS
        ======================================================================== */
     .category-card {
-        position: relative;
-        padding: var(--space-md) var(--space-lg);  /* Reduced padding */
+        padding: var(--space-md) var(--space-lg);
         border-radius: var(--radius-lg);
-        min-height: 110px;  /* Reduced from 160px */
+        min-height: 110px;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        cursor: pointer;
-        overflow: hidden;
         transition: all var(--transition-base);
-        margin: var(--space-sm) 0;  /* Reduced margin */
         box-shadow: var(--shadow-md);
         border: 1px solid rgba(255, 255, 255, 0.15);
         color: white;
-        will-change: transform;
-        transform: translateZ(0);
-        backface-visibility: hidden;
-    }
-    
-    .category-card::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 100%);
-        opacity: 0;
-        transition: opacity var(--transition-base);
-        pointer-events: none;
+        margin: var(--space-sm) 0;
     }
     
     .category-card:hover {
-        transform: translateY(-4px);  /* Reduced from -8px */
+        transform: translateY(-4px);
         box-shadow: var(--shadow-lg);
     }
     
-    .category-card:hover::before {
-        opacity: 1;
-    }
-    
-    .category-icon {
-        font-size: 2rem;  /* Reduced from 2.75rem */
-        line-height: 1;
-        margin-bottom: var(--space-xs);  /* Reduced */
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    .category-title {
-        font-size: 1rem;  /* Reduced */
-        font-weight: 700;
-        margin-bottom: var(--space-xs);
-        color: #FFFFFF;
-        letter-spacing: -0.01em;
-    }
-    
-    .category-description {
-        font-size: 0.85rem;  /* Reduced */
-        opacity: 0.92;
-        margin-top: var(--space-xs);
-        color: rgba(255, 255, 255, 0.95);
-        line-height: 1.3;
-    }
-    
-    .category-count {
-        display: inline-block;
-        padding: 0.2rem 0.6rem;  /* Reduced */
-        border-radius: var(--radius-full);
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        font-size: 0.8rem;  /* Reduced */
-        font-weight: 600;
-        margin-top: var(--space-xs);  /* Reduced */
-        color: rgba(255, 255, 255, 0.95);
-    }
+    .category-icon { font-size: 2rem; margin-bottom: var(--space-xs); }
+    .category-title { font-size: 1rem; font-weight: 700; color: #FFFFFF; }
+    .category-description { font-size: 0.85rem; opacity: 0.9; }
 
     /* ========================================================================
-       7. COMPACT SEARCH COMPONENTS
+       6. SEARCH COMPONENTS
        ======================================================================== */
-    .search-container {
-        background: var(--win-bg-acrylic);
-        backdrop-filter: blur(20px) saturate(150%);
-        padding: var(--space-md);  /* Reduced */
-        border-radius: var(--radius-md);
-        margin-bottom: var(--space-md);  /* Reduced */
-        box-shadow: var(--shadow-sm);
-        border: 1px solid rgba(0, 0, 0, 0.04);
-    }
-    
-    .search-icon {
-        font-size: 1.5rem;  /* Reduced */
-        margin-bottom: var(--space-xs);
-        color: var(--win-accent-primary);
-    }
-    
-    /* Compact Search Input */
     div[data-testid="stTextInput"] input {
         border-radius: var(--radius-md) !important;
         border: 1px solid rgba(0, 0, 0, 0.10) !important;
-        padding: var(--space-sm) var(--space-md) !important;  /* Reduced */
-        font-size: 0.9375rem !important;
-        transition: all var(--transition-base) !important;
-        background: var(--win-bg-elevated) !important;
         min-height: 36px !important;
+        background: var(--win-bg-elevated) !important;
     }
     
     div[data-testid="stTextInput"] input:focus {
         border-color: var(--win-accent-primary) !important;
         box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
-        outline: none !important;
     }
-    
-    /* Compact Search Results */
+
     .search-result-card {
         display: flex;
         align-items: center;
-        gap: var(--space-sm);  /* Reduced */
-        padding: var(--space-sm) var(--space-md);  /* Reduced */
+        gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
         background: var(--win-bg-elevated);
-        border-left: 3px solid var(--win-accent-primary);  /* Thinner */
+        border-left: 3px solid var(--win-accent-primary);
         border-radius: var(--radius-md);
-        margin-bottom: var(--space-xs);  /* Reduced */
+        margin-bottom: var(--space-xs);
         transition: all var(--transition-base);
         box-shadow: var(--shadow-xs);
     }
-    
-    .search-result-card:hover {
-        transform: translateX(6px);
-        box-shadow: var(--shadow-sm);
-        border-left-width: 4px;
-    }
-    
-    .search-tool-name {
-        font-weight: 700;
-        color: var(--text-primary);
-        font-size: 0.9375rem;
-        margin: 0;
-        line-height: 1.2;
-    }
-    
-    .search-category-badge {
-        display: inline-block;
-        padding: 0.15rem 0.5rem;  /* Reduced */
-        border-radius: var(--radius-sm);
-        background: #F1F5F9;
-        color: var(--text-secondary);
-        font-size: 0.75rem;  /* Reduced */
-        font-weight: 600;
-        margin-top: 0.15rem;
-    }
 
     /* ========================================================================
-       8. COMPACT FORM ELEMENTS
-       ======================================================================== */
-    textarea {
-        border-radius: var(--radius-md) !important;
-        border: 1px solid rgba(0, 0, 0, 0.10) !important;
-        font-family: inherit !important;
-        transition: all var(--transition-base) !important;
-        padding: var(--space-sm) !important;  /* Reduced */
-    }
-    
-    textarea:focus {
-        border-color: var(--win-accent-primary) !important;
-        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
-        outline: none !important;
-    }
-    
-    /* Compact Select Box */
-    div[data-baseweb="select"] > div {
-        border-radius: var(--radius-md) !important;
-        border-color: rgba(0, 0, 0, 0.10) !important;
-        transition: all var(--transition-base) !important;
-        min-height: 36px !important;  /* Reduced */
-    }
-    
-    div[data-baseweb="select"] > div:focus-within {
-        border-color: var(--win-accent-primary) !important;
-        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
-    }
-
-    /* ========================================================================
-       9. COMPACT STATUS BOXES
+       7. STATUS BOXES
        ======================================================================== */
     .success-box, .warning-box, .error-box, .info-box {
-        padding: var(--space-sm) var(--space-md);  /* Reduced */
+        padding: var(--space-sm) var(--space-md);
         border-radius: var(--radius-md);
-        margin: var(--space-sm) 0;  /* Reduced */
-        box-shadow: var(--shadow-xs);
-        border-left: 3px solid;  /* Thinner */
+        margin: var(--space-sm) 0;
+        border-left: 3px solid;
         font-size: 0.9rem;
     }
-    
-    .success-box {
-        background: linear-gradient(180deg, #F0FDF4 0%, #ECFDF5 100%);
-        border-left-color: #10B981;
-        color: #065F46;
-    }
-    
-    .warning-box {
-        background: linear-gradient(180deg, #FFFBEB 0%, #FEF3C7 100%);
-        border-left-color: #F59E0B;
-        color: #92400E;
-    }
-    
-    .error-box {
-        background: linear-gradient(180deg, #FEF2F2 0%, #FEE2E2 100%);
-        border-left-color: #EF4444;
-        color: #991B1B;
-    }
-    
-    .info-box {
-        background: linear-gradient(180deg, #EFF6FF 0%, #DBEAFE 100%);
-        border-left-color: var(--win-accent-primary);
-        color: #1E40AF;
-    }
+    .success-box { background: #F0FDF4; border-left-color: #10B981; color: #065F46; }
+    .error-box { background: #FEF2F2; border-left-color: #EF4444; color: #991B1B; }
+    .info-box { background: #EFF6FF; border-left-color: var(--win-accent-primary); color: #1E40AF; }
 
     /* ========================================================================
-       10. COMPACT UTILITY CLASSES
+       8. UTILITY & CLEANUP
        ======================================================================== */
+    #MainMenu, footer, header { visibility: hidden; }
+    
     .stats-badge {
         display: inline-block;
         background: linear-gradient(90deg, var(--win-accent-primary) 0%, var(--win-accent-secondary) 100%);
         color: white;
-        padding: var(--space-sm) var(--space-lg);  /* Reduced */
+        padding: var(--space-sm) var(--space-lg);
         border-radius: var(--radius-md);
-        font-size: 0.95rem;  /* Reduced */
         font-weight: 700;
         box-shadow: var(--shadow-md);
-        margin: var(--space-md) 0;  /* Reduced */
-    }
-    
-    .breadcrumb {
-        display: flex;
-        align-items: center;
-        gap: var(--space-xs);
-        padding: var(--space-xs) var(--space-sm);
-        border-radius: var(--radius-sm);
-        font-size: 0.8125rem;
-        color: var(--text-secondary);
-        margin-bottom: var(--space-sm);  /* Reduced */
-    }
-    
-    .tool-button {
-        display: inline-block;
-        width: 100%;
-        padding: var(--space-sm) var(--space-md);  /* Reduced */
-        margin: var(--space-xs) 0;  /* Reduced */
-        border-radius: var(--radius-md);
-        background: linear-gradient(180deg, #FFFFFF 0%, #F7F9FC 100%);
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        color: var(--text-primary);
-        font-weight: 600;
-        font-size: 0.9rem;
-        text-align: center;
-        cursor: pointer;
-        transition: all var(--transition-base), color var(--transition-base);
-        box-shadow: var(--shadow-xs);
-    }
-    
-    .tool-button:hover {
-        background: var(--deep-navy) !important;
-        color: #FFFFFF !important;
-        border-color: var(--deep-navy) !important;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(0, 51, 102, 0.25);
+        margin: var(--space-md) 0;
     }
 
-    /* ========================================================================
-       11. COMPACT DATA DISPLAY
-       ======================================================================== */
-    .streamlit-expanderHeader {
-        background: var(--win-bg-elevated) !important;
-        border-radius: var(--radius-md) !important;
-        border: 1px solid rgba(0, 0, 0, 0.06) !important;
-        transition: all var(--transition-base) !important;
-        padding: var(--space-sm) var(--space-md) !important;  /* Reduced */
-        min-height: 36px !important;
-    }
-    
-    .streamlit-expanderHeader:hover {
-        background: var(--win-bg-acrylic) !important;
-        border-color: var(--win-accent-primary) !important;
-    }
-    
-    [data-testid="stMetric"] {
-        background: var(--win-bg-elevated);
-        padding: var(--space-sm) var(--space-md);  /* Reduced */
-        border-radius: var(--radius-md);
-        border: 1px solid rgba(0, 0, 0, 0.04);
-        box-shadow: var(--shadow-xs);
-    }
-    
-    /* Compact column gaps */
-    [data-testid="column"] {
-        padding: 0 var(--space-xs) !important;  /* Reduced */
-    }
-
-    /* ========================================================================
-       12. STREAMLIT CHROME CLEANUP
-       ======================================================================== */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
-    
-    /* Remove excessive padding */
-    .element-container {
-        margin: 0 !important;
-    }
-    
-    /* Compact stApp sections */
-    section.main > div {
-        padding-top: 0 !important;
-    }
-
-    /* ========================================================================
-       13. PROFESSIONAL ADMIN BUTTONS/LINKS
-       ======================================================================== */
-    /* Style the admin link buttons to be more compact */
-    [data-testid="stHorizontalBlock"] > div {
-        gap: var(--space-sm) !important;  /* Reduced gap */
-    }
-    
-    /* Compact spacing between elements */
-    .stMarkdown {
-        margin-bottom: var(--space-xs) !important;
-    }
-
-    /* ========================================================================
-       14. ACCESSIBILITY & PERFORMANCE
-       ======================================================================== */
-    *:focus-visible {
-        outline: 2px solid rgba(0, 120, 212, 0.15) !important;
-        outline-offset: 2px !important;
-    }
-    
-    @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-        }
-    }
-    
     /* GPU Acceleration */
-    .category-card,
-    div.stButton > button,
-    .search-result-card,
-    .tool-button {
+    .category-card, div.stButton > button, .search-result-card {
         will-change: transform;
         transform: translateZ(0);
         backface-visibility: hidden;
     }
-
-    /* ========================================================================
-       15. DESKTOP-SPECIFIC OPTIMIZATIONS
-       ======================================================================== */
-    /* Maximize screen real estate on large displays */
-    @media (min-width: 1920px) {
-        .main {
-            max-width: 1900px;
-            padding: var(--space-lg) var(--space-2xl);
-        }
-        
-        .block-container {
-            max-width: 100%;
-        }
-    }
-    
-    /* Ultra-wide display optimization */
-    @media (min-width: 2560px) {
-        .main {
-            max-width: 2400px;
-        }
-    }
-       :root {
-        --deep-navy: #003366;
-        --deep-navy-dark: #002244;
-    }
-    
-    /* Base button styling */
-    div.stButton > button {
-        width: 100%;
-        min-height: 38px;
-        padding: 0.5rem 0.75rem !important;
-        border-radius: 6px !important;
-        border: 1px solid rgba(0, 0, 0, 0.08) !important;
-        background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%) !important;
-        font-weight: 600 !important;
-        font-size: 0.9rem !important;
-        transition: all 180ms ease !important;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
-        cursor: pointer !important;
-        margin: 0.25rem 0 !important;
-    }
-    
-    /* Hover state - background only (text handled by JS) */
-    div.stButton > button:hover {
-        background: var(--deep-navy) !important;
-        border-color: var(--deep-navy) !important;
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(0, 51, 102, 0.25) !important;
-    }
-    
-    /* Active state */
-    div.stButton > button:active {
-        transform: translateY(0px) scale(0.98) !important;
-        background: var(--deep-navy-dark) !important;
-    }
-    
-    /* Class we'll add via JavaScript */
-    div.stButton > button.btn-hovered * {
-        color: #FFFFFF !important;
-        -webkit-text-fill-color: #FFFFFF !important;
-    } 
     </style>
-
-        
-    <script>
-    // Wait for page to fully load
-    function initButtonHoverEffects() {
-        // Get all Streamlit buttons
-        const buttons = document.querySelectorAll('div.stButton > button');
-        
-        buttons.forEach(button => {
-            // Remove any existing listeners
-            button.removeEventListener('mouseenter', handleMouseEnter);
-            button.removeEventListener('mouseleave', handleMouseLeave);
-            
-            // Add hover listeners
-            button.addEventListener('mouseenter', handleMouseEnter);
-            button.addEventListener('mouseleave', handleMouseLeave);
-        });
-    }
-    
-    function handleMouseEnter(e) {
-        const button = e.currentTarget;
-        button.classList.add('btn-hovered');
-        
-        // Force text color on all children
-        const allElements = button.querySelectorAll('*');
-        allElements.forEach(el => {
-            el.style.setProperty('color', '#FFFFFF', 'important');
-            el.style.setProperty('-webkit-text-fill-color', '#FFFFFF', 'important');
-        });
-    }
-    
-    function handleMouseLeave(e) {
-        const button = e.currentTarget;
-        button.classList.remove('btn-hovered');
-        
-        // Remove forced styles
-        const allElements = button.querySelectorAll('*');
-        allElements.forEach(el => {
-            el.style.removeProperty('color');
-            el.style.removeProperty('-webkit-text-fill-color');
-        });
-    }
-    
-    // Initialize on load
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initButtonHoverEffects);
-    } else {
-        initButtonHoverEffects();
-    }
-    
-    // Re-initialize periodically to catch dynamically added buttons
-    setInterval(initButtonHoverEffects, 500);
-    
-    // Watch for DOM changes
-    const observer = new MutationObserver(function(mutations) {
-        // Debounce: only run once per batch of mutations
-        clearTimeout(window.buttonInitTimeout);
-        window.buttonInitTimeout = setTimeout(initButtonHoverEffects, 100);
-    });
-    
-    observer.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-    </script>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 # Session state initialization
 if 'chat_history' not in st.session_state:
@@ -3652,6 +3172,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         """)
+
 
 
 
