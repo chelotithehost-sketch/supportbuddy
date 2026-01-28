@@ -115,20 +115,19 @@ st.set_page_config(
 )
 
 # ============================================================================
-# IMPROVED PROFESSIONAL CSS FOR SUPPORT BUDDY APP
+# PROFESSIONAL COMPACT CSS FOR SUPPORT BUDDY - DESKTOP OPTIMIZED
 # ============================================================================
-# This CSS combines the best elements from both approaches with refinements:
-# - Fluent Design / Windows 11 aesthetic
-# - Better hierarchy and spacing
-# - Improved accessibility
-# - Performance optimizations
-# - Responsive design patterns
+# This CSS is designed for professional desktop applications with:
+# - Reduced vertical spacing (no more "child's play" look)
+# - Tighter, more efficient layout
+# - Enterprise-grade appearance
+# - Optimized for 1920px+ displays
 # ============================================================================
 
 st.markdown("""
     <style>
     /* ========================================================================
-       1. CSS VARIABLES & DESIGN TOKENS
+       1. CSS VARIABLES & DESIGN TOKENS - COMPACT VERSION
        ======================================================================== */
     :root {
         /* Color System */
@@ -137,7 +136,7 @@ st.markdown("""
         --win-accent-hover: #005A9E;
         --win-bg-base: #F3F6F9;
         --win-bg-elevated: #FFFFFF;
-        --win-bg-acrylic: rgba(255, 255, 255, 0.70);
+        --win-bg-acrylic: rgba(255, 255, 255, 0.75);
         
         /* Text Colors */
         --text-primary: #0F1724;
@@ -145,37 +144,36 @@ st.markdown("""
         --text-tertiary: #8B98A9;
         --text-on-accent: #FFFFFF;
         
-        /* Spacing Scale (8px base) */
-        --space-xs: 0.5rem;   /* 8px */
-        --space-sm: 0.75rem;  /* 12px */
-        --space-md: 1rem;     /* 16px */
-        --space-lg: 1.5rem;   /* 24px */
-        --space-xl: 2rem;     /* 32px */
-        --space-2xl: 3rem;    /* 48px */
+        /* COMPACT Spacing Scale - Reduced by 30-40% */
+        --space-xs: 0.25rem;   /* 4px */
+        --space-sm: 0.5rem;    /* 8px */
+        --space-md: 0.75rem;   /* 12px */
+        --space-lg: 1rem;      /* 16px */
+        --space-xl: 1.25rem;   /* 20px */
+        --space-2xl: 1.5rem;   /* 24px */
         
         /* Border Radius */
-        --radius-sm: 6px;
-        --radius-md: 8px;
-        --radius-lg: 12px;
-        --radius-xl: 16px;
+        --radius-sm: 4px;
+        --radius-md: 6px;
+        --radius-lg: 8px;
+        --radius-xl: 10px;
         --radius-full: 9999px;
         
         /* Shadows */
         --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
-        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
-        --shadow-xl: 0 14px 40px rgba(0, 0, 0, 0.10);
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 3px 8px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.08);
+        --shadow-xl: 0 10px 30px rgba(0, 0, 0, 0.10);
         
         /* Transitions */
-        --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-spring: 400ms cubic-bezier(0.2, 0.9, 0.3, 1);
+        --transition-fast: 120ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-base: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-slow: 250ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* ========================================================================
-       2. GLOBAL RESET & BASE STYLES
+       2. GLOBAL RESET & BASE STYLES - COMPACT
        ======================================================================== */
     * {
         -webkit-font-smoothing: antialiased;
@@ -183,111 +181,129 @@ st.markdown("""
     }
     
     html {
-        font-size: 16px;
+        font-size: 15px;  /* Slightly smaller base */
         scroll-behavior: smooth;
     }
     
-    /* Responsive Typography */
-    @media (max-width: 1400px) { html { font-size: 15px; } }
-    @media (max-width: 1024px) { html { font-size: 14px; } }
-    @media (max-width: 768px) { html { font-size: 13px; } }
+    /* Desktop only - no responsive shrinking */
+    @media (max-width: 1600px) { html { font-size: 14px; } }
+    @media (max-width: 1024px) { html { font-size: 13px; } }
     
-    /* App-wide Background & Font */
     .stApp {
         background-color: var(--win-bg-base) !important;
-        font-family: "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+        font-family: "Segoe UI Variable", "Segoe UI", -apple-system, BlinkMacSystemFont, "Roboto", Arial, sans-serif !important;
     }
     
-    /* Main Content Area */
+    /* COMPACT Main Content Area */
     .main {
-        padding: var(--space-md) var(--space-xl);
-        max-width: 1600px;
+        padding: var(--space-lg) var(--space-2xl) !important;
+        max-width: 1800px;
         margin: 0 auto;
     }
     
-    @media (max-width: 1024px) {
-        .main { padding: var(--space-sm) var(--space-md); }
+    /* Reduce default Streamlit padding */
+    .block-container {
+        padding-top: var(--space-md) !important;
+        padding-bottom: var(--space-lg) !important;
+        padding-left: var(--space-md) !important;
+        padding-right: var(--space-md) !important;
     }
 
     /* ========================================================================
-       3. TYPOGRAPHY SYSTEM
+       3. COMPACT TYPOGRAPHY SYSTEM
        ======================================================================== */
     h1, h2, h3, h4, h5, h6 {
         color: var(--text-primary) !important;
         font-weight: 700 !important;
         letter-spacing: -0.02em !important;
         line-height: 1.2 !important;
+        margin: 0 !important;
     }
     
+    /* COMPACT heading margins */
     h1 {
-        font-size: 2.25rem !important;
-        margin-top: var(--space-xl) !important;
-        margin-bottom: var(--space-lg) !important;
+        font-size: 1.75rem !important;  /* Reduced from 2.25rem */
+        margin-bottom: var(--space-md) !important;
+        padding-top: var(--space-sm) !important;
     }
     
     h2 {
-        font-size: 1.875rem !important;
-        margin-top: var(--space-xl) !important;
-        margin-bottom: var(--space-md) !important;
+        font-size: 1.35rem !important;  /* Reduced from 1.875rem */
+        margin-top: var(--space-lg) !important;
+        margin-bottom: var(--space-sm) !important;
     }
     
     h3 {
-        font-size: 1.5rem !important;
-        margin-top: var(--space-lg) !important;
-        margin-bottom: var(--space-md) !important;
+        font-size: 1.125rem !important;  /* Reduced from 1.5rem */
+        margin-top: var(--space-md) !important;
+        margin-bottom: var(--space-sm) !important;
     }
     
     p, li, span {
         color: var(--text-primary);
-        line-height: 1.6;
+        line-height: 1.5;
+        margin: var(--space-xs) 0;
+    }
+    
+    /* Reduce hr spacing */
+    hr {
+        margin: var(--space-md) 0 !important;
+        border: none;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     /* ========================================================================
-       4. SIDEBAR STYLING (MICA EFFECT)
+       4. COMPACT SIDEBAR STYLING
        ======================================================================== */
     [data-testid="stSidebar"] {
         background: var(--win-bg-acrylic) !important;
         backdrop-filter: blur(40px) saturate(180%) !important;
         -webkit-backdrop-filter: blur(40px) saturate(180%) !important;
-        border-right: 1px solid rgba(0, 0, 0, 0.05) !important;
+        border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
     }
     
     [data-testid="stSidebar"] > div:first-child {
-        padding: var(--space-lg) var(--space-md);
+        padding: var(--space-md) var(--space-sm);
     }
     
-    /* Sidebar Headers */
+    /* COMPACT sidebar headers */
     [data-testid="stSidebar"] h1,
     [data-testid="stSidebar"] h2,
     [data-testid="stSidebar"] h3 {
-        padding-top: var(--space-lg) !important;
-        margin-top: var(--space-md) !important;
+        padding-top: var(--space-md) !important;
+        margin-top: var(--space-xs) !important;
+        margin-bottom: var(--space-xs) !important;
+    }
+    
+    /* Reduce sidebar button spacing */
+    [data-testid="stSidebar"] .stButton {
+        margin: var(--space-xs) 0 !important;
     }
 
     /* ========================================================================
-       5. BUTTON SYSTEM
+       5. PROFESSIONAL BUTTON SYSTEM - COMPACT
        ======================================================================== */
-    /* Primary Buttons (st.button) */
     div.stButton > button {
         width: 100%;
-        min-height: 44px;
+        min-height: 38px;  /* Reduced from 44px */
         padding: var(--space-sm) var(--space-md) !important;
         border-radius: var(--radius-md) !important;
         border: 1px solid rgba(0, 0, 0, 0.08) !important;
         background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%) !important;
         color: var(--text-primary) !important;
         font-weight: 600 !important;
-        font-size: 0.9375rem !important;
+        font-size: 0.9rem !important;
         transition: all var(--transition-base) !important;
         box-shadow: var(--shadow-sm) !important;
         cursor: pointer !important;
+        margin: var(--space-xs) 0 !important;  /* Reduced margin */
     }
     
     div.stButton > button:hover {
         background: linear-gradient(180deg, var(--win-accent-primary) 0%, var(--win-accent-secondary) 100%) !important;
         color: var(--text-on-accent) !important;
         border-color: transparent !important;
-        transform: translateY(-2px) !important;
+        transform: translateY(-1px) !important;
         box-shadow: var(--shadow-md) !important;
     }
     
@@ -297,41 +313,31 @@ st.markdown("""
     }
     
     div.stButton > button:focus-visible {
-        outline: 3px solid rgba(0, 120, 212, 0.15) !important;
+        outline: 2px solid rgba(0, 120, 212, 0.15) !important;
         outline-offset: 2px !important;
-    }
-    
-    /* Download Buttons */
-    div.stDownloadButton > button {
-        background: var(--win-accent-primary) !important;
-        color: var(--text-on-accent) !important;
-        border: none !important;
-    }
-    
-    div.stDownloadButton > button:hover {
-        background: var(--win-accent-hover) !important;
-        transform: translateY(-2px) !important;
     }
 
     /* ========================================================================
-       6. CUSTOM CARD COMPONENTS
+       6. COMPACT CATEGORY CARDS
        ======================================================================== */
-    /* Category Cards */
     .category-card {
         position: relative;
-        padding: var(--space-lg);
-        border-radius: var(--radius-xl);
-        min-height: 160px;
+        padding: var(--space-md) var(--space-lg);  /* Reduced padding */
+        border-radius: var(--radius-lg);
+        min-height: 110px;  /* Reduced from 160px */
         display: flex;
         flex-direction: column;
         justify-content: center;
         cursor: pointer;
         overflow: hidden;
-        transition: all var(--transition-spring);
-        margin: var(--space-md) 0;
+        transition: all var(--transition-base);
+        margin: var(--space-sm) 0;  /* Reduced margin */
         box-shadow: var(--shadow-md);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         color: white;
+        will-change: transform;
+        transform: translateZ(0);
+        backface-visibility: hidden;
     }
     
     .category-card::before {
@@ -345,8 +351,8 @@ st.markdown("""
     }
     
     .category-card:hover {
-        transform: translateY(-8px);
-        box-shadow: var(--shadow-xl);
+        transform: translateY(-4px);  /* Reduced from -8px */
+        box-shadow: var(--shadow-lg);
     }
     
     .category-card:hover::before {
@@ -354,20 +360,14 @@ st.markdown("""
     }
     
     .category-icon {
-        font-size: 2.75rem;
+        font-size: 2rem;  /* Reduced from 2.75rem */
         line-height: 1;
-        margin-bottom: var(--space-sm);
-        text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        animation: float 4s ease-in-out infinite;
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-8px); }
+        margin-bottom: var(--space-xs);  /* Reduced */
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
     
     .category-title {
-        font-size: 1.125rem;
+        font-size: 1rem;  /* Reduced */
         font-weight: 700;
         margin-bottom: var(--space-xs);
         color: #FFFFFF;
@@ -375,51 +375,53 @@ st.markdown("""
     }
     
     .category-description {
-        font-size: 0.9rem;
+        font-size: 0.85rem;  /* Reduced */
         opacity: 0.92;
         margin-top: var(--space-xs);
         color: rgba(255, 255, 255, 0.95);
+        line-height: 1.3;
     }
     
     .category-count {
         display: inline-block;
-        padding: 0.25rem 0.75rem;
+        padding: 0.2rem 0.6rem;  /* Reduced */
         border-radius: var(--radius-full);
         background: rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(10px);
-        font-size: 0.875rem;
+        font-size: 0.8rem;  /* Reduced */
         font-weight: 600;
-        margin-top: var(--space-sm);
+        margin-top: var(--space-xs);  /* Reduced */
         color: rgba(255, 255, 255, 0.95);
     }
 
     /* ========================================================================
-       7. SEARCH COMPONENTS
+       7. COMPACT SEARCH COMPONENTS
        ======================================================================== */
     .search-container {
         background: var(--win-bg-acrylic);
         backdrop-filter: blur(20px) saturate(150%);
-        padding: var(--space-lg);
-        border-radius: var(--radius-lg);
-        margin-bottom: var(--space-lg);
-        box-shadow: var(--shadow-md);
+        padding: var(--space-md);  /* Reduced */
+        border-radius: var(--radius-md);
+        margin-bottom: var(--space-md);  /* Reduced */
+        box-shadow: var(--shadow-sm);
         border: 1px solid rgba(0, 0, 0, 0.04);
     }
     
     .search-icon {
-        font-size: 1.75rem;
-        margin-bottom: var(--space-sm);
+        font-size: 1.5rem;  /* Reduced */
+        margin-bottom: var(--space-xs);
         color: var(--win-accent-primary);
     }
     
-    /* Search Input Styling */
+    /* Compact Search Input */
     div[data-testid="stTextInput"] input {
         border-radius: var(--radius-md) !important;
         border: 1px solid rgba(0, 0, 0, 0.10) !important;
-        padding: var(--space-sm) var(--space-md) !important;
-        font-size: 1rem !important;
+        padding: var(--space-sm) var(--space-md) !important;  /* Reduced */
+        font-size: 0.9375rem !important;
         transition: all var(--transition-base) !important;
         background: var(--win-bg-elevated) !important;
+        min-height: 36px !important;
     }
     
     div[data-testid="stTextInput"] input:focus {
@@ -428,65 +430,85 @@ st.markdown("""
         outline: none !important;
     }
     
-    div[data-testid="stTextInput"] input::placeholder {
-        color: var(--text-tertiary) !important;
-    }
-    
-    /* Search Result Cards */
+    /* Compact Search Results */
     .search-result-card {
         display: flex;
         align-items: center;
-        gap: var(--space-md);
-        padding: var(--space-md);
+        gap: var(--space-sm);  /* Reduced */
+        padding: var(--space-sm) var(--space-md);  /* Reduced */
         background: var(--win-bg-elevated);
-        border-left: 4px solid var(--win-accent-primary);
+        border-left: 3px solid var(--win-accent-primary);  /* Thinner */
         border-radius: var(--radius-md);
-        margin-bottom: var(--space-sm);
+        margin-bottom: var(--space-xs);  /* Reduced */
         transition: all var(--transition-base);
-        box-shadow: var(--shadow-sm);
+        box-shadow: var(--shadow-xs);
     }
     
     .search-result-card:hover {
-        transform: translateX(8px);
-        box-shadow: var(--shadow-md);
-        border-left-width: 6px;
+        transform: translateX(6px);
+        box-shadow: var(--shadow-sm);
+        border-left-width: 4px;
     }
     
     .search-tool-name {
         font-weight: 700;
         color: var(--text-primary);
-        font-size: 1rem;
+        font-size: 0.9375rem;
         margin: 0;
         line-height: 1.2;
     }
     
     .search-category-badge {
         display: inline-block;
-        padding: 0.2rem 0.6rem;
+        padding: 0.15rem 0.5rem;  /* Reduced */
         border-radius: var(--radius-sm);
         background: #F1F5F9;
         color: var(--text-secondary);
-        font-size: 0.8125rem;
+        font-size: 0.75rem;  /* Reduced */
         font-weight: 600;
-        margin-top: 0.25rem;
-    }
-    
-    .no-results {
-        text-align: center;
-        padding: var(--space-xl);
-        color: var(--text-secondary);
-        font-size: 1rem;
+        margin-top: 0.15rem;
     }
 
     /* ========================================================================
-       8. STATUS & NOTIFICATION BOXES
+       8. COMPACT FORM ELEMENTS
+       ======================================================================== */
+    textarea {
+        border-radius: var(--radius-md) !important;
+        border: 1px solid rgba(0, 0, 0, 0.10) !important;
+        font-family: inherit !important;
+        transition: all var(--transition-base) !important;
+        padding: var(--space-sm) !important;  /* Reduced */
+    }
+    
+    textarea:focus {
+        border-color: var(--win-accent-primary) !important;
+        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
+        outline: none !important;
+    }
+    
+    /* Compact Select Box */
+    div[data-baseweb="select"] > div {
+        border-radius: var(--radius-md) !important;
+        border-color: rgba(0, 0, 0, 0.10) !important;
+        transition: all var(--transition-base) !important;
+        min-height: 36px !important;  /* Reduced */
+    }
+    
+    div[data-baseweb="select"] > div:focus-within {
+        border-color: var(--win-accent-primary) !important;
+        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
+    }
+
+    /* ========================================================================
+       9. COMPACT STATUS BOXES
        ======================================================================== */
     .success-box, .warning-box, .error-box, .info-box {
-        padding: var(--space-md) var(--space-lg);
+        padding: var(--space-sm) var(--space-md);  /* Reduced */
         border-radius: var(--radius-md);
-        margin: var(--space-md) 0;
-        box-shadow: var(--shadow-sm);
-        border-left: 4px solid;
+        margin: var(--space-sm) 0;  /* Reduced */
+        box-shadow: var(--shadow-xs);
+        border-left: 3px solid;  /* Thinner */
+        font-size: 0.9rem;
     }
     
     .success-box {
@@ -512,100 +534,20 @@ st.markdown("""
         border-left-color: var(--win-accent-primary);
         color: #1E40AF;
     }
-    
-    /* Streamlit Native Alert Styling */
-    .stAlert {
-        border-radius: var(--radius-md) !important;
-        border-left-width: 4px !important;
-    }
 
     /* ========================================================================
-       9. FORM ELEMENTS
-       ======================================================================== */
-    /* Text Area */
-    textarea {
-        border-radius: var(--radius-md) !important;
-        border: 1px solid rgba(0, 0, 0, 0.10) !important;
-        font-family: inherit !important;
-        transition: all var(--transition-base) !important;
-    }
-    
-    textarea:focus {
-        border-color: var(--win-accent-primary) !important;
-        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
-        outline: none !important;
-    }
-    
-    /* Select Box */
-    div[data-baseweb="select"] {
-        border-radius: var(--radius-md) !important;
-    }
-    
-    div[data-baseweb="select"] > div {
-        border-radius: var(--radius-md) !important;
-        border-color: rgba(0, 0, 0, 0.10) !important;
-        transition: all var(--transition-base) !important;
-    }
-    
-    div[data-baseweb="select"] > div:focus-within {
-        border-color: var(--win-accent-primary) !important;
-        box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.10) !important;
-    }
-    
-    /* File Uploader */
-    [data-testid="stFileUploader"] {
-        border-radius: var(--radius-md) !important;
-    }
-    
-    [data-testid="stFileUploader"] section {
-        border-radius: var(--radius-md) !important;
-        border-color: rgba(0, 0, 0, 0.10) !important;
-    }
-
-    /* ========================================================================
-       10. DATA DISPLAY COMPONENTS
-       ======================================================================== */
-    /* Expander */
-    .streamlit-expanderHeader {
-        background: var(--win-bg-elevated) !important;
-        border-radius: var(--radius-md) !important;
-        border: 1px solid rgba(0, 0, 0, 0.06) !important;
-        transition: all var(--transition-base) !important;
-    }
-    
-    .streamlit-expanderHeader:hover {
-        background: var(--win-bg-acrylic) !important;
-        border-color: var(--win-accent-primary) !important;
-    }
-    
-    /* Dataframe */
-    [data-testid="stDataFrame"] {
-        border-radius: var(--radius-md) !important;
-        overflow: hidden !important;
-    }
-    
-    /* Metric */
-    [data-testid="stMetric"] {
-        background: var(--win-bg-elevated);
-        padding: var(--space-md);
-        border-radius: var(--radius-md);
-        border: 1px solid rgba(0, 0, 0, 0.04);
-        box-shadow: var(--shadow-sm);
-    }
-
-    /* ========================================================================
-       11. UTILITY CLASSES
+       10. COMPACT UTILITY CLASSES
        ======================================================================== */
     .stats-badge {
         display: inline-block;
         background: linear-gradient(90deg, var(--win-accent-primary) 0%, var(--win-accent-secondary) 100%);
         color: white;
-        padding: var(--space-sm) var(--space-lg);
-        border-radius: var(--radius-lg);
-        font-size: 1rem;
+        padding: var(--space-sm) var(--space-lg);  /* Reduced */
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;  /* Reduced */
         font-weight: 700;
         box-shadow: var(--shadow-md);
-        margin: var(--space-lg) 0;
+        margin: var(--space-md) 0;  /* Reduced */
     }
     
     .breadcrumb {
@@ -614,104 +556,104 @@ st.markdown("""
         gap: var(--space-xs);
         padding: var(--space-xs) var(--space-sm);
         border-radius: var(--radius-sm);
-        font-size: 0.875rem;
+        font-size: 0.8125rem;
         color: var(--text-secondary);
-        margin-bottom: var(--space-md);
+        margin-bottom: var(--space-sm);  /* Reduced */
     }
     
-    /* Tool Button (custom HTML buttons) */
     .tool-button {
         display: inline-block;
         width: 100%;
-        padding: var(--space-sm) var(--space-md);
-        margin: var(--space-xs) 0;
+        padding: var(--space-sm) var(--space-md);  /* Reduced */
+        margin: var(--space-xs) 0;  /* Reduced */
         border-radius: var(--radius-md);
         background: linear-gradient(180deg, #FFFFFF 0%, #F7F9FC 100%);
         border: 1px solid rgba(0, 0, 0, 0.06);
         color: var(--text-primary);
         font-weight: 600;
+        font-size: 0.9rem;
         text-align: center;
         cursor: pointer;
         transition: all var(--transition-base);
-        box-shadow: var(--shadow-sm);
+        box-shadow: var(--shadow-xs);
     }
     
     .tool-button:hover {
         background: linear-gradient(180deg, var(--win-accent-primary) 0%, var(--win-accent-secondary) 100%);
         color: white;
         border-color: transparent;
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
     }
 
     /* ========================================================================
-       12. STREAMLIT CHROME CUSTOMIZATION
+       11. COMPACT DATA DISPLAY
        ======================================================================== */
-    /* Hide Streamlit branding for cleaner app appearance */
+    .streamlit-expanderHeader {
+        background: var(--win-bg-elevated) !important;
+        border-radius: var(--radius-md) !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+        transition: all var(--transition-base) !important;
+        padding: var(--space-sm) var(--space-md) !important;  /* Reduced */
+        min-height: 36px !important;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        background: var(--win-bg-acrylic) !important;
+        border-color: var(--win-accent-primary) !important;
+    }
+    
+    [data-testid="stMetric"] {
+        background: var(--win-bg-elevated);
+        padding: var(--space-sm) var(--space-md);  /* Reduced */
+        border-radius: var(--radius-md);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        box-shadow: var(--shadow-xs);
+    }
+    
+    /* Compact column gaps */
+    [data-testid="column"] {
+        padding: 0 var(--space-xs) !important;  /* Reduced */
+    }
+
+    /* ========================================================================
+       12. STREAMLIT CHROME CLEANUP
+       ======================================================================== */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Adjust default Streamlit padding */
-    .block-container {
-        padding-top: var(--space-lg) !important;
-        padding-bottom: var(--space-xl) !important;
+    /* Remove excessive padding */
+    .element-container {
+        margin: 0 !important;
     }
     
-    /* Remove default hr styling */
-    hr {
-        margin: var(--space-lg) 0;
-        border: none;
-        border-top: 1px solid rgba(0, 0, 0, 0.08);
+    /* Compact stApp sections */
+    section.main > div {
+        padding-top: 0 !important;
     }
 
     /* ========================================================================
-       13. RESPONSIVE DESIGN
+       13. PROFESSIONAL ADMIN BUTTONS/LINKS
        ======================================================================== */
-    @media (max-width: 1024px) {
-        .category-card {
-            min-height: 140px;
-            padding: var(--space-md);
-        }
-        
-        .category-icon {
-            font-size: 2.25rem;
-        }
-        
-        .category-title {
-            font-size: 1rem;
-        }
+    /* Style the admin link buttons to be more compact */
+    [data-testid="stHorizontalBlock"] > div {
+        gap: var(--space-sm) !important;  /* Reduced gap */
     }
     
-    @media (max-width: 768px) {
-        .category-card {
-            min-height: 120px;
-            padding: var(--space-sm) var(--space-md);
-        }
-        
-        .category-icon {
-            font-size: 2rem;
-        }
-        
-        .search-container {
-            padding: var(--space-md);
-        }
-        
-        h1 { font-size: 1.75rem !important; }
-        h2 { font-size: 1.5rem !important; }
-        h3 { font-size: 1.25rem !important; }
+    /* Compact spacing between elements */
+    .stMarkdown {
+        margin-bottom: var(--space-xs) !important;
     }
 
     /* ========================================================================
-       14. ACCESSIBILITY ENHANCEMENTS
+       14. ACCESSIBILITY & PERFORMANCE
        ======================================================================== */
-    /* Focus visible states for keyboard navigation */
     *:focus-visible {
-        outline: 3px solid rgba(0, 120, 212, 0.15) !important;
+        outline: 2px solid rgba(0, 120, 212, 0.15) !important;
         outline-offset: 2px !important;
     }
     
-    /* Reduced motion support */
     @media (prefers-reduced-motion: reduce) {
         *,
         *::before,
@@ -720,37 +662,38 @@ st.markdown("""
             animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
         }
-        
-        .category-icon {
-            animation: none !important;
-        }
     }
     
-    /* High contrast mode support */
-    @media (prefers-contrast: high) {
-        .category-card,
-        .search-container,
-        div.stButton > button {
-            border-width: 2px !important;
-        }
-    }
-
-    /* ========================================================================
-       15. PERFORMANCE OPTIMIZATIONS
-       ======================================================================== */
-    /* GPU acceleration for animations */
+    /* GPU Acceleration */
     .category-card,
     div.stButton > button,
-    .search-result-card {
+    .search-result-card,
+    .tool-button {
         will-change: transform;
         transform: translateZ(0);
         backface-visibility: hidden;
     }
+
+    /* ========================================================================
+       15. DESKTOP-SPECIFIC OPTIMIZATIONS
+       ======================================================================== */
+    /* Maximize screen real estate on large displays */
+    @media (min-width: 1920px) {
+        .main {
+            max-width: 1900px;
+            padding: var(--space-lg) var(--space-2xl);
+        }
+        
+        .block-container {
+            max-width: 100%;
+        }
+    }
     
-    /* Optimize blur rendering */
-    .search-container,
-    [data-testid="stSidebar"] {
-        transform: translateZ(0);
+    /* Ultra-wide display optimization */
+    @media (min-width: 2560px) {
+        .main {
+            max-width: 2400px;
+        }
     }
     
     </style>
@@ -3549,6 +3492,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         """)
+
 
 
 
