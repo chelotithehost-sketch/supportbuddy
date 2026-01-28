@@ -698,8 +698,112 @@ st.markdown("""
             max-width: 2400px;
         }
     }
+       :root {
+        --deep-navy: #003366;
+        --deep-navy-dark: #002244;
+    }
     
+    /* Base button styling */
+    div.stButton > button {
+        width: 100%;
+        min-height: 38px;
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 6px !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%) !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        transition: all 180ms ease !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+        cursor: pointer !important;
+        margin: 0.25rem 0 !important;
+    }
+    
+    /* Hover state - background only (text handled by JS) */
+    div.stButton > button:hover {
+        background: var(--deep-navy) !important;
+        border-color: var(--deep-navy) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(0, 51, 102, 0.25) !important;
+    }
+    
+    /* Active state */
+    div.stButton > button:active {
+        transform: translateY(0px) scale(0.98) !important;
+        background: var(--deep-navy-dark) !important;
+    }
+    
+    /* Class we'll add via JavaScript */
+    div.stButton > button.btn-hovered * {
+        color: #FFFFFF !important;
+        -webkit-text-fill-color: #FFFFFF !important;
+    } 
     </style>
+
+        
+    <script>
+    // Wait for page to fully load
+    function initButtonHoverEffects() {
+        // Get all Streamlit buttons
+        const buttons = document.querySelectorAll('div.stButton > button');
+        
+        buttons.forEach(button => {
+            // Remove any existing listeners
+            button.removeEventListener('mouseenter', handleMouseEnter);
+            button.removeEventListener('mouseleave', handleMouseLeave);
+            
+            // Add hover listeners
+            button.addEventListener('mouseenter', handleMouseEnter);
+            button.addEventListener('mouseleave', handleMouseLeave);
+        });
+    }
+    
+    function handleMouseEnter(e) {
+        const button = e.currentTarget;
+        button.classList.add('btn-hovered');
+        
+        // Force text color on all children
+        const allElements = button.querySelectorAll('*');
+        allElements.forEach(el => {
+            el.style.setProperty('color', '#FFFFFF', 'important');
+            el.style.setProperty('-webkit-text-fill-color', '#FFFFFF', 'important');
+        });
+    }
+    
+    function handleMouseLeave(e) {
+        const button = e.currentTarget;
+        button.classList.remove('btn-hovered');
+        
+        // Remove forced styles
+        const allElements = button.querySelectorAll('*');
+        allElements.forEach(el => {
+            el.style.removeProperty('color');
+            el.style.removeProperty('-webkit-text-fill-color');
+        });
+    }
+    
+    // Initialize on load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initButtonHoverEffects);
+    } else {
+        initButtonHoverEffects();
+    }
+    
+    // Re-initialize periodically to catch dynamically added buttons
+    setInterval(initButtonHoverEffects, 500);
+    
+    // Watch for DOM changes
+    const observer = new MutationObserver(function(mutations) {
+        // Debounce: only run once per batch of mutations
+        clearTimeout(window.buttonInitTimeout);
+        window.buttonInitTimeout = setTimeout(initButtonHoverEffects, 100);
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    </script>
 """, unsafe_allow_html=True)
 
 # Session state initialization
@@ -1225,13 +1329,66 @@ def _sanitize_key(s: str) -> str:
 
 def render_all_categories_and_tools():
     """Render a single page with all categories and their tools (grid of buttons)"""
-    st.title("🏠 Welcome to Support Buddy")
-    st.markdown("### Your Complete Technical Support Toolkit.")
-    st.markdown("---")
-
-    total_tools = sum(len(cat['tools']) for cat in TOOL_CATEGORIES.values())
-    st.markdown(f"<div class='stats-badge'>📊 {total_tools} tools available</div>", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # HEADER
+    # ---------------------------------------------------
+    st.markdown("""
+        <style>
+        .centered-header {
+            text-align: center;
+            margin: 1rem 0 2rem 0;
+            padding: 0 1rem;
+        }
+        
+        .centered-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0F1724;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .centered-header h3 {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #586069;
+            margin-bottom: 1rem;
+            margin-top: 0;
+        }
+        
+        .centered-header .tools-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #0078D4 0%, #2B88D8 100%);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0, 120, 212, 0.2);
+            margin-bottom: 1.5rem;
+            transition: transform 180ms ease, box-shadow 180ms ease;
+        }
+        
+        .centered-header .tools-badge:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 120, 212, 0.25);
+        }
+        
+        .centered-header hr {
+            margin: 1.5rem auto;
+            max-width: 80%;
+            border: none;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        </style>
+        
+        <div class="centered-header">
+            <h1>🏠 Welcome to Support Buddy</h1>
+            <h3>Your Complete Technical Support Toolkit.</h3>
+            <div class="tools-badge">📊 36 tools available</div>
+            <hr>
+        </div>
+    """, unsafe_allow_html=True)
 
     for category_name, category_info in TOOL_CATEGORIES.items():
         icon = category_info.get('icon', '')
@@ -3495,6 +3652,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
         - **Edge**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         - **Opera**: `Ctrl+Shift+N` (Windows) or `Cmd+Shift+N` (Mac)
         """)
+
 
 
 
