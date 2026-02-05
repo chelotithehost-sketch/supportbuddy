@@ -3407,9 +3407,9 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     
         col1, col2, col3 = st.columns(3)
         with col1:
-        check_virustotal = st.checkbox("VirusTotal", value=True)
+            check_virustotal = st.checkbox("VirusTotal", value=True)
         with col2:
-        check_securitytrails = st.checkbox("SecurityTrails", value=True)
+            check_securitytrails = st.checkbox("SecurityTrails", value=True)
         with col3:
             record_type = st.selectbox("Record Type:", ["A", "AAAA", "MX", "NS", "SOA", "TXT"])
     
@@ -3419,6 +3419,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     check_historical_dns(domain, check_virustotal, check_securitytrails, record_type)
             else:
                 st.error("❌ Please enter a domain name")
+
 
 
 
