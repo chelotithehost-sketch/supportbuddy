@@ -1224,16 +1224,18 @@ else:
                 use_container_width=True
             )
 
-    elif tool == "📋 cPanel Account List":
-        st.title("📋 cPanel Account List")
-        st.markdown("View a comprehensive list of all hosted cPanel accounts and their details.")
+    elif tool == "📋 cPanel/ DirectAdmin Account List":
+        st.title("📋 cPanel/DirectAdmin Account List")
+        st.markdown("View a comprehensive list of all hosted cPanel or DirectAdmin accounts and their details.")
         
-        col1, col2 = st.columns([3, 1])
+        col1, col2, col3 = st.columns([3, 1])
         with col1:
             st.info("Access account status, package types, and owner details.")
         with col2:
-            st.link_button("📂 Open List", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
-
+            st.link_button("📂 DA and cPanel", "https://my.hostafrica.com/admin/custom/scripts/findHostingByDomain", use_container_width=True)
+        with col3:
+            st.link_button("📂 Open List cPanel Only", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
+   
     # TICKET MANAGEMENT TOOLS
     elif tool == "✅ Support Ticket Checklist":
         st.title("✅ Support Ticket Checklist")
@@ -3419,6 +3421,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     check_historical_dns(domain, check_virustotal, check_securitytrails, record_type)
             else:
                 st.error("❌ Please enter a domain name")
+
 
 
 
