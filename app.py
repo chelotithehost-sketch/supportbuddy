@@ -3320,10 +3320,11 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
     with col2:
         check_securitytrails = st.checkbox("SecurityTrails (Limited)", value=False)
     
-      if st.button("🔍 Check Historical DNS", use_container_width=True):
+    if st.button("🔍 Check Historical DNS", use_container_width=True):
         if domain:
             with st.spinner("Querying historical DNS records..."):
                 check_historical_dns(domain, check_virustotal, check_securitytrails)
         else:
             st.error("❌ Please enter a domain name")
+
 
