@@ -367,7 +367,7 @@ TOOL_CATEGORIES = {
             "🔐 PIN Checker",
             "🔓 IP Unban",
             "📝 Bulk NS Updater",
-            "📋 cPanel Account List"
+            "📋 cPanel and DirectAdmin Checker"
         ],
         "description": "Your essential admin tools",
         "color": CATEGORY_COLORS.get("Admin Links")
@@ -1224,8 +1224,8 @@ else:
                 use_container_width=True
             )
 
-    elif tool == "📋 cPanel/ DirectAdmin Account List":
-        st.title("📋 cPanel/DirectAdmin Account List")
+    elif tool == "📋 cPanel and DirectAdmin Checker":
+        st.title("📋 cPanel and DirectAdmin Checker")
         st.markdown("View a comprehensive list of all hosted cPanel or DirectAdmin accounts and their details.")
         
         col1, col2, col3 = st.columns([3, 1])
@@ -3421,6 +3421,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     check_historical_dns(domain, check_virustotal, check_securitytrails, record_type)
             else:
                 st.error("❌ Please enter a domain name")
+
 
 
 
