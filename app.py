@@ -1233,7 +1233,7 @@ else:
             st.info("Access account status, package types, and owner details.")
         with col2:
             st.link_button("📂 DA and cPanel", "https://my.hostafrica.com/admin/custom/scripts/findHostingByDomain", use_container_width=True)
-            st.link_button("📂 Open List cPanel Only", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
+            st.link_button("📂 List cPanel Only", "https://my.hostafrica.com/admin/custom/scripts/custom_tests/listaccounts.php", use_container_width=True)
    
     # TICKET MANAGEMENT TOOLS
     elif tool == "✅ Support Ticket Checklist":
@@ -3420,6 +3420,7 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                     check_historical_dns(domain, check_virustotal, check_securitytrails, record_type)
             else:
                 st.error("❌ Please enter a domain name")
+
 
 
 
