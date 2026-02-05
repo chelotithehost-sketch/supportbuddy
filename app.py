@@ -3315,9 +3315,9 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
      domain = st.text_input("🌐 Enter Domain:", placeholder="example.com")
     
      col1, col2 = st.columns(2)
-      with col1:
+    with col1:
         check_virustotal = st.checkbox("VirusTotal (Free)", value=True)
-      with col2:
+    with col2:
         check_securitytrails = st.checkbox("SecurityTrails (Limited)", value=False)
     
       if st.button("🔍 Check Historical DNS", use_container_width=True):
@@ -3326,3 +3326,4 @@ ORDER BY (data_length + index_length) DESC;""", language="sql")
                 check_historical_dns(domain, check_virustotal, check_securitytrails)
         else:
             st.error("❌ Please enter a domain name")
+
